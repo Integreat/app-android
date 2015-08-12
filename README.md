@@ -1,6 +1,6 @@
 # Flüchtlingshilfe
 
-Interdisziplinäres Projekt von Software Engineering-Studenten zusammen mit Studenten von FIM FIM (Finanz- und Informationsmanagement) und dem Lehrstuhl für Wirtschaftsinformatik an der TUM.
+Interdisziplinäres Projekt von Studenten der Master-Elitestudiengänge Software Engineering (SE) und Finanz- und Informationsmanagement (FIM) sowie dem Lehrstuhl für Wirtschaftsinformatik an der TUM.
 
 Ziel ist die Bereitstellung von Informationen für Flüchtlinge, um sie bei ihrer Ankunft in Deutschland unterstützen.
 
