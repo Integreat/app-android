@@ -18,6 +18,10 @@ public class Information implements Serializable {
         mUrl = url;
     }
 
+    public Information(String title, String description) {
+        this(title, description, null, null);
+    }
+
     public String getUrl() {
         return mUrl;
     }

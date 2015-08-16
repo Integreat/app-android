@@ -19,6 +19,10 @@ public class Content implements Serializable{
         mSubContents = subContents;
     }
 
+    public Content(String title, String description) {
+        this(title, description, null, null);
+    }
+
     public List<Content> getSubContent() {
         return mSubContents;
     }
