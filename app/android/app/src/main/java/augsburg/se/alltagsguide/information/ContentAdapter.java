@@ -19,6 +19,12 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentV
     private Content mContent;
     private ContentFragment.OnContentFragmentInteractionListener mListener;
 
+    public void replace(Content content) {
+        notifyItemRangeRemoved(0, mContent.getInformation().size());
+        mContent = content;
+        notifyItemRangeInserted(0, mContent.getInformation().size());
+    }
+
     public interface OnItemClickListener {
         void onClick(Information information);
     }

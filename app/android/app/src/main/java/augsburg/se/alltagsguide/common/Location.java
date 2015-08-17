@@ -1,7 +1,9 @@
 package augsburg.se.alltagsguide.common;
 
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable{
     private String mIconPath;
     private String mName;
 

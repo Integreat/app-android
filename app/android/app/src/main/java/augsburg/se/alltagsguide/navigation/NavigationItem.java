@@ -1,26 +1,29 @@
 package augsburg.se.alltagsguide.navigation;
 
+import augsburg.se.alltagsguide.common.Content;
 
+/**
+ * Created by Daniel-L on 16.08.2015.
+ */
 public class NavigationItem {
-    private String mText;
-    private String mDescription;
+    private Content mContent;
     private int mDepth;
 
-    public NavigationItem(String text, String description, int depth) {
-        mText = text;
+    public NavigationItem(Content content, int depth) {
+        mContent = content;
         mDepth = depth;
-    }
-
-    public String getText() {
-        return mText;
-    }
-
-    public String getDescription() {
-        return mDescription;
     }
 
     public int getDepth() {
         return mDepth;
+    }
+
+    public boolean hasChilds() {
+        return mContent.getSubContent() != null && !mContent.getSubContent().isEmpty();
+    }
+
+    public Content getContent() {
+        return mContent;
     }
 
 }

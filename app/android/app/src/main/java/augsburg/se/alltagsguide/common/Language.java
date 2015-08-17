@@ -1,9 +1,11 @@
 package augsburg.se.alltagsguide.common;
 
+import java.io.Serializable;
+
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class Language {
+public class Language implements Serializable {
     private String mIconPath;
     private String mName;
     private String mShortName;

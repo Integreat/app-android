@@ -23,24 +23,78 @@
             android:layout_height="match_parent"
             android:clickable="true" />
     </LinearLayout>
-    <!-- android:layout_marginTop="?android:attr/actionBarSize"-->
-    <android.support.design.internal.ScrimInsetsFrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/scrimInsetsFrameLayout"
-        android:layout_width="@dimen/navigation_drawer_width"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:elevation="10dp"
-        android:fitsSystemWindows="true"
-        app:insetForeground="#4000">
 
-        <fragment
-            android:id="@+id/fragment_drawer"
-            android:name="augsburg.se.alltagsguide.navigation.NavigationDrawerFragment"
-            android:layout_width="@dimen/navigation_drawer_width"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:layout="@layout/fragment_navigation_drawer" />
-    </android.support.design.internal.ScrimInsetsFrameLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="168dp"
+                android:background="@drawable/augsburg"
+                android:paddingTop="24dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:background="#4c000000">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/language"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_margin="10dp"
+                        app:border_color="#64ffffff"
+                        app:border_width="1dp" />
+
+                    <TextView
+                        android:id="@+id/location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/url"
+                        android:layout_toEndOf="@+id/language"
+                        android:gravity="start"
+                        android:paddingBottom="4dp"
+                        android:text="Augsburg"
+                        android:textColor="#FFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/url"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_toEndOf="@+id/language"
+                        android:gravity="start"
+                        android:text="www.augsburg.de"
+                        android:textColor="#fff"
+                        android:textSize="14sp" />
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/header" />
+        </RelativeLayout>
+
+    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

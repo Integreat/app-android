@@ -17,6 +17,7 @@ public class ContentFragment extends Fragment {
     private static final String ARG_CONTENT = "content";
     private Content mContent;
     private RecyclerView mRecyclerView;
+    private ContentAdapter mContentAdapter;
 
     private OnContentFragmentInteractionListener mListener;
 
@@ -47,8 +48,8 @@ public class ContentFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_content, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        mRecyclerView.setAdapter(new ContentAdapter(mContent, mListener));
+        mContentAdapter = new ContentAdapter(mContent, mListener);
+        mRecyclerView.setAdapter(mContentAdapter);
         return rootView;
     }
 
@@ -60,7 +61,7 @@ public class ContentFragment extends Fragment {
             mListener = (OnContentFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnContentFragmentInteractionListener");
         }
     }
 
@@ -68,6 +69,10 @@ public class ContentFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void changeContent(Content content) {
+        mContentAdapter.replace(content);
     }
 
     public interface OnContentFragmentInteractionListener {
