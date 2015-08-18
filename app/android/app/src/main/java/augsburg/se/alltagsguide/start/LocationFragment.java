@@ -3,6 +3,7 @@ package augsburg.se.alltagsguide.start;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,12 @@ public class LocationFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("SELECT A CITY");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("Where do you live?");
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -64,7 +71,6 @@ public class LocationFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        activity.setTitle("Pick a city");
     }
 
     @Override

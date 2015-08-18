@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:orientation="horizontal">
@@ -10,12 +11,14 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:layout_marginStart="10dp"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:padding="5dp"
-        android:textAppearance="?textAppearanceListItem" />
+        android:textAppearance="?android:textAppearanceSmall"
+        tools:text="Ankuftsinformationen" />
 
     <TextView
         android:id="@+id/counter"
@@ -25,5 +28,6 @@
         android:layout_marginEnd="5dp"
         android:gravity="center_vertical"
         android:padding="5dp"
-        android:textAppearance="?textAppearanceListItem" />
+        android:textAppearance="?android:textAppearanceSmall"
+        tools:text="20+" />
 </RelativeLayout>

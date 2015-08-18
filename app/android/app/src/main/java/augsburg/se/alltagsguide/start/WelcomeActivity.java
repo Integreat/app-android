@@ -5,20 +5,16 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.information.OverviewActivity;
+import augsburg.se.alltagsguide.content.OverviewActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 public class WelcomeActivity extends BaseActivity implements LanguageFragment.OnLanguageFragmentInteractionListener, LocationFragment.OnLocationFragmentInteractionListener {
 
-    private View navigationLayout;
-    private TextView progressText;
     private Toolbar mToolbar;
 
     @Override
@@ -27,9 +23,6 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
         setContentView(R.layout.activity_welcome);
         mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
-
-        navigationLayout = findViewById(R.id.navigation); //TODO fade in/out
-        progressText = (TextView) findViewById(R.id.progress_text);
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, LocationFragment.newInstance())
@@ -51,14 +44,13 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
     @Override
     public void onLanguageSelected(Location location, Language language) {
         // save values
-        PrefUtilities.getInstance().setLanguage(language.getShortName());
-        PrefUtilities.getInstance().setLocation(location.getName());
+        PrefUtilities.getInstance().setLanguage(language);
+        PrefUtilities.getInstance().setLocation(location);
         startActivity(new Intent(WelcomeActivity.this, OverviewActivity.class));
     }
 
     @Override
     public void onLocationSelected(Location location) {
-        progressText.setText("Location: " + location.getName());
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, LanguageFragment.newInstance(location))

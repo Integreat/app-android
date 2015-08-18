@@ -5,6 +5,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import augsburg.se.alltagsguide.common.Language;
+import augsburg.se.alltagsguide.common.Location;
+
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.GINGERBREAD;
 
@@ -33,20 +39,30 @@ public class PrefUtilities {
         return _instance;
     }
 
-    public String getLocation() {
-        return preferences.getString(LOCATION, "Augsburg");
+    public Language getLanguage() {
+        return getObject(Language.class, LANGUAGE);
     }
 
-    public void setLocation(String location) {
-        save(preferences.edit().putString(LOCATION, location));
+    public <T> T getObject(Class<T> clazz, String key) {
+        try {
+            return new Gson().fromJson(preferences.getString(key, null), clazz);
+        } catch (JsonSyntaxException e) {
+            return null;
+        }
     }
 
-    public String getLanguage() {
-        return preferences.getString(LANGUAGE, "de");
+
+    public void setLocation(Location location) {
+        save(preferences.edit().putString(LOCATION, new Gson().toJson(location)));
     }
 
-    public void setLanguage(String language) {
-        save(preferences.edit().putString(LANGUAGE, language));
+    public Location getLocation() {
+        return getObject(Location.class, LOCATION);
+    }
+
+
+    public void setLanguage(Language language) {
+        save(preferences.edit().putString(LANGUAGE, new Gson().toJson(language)));
     }
 
     public void setDrawerLearned(boolean learned) {
@@ -82,4 +98,5 @@ public class PrefUtilities {
     public void removeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
+
 }

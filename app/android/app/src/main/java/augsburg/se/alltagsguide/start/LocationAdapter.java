@@ -45,7 +45,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
         final Location location = mLocations.get(position);
         holder.title.setText(location.getName());
         Picasso.with(mContext)
-                .load(location.getIconPath())
+                .load(location.getPath())
                 .placeholder(R.drawable.placeholder_location)
                 .error(R.drawable.placeholder_location)
                 .fit()

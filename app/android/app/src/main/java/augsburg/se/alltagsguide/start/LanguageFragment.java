@@ -3,18 +3,21 @@ package augsburg.se.alltagsguide.start;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.NetworkHandler;
 import augsburg.se.alltagsguide.network.NetworkHandlerMock;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 
 public class LanguageFragment extends Fragment {
@@ -59,7 +62,18 @@ public class LanguageFragment extends Fragment {
             }
         }, getActivity());
         recyclerView.setAdapter(adapter);
+
+
+        TextView cityText = (TextView) rootView.findViewById(R.id.city_name);
+        cityText.setText(mLocation.getName());
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("SELECT A LANGUAGE");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("What language do you speak?");
     }
 
     @Override
@@ -71,7 +85,6 @@ public class LanguageFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnLanguageFragmentInteractionListener");
         }
-        activity.setTitle("Pick a language");
     }
 
     @Override
