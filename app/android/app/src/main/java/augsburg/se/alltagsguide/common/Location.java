@@ -7,9 +7,14 @@ public class Location implements Serializable {
     private String mPath;
     private String mName;
     private String mUrl;
+    private int mColor;
 
     public String getPath() {
         return mPath;
+    }
+
+    public int getColor() {
+        return mColor;
     }
 
 
@@ -27,4 +32,10 @@ public class Location implements Serializable {
         mUrl = url;
     }
 
+    public Location(String path, String name, String url, int color) {
+        mPath = path;
+        mName = name;
+        mUrl = url;
+        mColor = color;
+    }
 }

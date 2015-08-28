@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="font_sizes_values" translatable="false">
+        <item>XSmall</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+        <item>XLarge</item>
+    </string-array>
+
+    <string-array name="font_sizes_names" translatable="false">
+        <item>@string/font_size_xsmall</item>
+        <item>@string/font_size_small</item>
+        <item>@string/font_size_medium</item>
+        <item>@string/font_size_large</item>
+        <item>@string/font_size_xlarge</item>
+    </string-array>
+
+
+    <array name="colors">
+        <item>#00BCD4</item>
+        <item>#03A9F4</item>
+        <item>#1E88E5</item>
+        <item>#3F51B5</item>
+        <item>#5E35B1</item>
+        <item>#9C27B0</item>
+        <item>#8BC34A</item>
+        <item>#4CAF50</item>
+        <item>#009688</item>
+        <item>#CDDC39</item>
+        <item>#FFEB3B</item>
+        <item>#FFC107</item>
+        <item>#FF9800</item>
+        <item>#FF5722</item>
+        <item>#D32F2F</item>
+        <item>#E91E63</item>
+        <item>#9E9E9E</item>
+        <item>#607D8B</item>
+        <item>#795548</item>
+        <item>#424242</item>
+        <item>#1F1F1F</item>
+    </array>
+
+</resources>

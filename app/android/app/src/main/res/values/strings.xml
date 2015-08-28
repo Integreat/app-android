@@ -10,4 +10,13 @@
 
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
+
+
+    <string name="font_size_small">Small</string>
+    <string name="font_size_medium">Medium</string>
+    <string name="font_size_large">Large</string>
+    <string name="font_size_pref_summary">Set a font-size</string>
+    <string name="font_size_pref_title">Font-size</string>
+    <string name="font_size_xlarge">Extra Large</string>
+    <string name="font_size_xsmall">Extra Small</string>
 </resources>

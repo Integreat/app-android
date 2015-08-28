@@ -1,5 +1,7 @@
 package augsburg.se.alltagsguide.network;
 
+import android.os.Handler;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,13 +10,21 @@ import augsburg.se.alltagsguide.common.Content;
 import augsburg.se.alltagsguide.common.Information;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
+import augsburg.se.alltagsguide.utilities.ColorManager;
+import retrofit.Callback;
+import retrofit.http.Path;
 
 
 public class NetworkHandlerMock implements NetworkHandler {
 
+    /**
+     * Time the response should wait until it's executed (to simulate network).
+     */
+    private static final int TIME_TO_SLEEP = 1500;
+
     @Override
-    public List<Content> getContent(Language language, Location location) {
-        return Arrays.asList(
+    public void getContents(Language language, Location location, Callback<List<Content>> cb) {
+        sendDelayed(cb, Arrays.asList(
                 new Content("Wilkommen in Augsburg",
                         "Die Stadt Augsburg und Ihre Kommunen",
                         Arrays.asList(
@@ -71,20 +81,18 @@ public class NetworkHandlerMock implements NetworkHandler {
                 new Content("Kinder und Familie", "Kindergeld, Kindergarten,..."),
 
                 new Content("Telekommunikation", "Handyvertrag, Festnetzanschluss, ...")
-        );
-    }
-
-    @Override
-    public List<Content> getContent(String language, String location) {
-        return getContent(new Language(null, null, language), new Location(null, location, null));
+        ));
     }
 
 
     @Override
-    public List<Location> getAvailableLocations() {
+    public void getAvailableLocations(Callback<List<Location>> cb) {
+
+        ColorManager cm = ColorManager.getInstance();
         List<Location> locations = new ArrayList<>();
         String[] locationNames = {"Augsburg", "Berlin", "Düsseldorf", "Freiburg", "München"};
         String[] locationUrl = {"www.augsburg.de", "www.berlin.de", "www.düsseldorf.de", "www.freiburg.de", "www.münchen.de"};
+        int[] locationColors = {cm.getColor(0), cm.getColor(3), cm.getColor(6), cm.getColor(9), cm.getColor(12)};
         String[] locationPictures = {
                 "http://www.ina-sic.de/bilder/default/augsburg2.png",
                 "http://www.briefmarkenverein-berliner-baer.de/foto-berliner-baer/berliner-baer-wappen.gif",
@@ -93,13 +101,13 @@ public class NetworkHandlerMock implements NetworkHandler {
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Muenchen_Kleines_Stadtwappen.svg/818px-Muenchen_Kleines_Stadtwappen.svg.png"};
 
         for (int i = 0; i < locationNames.length; i++) {
-            locations.add(new Location(locationPictures[i], locationNames[i], locationUrl[i]));
+            locations.add(new Location(locationPictures[i], locationNames[i], locationUrl[i], locationColors[i]));
         }
-        return locations;
+        sendDelayed(cb, locations);
     }
 
     @Override
-    public List<Language> getAvailableLanguages(Location location) {
+    public void getAvailableLanguages(Location location, Callback<List<Language>> cb) {
         Language english = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/100px-Flag_of_the_United_Kingdom.svg.png", "English", "en");
         Language german = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/100px-Flag_of_Germany.svg.png", "Deutsch", "de");
         Language spanish = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Flag_of_Spain.svg/100px-Flag_of_Spain.svg.png", "Espanol", "es");
@@ -110,8 +118,56 @@ public class NetworkHandlerMock implements NetworkHandler {
         languages.add(frensh);
         languages.add(english);
         languages.add(spanish);
-        return languages;
+        sendDelayed(cb, languages);
+    }
+
+    /**
+     * Sends the response to the success-listener.
+     *
+     * @param <T>             Type of object, which is send to the successlistener
+     * @param successListener listener which should receive the response
+     * @param response        response which should be send to the listener
+     */
+    private <T> void sendDelayed(final Callback<T> successListener, final T response, int timeToSleep) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (successListener != null) {
+                    successListener.success(response, null);
+                }
+            }
+        }, timeToSleep);
+    }
+
+    /**
+     * Sends the response to the success-listener.
+     *
+     * @param <T>             Type of object, which is send to the successlistener
+     * @param successListener listener which should receive the response
+     * @param response        response which should be send to the listener
+     */
+    private <T> void sendDelayed(final Callback<T> successListener, final T response) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (successListener != null) {
+                    successListener.success(response, null);
+                }
+            }
+        }, TIME_TO_SLEEP);
     }
 
 
+    @Override
+    public void isServerAlive(Callback<Boolean> callback) {
+        sendDelayed(callback, true);
+    }
+
+
+    @Override
+    public void getContent(@Path("language") Language language, @Path("location") Location location, @Path("contentid") String contentId, Callback<List<Content>> cb) {
+        getContents(language, location, cb);
+    }
 }

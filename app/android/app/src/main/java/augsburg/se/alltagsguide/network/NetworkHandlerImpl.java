@@ -5,28 +5,35 @@ import java.util.List;
 import augsburg.se.alltagsguide.common.Content;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
+import retrofit.Callback;
+import retrofit.http.Path;
 
 /**
  * Created by Daniel-L on 28.07.2015.
  */
 public class NetworkHandlerImpl implements NetworkHandler {
     @Override
-    public List<Content> getContent(Language language, Location location) {
-        return null;
+    public void isServerAlive(Callback<Boolean> callback) {
+
     }
 
     @Override
-    public List<Content> getContent(String language, String location) {
-        return null;
+    public void getContents(@Path("language") Language language, @Path("location") Location location, Callback<List<Content>> cb) {
+
     }
 
     @Override
-    public List<Location> getAvailableLocations() {
-        return null;
+    public void getContent(@Path("language") Language language, @Path("location") Location location, @Path("contentid") String contentId, Callback<List<Content>> cb) {
+
     }
 
     @Override
-    public List<Language> getAvailableLanguages(Location location) {
-        return null;
+    public void getAvailableLocations(Callback<List<Location>> cb) {
+
+    }
+
+    @Override
+    public void getAvailableLanguages(Location location, Callback<List<Language>> cb) {
+
     }
 }
