@@ -30,3 +30,5 @@ Weiterentwicklung des Android Prototypen, Laden der Inhalte aus dem Backend
 
 ## Zeitplan
 Eintragung der Daten ins Backend ab ca. 01.09. (in 1 Woche)
+
+**Nächster Termin: Montag (31.08.), 8:30 Uhr**
