@@ -5,17 +5,27 @@ import java.util.List;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Content;
+import retrofit.Callback;
+import retrofit.http.GET;
+import retrofit.http.Path;
 
 /**
  * Created by Daniel-L on 28.07.2015.
  */
 public interface NetworkHandler {
-    List<Content> getContent(Language language, Location location);
+    @GET("/alive")
+    void isServerAlive(Callback<Boolean> callback);
 
-    List<Content> getContent(String language, String location);
+    @GET("/locations/{location}/languages/{language}/contents")
+    void getContents(@Path("language") Language language, @Path("location") Location location, Callback<List<Content>> cb); //todo toString ueberschreiben
 
-    List<Location> getAvailableLocations();
+    @GET("/locations/{location}/languages/{language}/contents/{contentid}/information")
+    void getContent(@Path("language") Language language, @Path("location") Location location, @Path("contentid") String contentId, Callback<List<Content>> cb); //todo toString ueberschreiben
 
-    List<Language> getAvailableLanguages(Location location);
+    @GET("/locations")
+    void getAvailableLocations(Callback<List<Location>> cb);
+
+    @GET("/locations/{location}/languages")
+    void getAvailableLanguages(Location location, Callback<List<Language>> cb);
 
 }

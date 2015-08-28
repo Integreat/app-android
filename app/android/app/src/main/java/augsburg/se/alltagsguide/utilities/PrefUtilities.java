@@ -22,6 +22,8 @@ public class PrefUtilities {
     private static final String LOCATION = "location";
     private static final String LANGUAGE = "language";
     private static final String USER_LEARNED_DRAWER = "navigation_drawer_learned";
+    private static final String CURRENT_COLOR = "current_color";
+    private static final String FONT_STYLE = "font_style";
 
     private static PrefUtilities _instance;
     private final SharedPreferences preferences;
@@ -90,6 +92,14 @@ public class PrefUtilities {
         }
     }
 
+    public void saveCurrentColor(int color) {
+        save(preferences.edit().putInt(CURRENT_COLOR, color));
+    }
+
+    public int getCurrentColor() {
+        return preferences.getInt(CURRENT_COLOR, 0);
+    }
+
 
     public void addListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.registerOnSharedPreferenceChangeListener(listener);
@@ -97,6 +107,15 @@ public class PrefUtilities {
 
     public void removeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
+    public FontStyle getFontStyle() {
+        try {
+            return FontStyle.valueOf(preferences.getString(FONT_STYLE,
+                    FontStyle.Medium.name()));
+        } catch (Exception e) {
+            return FontStyle.Medium;
+        }
     }
 
 }

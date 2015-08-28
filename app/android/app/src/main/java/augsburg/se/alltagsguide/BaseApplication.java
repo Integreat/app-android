@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide;
 
 import android.app.Application;
 
+import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 /**
@@ -13,5 +14,6 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         PrefUtilities.init(getApplicationContext());
+        ColorManager.init(getApplicationContext());
     }
 }

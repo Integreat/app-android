@@ -11,17 +11,16 @@ import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.content.OverviewActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
+import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 public class WelcomeActivity extends BaseActivity implements LanguageFragment.OnLanguageFragmentInteractionListener, LocationFragment.OnLocationFragmentInteractionListener {
-
-    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mToolbar);
         getFragmentManager()
                 .beginTransaction()
@@ -56,6 +55,9 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
                 .replace(R.id.container, LanguageFragment.newInstance(location))
                 .addToBackStack(null)
                 .commit();
+        int color = location.getColor();
+        PrefUtilities.getInstance().saveCurrentColor(color);
+        changeColor(color);
     }
 
     @Override
