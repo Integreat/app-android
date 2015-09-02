@@ -1,16 +1,16 @@
 package augsburg.se.alltagsguide.navigation;
 
-import augsburg.se.alltagsguide.common.Content;
+import augsburg.se.alltagsguide.common.Category;
 
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class NavigationItem {
-    private Content mContent;
+public class NavigationItem implements Comparable {
+    private Category mCategory;
     private int mDepth;
 
-    public NavigationItem(Content content, int depth) {
-        mContent = content;
+    public NavigationItem(Category category, int depth) {
+        mCategory = category;
         mDepth = depth;
     }
 
@@ -19,11 +19,11 @@ public class NavigationItem {
     }
 
     public boolean hasChilds() {
-        return mContent.getSubContent() != null && !mContent.getSubContent().isEmpty();
+        return mCategory.getSubContent() != null && !mCategory.getSubContent().isEmpty();
     }
 
-    public Content getContent() {
-        return mContent;
+    public Category getCategory() {
+        return mCategory;
     }
 
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import augsburg.se.alltagsguide.common.Content;
-import augsburg.se.alltagsguide.common.Information;
+import augsburg.se.alltagsguide.common.Article;
+import augsburg.se.alltagsguide.common.Category;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.utilities.ColorManager;
@@ -23,39 +23,39 @@ public class NetworkHandlerMock implements NetworkHandler {
     private static final int TIME_TO_SLEEP = 1500;
 
     @Override
-    public void getContents(Language language, Location location, Callback<List<Content>> cb) {
+    public void getContents(Language language, Location location, Callback<List<Category>> cb) {
         sendDelayed(cb, Arrays.asList(
-                new Content("Wilkommen in Augsburg",
+                new Category("Wilkommen in Augsburg",
                         "Die Stadt Augsburg und Ihre Kommunen",
                         Arrays.asList(
-                                new Information("Bürgeramt", "Das Bürgeramt befindet sich in XYZ",
+                                new Article("Bürgeramt", "Das Bürgeramt befindet sich in XYZ",
                                         String.format("/location/%s/%s/images/burgeramt.png", location.getName(),
                                                 language.getShortName()),
                                         "www.augsburg.de"),
-                                new Information("Stadtplan", "Hier sehen sie keine Karte")
+                                new Article("Stadtplan", "Hier sehen sie keine Karte")
                         ),
                         null),
 
-                new Content("Ankunftsinformation",
+                new Category("Ankunftsinformation",
                         "Ein erster Einstieg bei Ihrer Ankunft",
                         null,
                         Arrays.asList(
-                                new Content("Unterbringung",
+                                new Category("Unterbringung",
                                         "So hausen Sie",
                                         Arrays.asList(
-                                                new Information("Hausordnung", "Wir trennen Müll, um durch Recycling " +
+                                                new Article("Hausordnung", "Wir trennen Müll, um durch Recycling " +
                                                         "die Umwelt zu schonen. Werfen Sie Papier und Kartons in den Papiermüll " +
                                                         "und ihre Dosen in dafür vorgesehene Container. Diese finden Sie ....")
                                         ), null),
-                                new Content("Sozialamt",
+                                new Category("Sozialamt",
                                         "Termine, Informationen und Dokumente"),
-                                new Content("Asylberatung",
+                                new Category("Asylberatung",
                                         "Anliegen")
                         )),
 
-                new Content("Notrufnummern",
+                new Category("Notrufnummern",
                         "Polizei, Krankenwagen, Feuerwehr,...",
-                        Arrays.asList(new Information("Notfall",
+                        Arrays.asList(new Article("Notfall",
                                 "Ausschließlich bei einem Notfall (akute Gesundheitsbedrohung!) dürfen Sie auch ohne Behandlungsschein " +
                                         "zum Krankenhaus oder Arzt gehen. Dort müssen Sie nachweisen, dass Sie Asylsuchender sind " +
                                         "und die Kosten über das Sozialamt abgerechnet werden.\n" +
@@ -65,8 +65,8 @@ public class NetworkHandlerMock implements NetworkHandler {
                                         "\n" +
                                         "Bitte beachten Sie die 5 W's...")), null),
 
-                new Content("Feiertage und Öffnungszeiten", "Geschäfte, Kiosk und Tankstellen",
-                        Arrays.asList(new Information("Öffnungszeiten", "Die gewöhnlichen Öffnungszeiten von Geschäften in Augsburg sind " +
+                new Category("Feiertage und Öffnungszeiten", "Geschäfte, Kiosk und Tankstellen",
+                        Arrays.asList(new Article("Öffnungszeiten", "Die gewöhnlichen Öffnungszeiten von Geschäften in Augsburg sind " +
                                 "von Montag bis Samstag von 08:00 Uhr bis 20:00 Uhr. " +
                                 "Bei kleineren Geschäften sind diese Zeiten oftmals kürzer, ggf. auch mit einer Mittagspause " +
                                 "in der das Geschäft geschlossen ist.\n" +
@@ -74,13 +74,13 @@ public class NetworkHandlerMock implements NetworkHandler {
                                 "\n" +
                                 "Hier finden Sie eine Übersicht über die Feiertage in Augsburg: ...")), null),
 
-                new Content("Deutsch lernen in Augsburg", "Tandem-Partner, Dolmetscher, Sprachschulen"),
+                new Category("Deutsch lernen in Augsburg", "Tandem-Partner, Dolmetscher, Sprachschulen"),
 
-                new Content("Inanspruchnahme von Dolmetschern/Übersetzern", "Schwierigkeiten bei inoffizieller Übersetzung: ..."),
+                new Category("Inanspruchnahme von Dolmetschern/Übersetzern", "Schwierigkeiten bei inoffizieller Übersetzung: ..."),
 
-                new Content("Kinder und Familie", "Kindergeld, Kindergarten,..."),
+                new Category("Kinder und Familie", "Kindergeld, Kindergarten,..."),
 
-                new Content("Telekommunikation", "Handyvertrag, Festnetzanschluss, ...")
+                new Category("Telekommunikation", "Handyvertrag, Festnetzanschluss, ...")
         ));
     }
 
@@ -167,7 +167,7 @@ public class NetworkHandlerMock implements NetworkHandler {
 
 
     @Override
-    public void getContent(@Path("language") Language language, @Path("location") Location location, @Path("contentid") String contentId, Callback<List<Content>> cb) {
+    public void getContent(@Path("language") Language language, @Path("location") Location location, @Path("contentid") String contentId, Callback<List<Category>> cb) {
         getContents(language, location, cb);
     }
 }

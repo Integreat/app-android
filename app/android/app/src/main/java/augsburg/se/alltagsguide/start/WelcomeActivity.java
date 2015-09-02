@@ -9,9 +9,8 @@ import android.view.MenuItem;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.content.OverviewActivity;
+import augsburg.se.alltagsguide.category.OverviewActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
-import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 public class WelcomeActivity extends BaseActivity implements LanguageFragment.OnLanguageFragmentInteractionListener, LocationFragment.OnLocationFragmentInteractionListener {
@@ -40,11 +39,11 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
         return super.onOptionsItemSelected(item);
     }
 
+    // save values
     @Override
     public void onLanguageSelected(Location location, Language language) {
-        // save values
-        PrefUtilities.getInstance().setLanguage(language);
-        PrefUtilities.getInstance().setLocation(location);
+        mPrefUtilities.setLanguage(language);
+        mPrefUtilities.setLocation(location);
         startActivity(new Intent(WelcomeActivity.this, OverviewActivity.class));
     }
 

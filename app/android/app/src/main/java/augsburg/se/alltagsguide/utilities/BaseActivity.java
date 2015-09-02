@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.Serializable;
+
 import augsburg.se.alltagsguide.R;
 
 public class BaseActivity extends AppCompatActivity {
@@ -19,14 +21,24 @@ public class BaseActivity extends AppCompatActivity {
     private Drawable oldBackgroundActivity = null;
     private Drawable oldBackgroundTabs = null;
     private Integer oldStatusBarColor = null;
+    protected PrefUtilities mPrefUtilities;
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         getTheme().applyStyle(PrefUtilities.getInstance().getFontStyle().getResId(), true);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDefaultDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
+        }
         setLastColor();
+        mPrefUtilities = PrefUtilities.getInstance();
+    }
+
+    protected boolean setDisplayHomeAsUp() {
+        return false;
     }
 
 
@@ -36,6 +48,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     void changeTabColor(Drawable drawable) {
+        /* overridable */
     }
 
     protected void changeColor(int primaryColor) {
@@ -99,5 +112,47 @@ public class BaseActivity extends AppCompatActivity {
         final float b = Color.blue(to) * ratio + Color.blue(from) * inverseRatio;
 
         return Color.rgb((int) r, (int) g, (int) b);
+    }
+
+
+    /**
+     * Get intent extra
+     *
+     * @param name
+     * @return serializable
+     */
+    @SuppressWarnings("unchecked")
+    protected <V extends Serializable> V getSerializableExtra(final String name) {
+        return (V) getIntent().getSerializableExtra(name);
+    }
+
+    /**
+     * Get intent extra
+     *
+     * @param name
+     * @return int
+     */
+    protected int getIntExtra(final String name) {
+        return getIntent().getIntExtra(name, -1);
+    }
+
+    /**
+     * Get intent extra
+     *
+     * @param name
+     * @return string
+     */
+    protected String getStringExtra(final String name) {
+        return getIntent().getStringExtra(name);
+    }
+
+    /**
+     * Get intent extra
+     *
+     * @param name
+     * @return string array
+     */
+    protected String[] getStringArrayExtra(final String name) {
+        return getIntent().getStringArrayExtra(name);
     }
 }

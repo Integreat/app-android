@@ -2,28 +2,31 @@ package augsburg.se.alltagsguide.start;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.NetworkHandler;
 import augsburg.se.alltagsguide.network.NetworkHandlerMock;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import augsburg.se.alltagsguide.network.SimpleCallback;
+import augsburg.se.alltagsguide.utilities.BaseFragment;
+import retrofit.client.Response;
 
 
-public class LanguageFragment extends Fragment {
+public class LanguageFragment extends BaseFragment {
     private static final String ARG_LOCATION = "location";
 
     private Location mLocation;
+    private List<Language> mLanguages;
 
     private OnLanguageFragmentInteractionListener mListener;
 
@@ -44,7 +47,10 @@ public class LanguageFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mLocation = (Location) getArguments().getSerializable(ARG_LOCATION);
+        } else {
+            throw new IllegalStateException("Location should not be null");
         }
+        mLanguages = new ArrayList<>();
     }
 
     @Override
@@ -55,7 +61,13 @@ public class LanguageFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(container.getContext(), 2));
         NetworkHandler network = new NetworkHandlerMock();
-        LanguageAdapter adapter = new LanguageAdapter(network.getAvailableLanguages(mLocation), new LanguageAdapter.LanguageClickListener() {
+        network.getAvailableLanguages(mLocation, new SimpleCallback<List<Language>>() {
+            @Override
+            public void onSuccess(List<Language> languages, Response response) {
+                mLanguages.addAll(languages);
+            }
+        });
+        LanguageAdapter adapter = new LanguageAdapter(mLanguages, new LanguageAdapter.LanguageClickListener() {
             @Override
             public void onLanguageClick(Language language) {
                 mListener.onLanguageSelected(mLocation, language);
@@ -72,8 +84,8 @@ public class LanguageFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("SELECT A LANGUAGE");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle("What language do you speak?");
+        setTitle("SELECT A LANGUAGE");
+        setSubTitle("What language do you speak?");
     }
 
     @Override
