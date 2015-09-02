@@ -14,13 +14,13 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
+import augsburg.se.alltagsguide.utilities.BaseAdapter;
 
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder> {
+public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHolder, Language> {
 
-    private List<Language> mLanguages;
     private LanguageClickListener mListener;
     private Context mContext;
 
@@ -29,7 +29,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langua
     }
 
     public LanguageAdapter(List<Language> languages, LanguageClickListener listener, Context context) {
-        mLanguages = languages;
+        super(languages);
         mListener = listener;
         mContext = context;
     }
@@ -41,7 +41,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langua
 
     @Override
     public void onBindViewHolder(LanguageViewHolder holder, int position) {
-        final Language language = mLanguages.get(position);
+        final Language language = get(position);
         holder.title.setText(language.getName());
         Picasso.with(mContext)
                 .load(language.getIconPath())
@@ -55,11 +55,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langua
                 mListener.onLanguageClick(language);
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return mLanguages.size();
     }
 
     public class LanguageViewHolder extends RecyclerView.ViewHolder {

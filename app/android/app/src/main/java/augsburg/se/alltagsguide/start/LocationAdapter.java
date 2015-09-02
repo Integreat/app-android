@@ -15,13 +15,13 @@ import java.util.List;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
+import augsburg.se.alltagsguide.utilities.BaseAdapter;
 
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocationViewHolder> {
+public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHolder, Location> {
 
-    private List<Location> mLocations;
     private LocationClickListener mListener;
     private Context mContext;
 
@@ -30,7 +30,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
     }
 
     public LocationAdapter(List<Location> locations, LocationClickListener listener, Context context) {
-        mLocations = locations;
+        super(locations);
         mListener = listener;
         mContext = context;
     }
@@ -42,7 +42,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
 
     @Override
     public void onBindViewHolder(LocationViewHolder holder, int position) {
-        final Location location = mLocations.get(position);
+        final Location location = get(position);
         holder.title.setText(location.getName());
         Picasso.with(mContext)
                 .load(location.getPath())
@@ -57,11 +57,6 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Locati
                 mListener.onLocationClick(location);
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return mLocations.size();
     }
 
     public class LocationViewHolder extends RecyclerView.ViewHolder {

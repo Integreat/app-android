@@ -3,7 +3,7 @@ package augsburg.se.alltagsguide.common;
 
 import java.io.Serializable;
 
-public class Location implements Serializable {
+public class Location implements Serializable, Comparable {
     private String mPath;
     private String mName;
     private String mUrl;
@@ -37,5 +37,10 @@ public class Location implements Serializable {
         mName = name;
         mUrl = url;
         mColor = color;
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        return 0;
     }
 }

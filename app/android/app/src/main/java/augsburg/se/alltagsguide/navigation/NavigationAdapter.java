@@ -10,12 +10,12 @@ import android.widget.TextView;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.utilities.BaseAdapter;
 
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.NavigationViewHolder> {
-    private List<NavigationItem> mItems;
+public class NavigationAdapter extends BaseAdapter<NavigationAdapter.NavigationViewHolder, NavigationItem> {
     private OnNavigationSelected mListener;
 
     public interface OnNavigationSelected {
@@ -23,7 +23,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
     }
 
     public NavigationAdapter(List<NavigationItem> items, OnNavigationSelected listener) {
-        mItems = items;
+        super(items);
         mListener = listener;
     }
 
@@ -44,26 +44,21 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
     @Override
     public int getItemViewType(int position) {
-        NavigationItem item = mItems.get(position);
+        NavigationItem item = get(position);
         return item.hasChilds() ? 0 : 1;
     }
 
     @Override
     public void onBindViewHolder(NavigationViewHolder holder, int position) {
-        final NavigationItem item = mItems.get(position);
-        holder.counter.setText("" + item.getContent().countItems());
-        holder.title.setText(generatePadding(item.getDepth(), item.getContent().getTitle()));
+        final NavigationItem item = get(position);
+        holder.counter.setText("" + item.getCategory().countItems());
+        holder.title.setText(generatePadding(item.getDepth(), item.getCategory().getTitle()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onNavigationClicked(item);
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return mItems.size();
     }
 
     public class NavigationViewHolder extends RecyclerView.ViewHolder {
