@@ -10,9 +10,14 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import augsburg.se.alltagsguide.persistence.resources.PersistableResource;
 
 /**
  * Given a PersistableResource, this class will take support loading/storing
@@ -109,8 +114,9 @@ public class DatabaseCache {
         final List<E> items = persistableResource.request();
 
         final SQLiteDatabase db = getWritable(helper);
-        if (db == null)
+        if (db == null) {
             return items;
+        }
 
         db.beginTransaction();
         try {
@@ -130,12 +136,14 @@ public class DatabaseCache {
 
         Cursor cursor = persistableResource.getCursor(db);
         try {
-            if (!cursor.moveToFirst())
+            if (!cursor.moveToFirst()) {
                 return null;
+            }
 
             List<E> cached = new ArrayList<>();
-            do
+            do {
                 cached.add(persistableResource.loadFrom(cursor));
+            }
             while (cursor.moveToNext());
             return cached;
         } finally {

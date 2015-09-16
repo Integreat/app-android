@@ -1,34 +1,45 @@
 package augsburg.se.alltagsguide.utilities;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * Created by Daniel-L on 01.09.2015.
- */
-public class BaseFragment extends Fragment {
+import roboguice.activity.RoboActionBarActivity;
+import roboguice.fragment.RoboFragment;
+
+
+public class BaseFragment extends RoboFragment {
 
     private ActionBar mActionBar;
+    private String title;
+    private String subTitle;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof AppCompatActivity)) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof AppCompatActivity)) {
             throw new IllegalStateException("Activity needs to be AppCompatActivity");
         }
-        mActionBar = ((AppCompatActivity) activity).getSupportActionBar();
+        mActionBar = ((RoboActionBarActivity) context).getSupportActionBar();
         if (mActionBar == null) {
             throw new IllegalStateException("ActionBar is null");
+        } else {
+            mActionBar.setTitle(title);
+            mActionBar.setSubtitle(subTitle);
         }
     }
 
     protected void setTitle(String title) {
-        mActionBar.setTitle(title);
+        this.title = title;
+        if (mActionBar != null) {
+            mActionBar.setTitle(title);
+        }
     }
 
     protected void setSubTitle(String subTitle) {
-        mActionBar.setSubtitle(subTitle);
+        this.subTitle = subTitle;
+        if (mActionBar != null) {
+            mActionBar.setSubtitle(subTitle);
+        }
     }
 }

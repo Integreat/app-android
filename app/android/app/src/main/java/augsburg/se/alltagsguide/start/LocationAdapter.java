@@ -10,10 +10,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import augsburg.se.alltagsguide.R;
-import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
 
@@ -29,8 +28,8 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
         void onLocationClick(Location location);
     }
 
-    public LocationAdapter(List<Location> locations, LocationClickListener listener, Context context) {
-        super(locations);
+    public LocationAdapter(LocationClickListener listener, Context context) {
+        super(new ArrayList<Location>());
         mListener = listener;
         mContext = context;
     }

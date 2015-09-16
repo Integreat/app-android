@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.inject.Singleton;
 
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
@@ -18,6 +19,7 @@ import static android.os.Build.VERSION_CODES.GINGERBREAD;
  * Created by Daniel-L on 16.08.2015.
  */
 @SuppressLint("CommitPrefEdits")
+@Singleton
 public class PrefUtilities {
     private static final String LOCATION = "location";
     private static final String LANGUAGE = "language";
@@ -25,20 +27,11 @@ public class PrefUtilities {
     private static final String CURRENT_COLOR = "current_color";
     private static final String FONT_STYLE = "font_style";
 
-    private static PrefUtilities _instance;
     private final SharedPreferences preferences;
 
-    private PrefUtilities(Context context) {
+    public PrefUtilities(Context context) {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
-    }
-
-    public static void init(Context context) {
-        _instance = new PrefUtilities(context);
-    }
-
-    public static PrefUtilities getInstance() {
-        return _instance;
     }
 
     public Language getLanguage() {

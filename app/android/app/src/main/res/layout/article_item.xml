@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/myAccentColor"
+            tools:background="@color/myAccentColor"
             android:gravity="center"
             android:minHeight="50dp"
             android:padding="7dp"
@@ -52,7 +52,7 @@
             android:padding="5dp"
             android:text="Mehr"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/myAccentColor" />
+            tools:textColor="@color/myAccentColor" />
 
 
     </LinearLayout>

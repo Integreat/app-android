@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -28,8 +29,8 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
         void onLanguageClick(Language language);
     }
 
-    public LanguageAdapter(List<Language> languages, LanguageClickListener listener, Context context) {
-        super(languages);
+    public LanguageAdapter(LanguageClickListener listener, Context context) {
+        super(new ArrayList<Language>());
         mListener = listener;
         mContext = context;
     }

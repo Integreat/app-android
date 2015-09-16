@@ -4,7 +4,14 @@
     android:layout_height="match_parent"
     tools:context="augsburg.se.alltagsguide.start.LocationFragment">
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Empty"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

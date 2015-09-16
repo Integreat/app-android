@@ -17,13 +17,32 @@ public class Location implements Serializable, Comparable {
         return mColor;
     }
 
-
     public String getUrl() {
         return mUrl;
     }
 
     public String getName() {
         return mName;
+    }
+
+
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public void setUrl(String url) {
+        mUrl = url;
+    }
+
+    public void setPath(String path) {
+        mPath = path;
+    }
+
+    public void setColor(int color) {
+        mColor = color;
+    }
+
+    public Location() {
     }
 
     public Location(String path, String name, String url) {
