@@ -68,12 +68,13 @@
                         android:gravity="start"
                         android:paddingBottom="4dp"
                         android:textColor="#FFF"
-                        android:textSize="14sp"
+                        android:textSize="?attr/font_small"
                         android:textStyle="bold"
                         tools:text="Augsburg" />
 
                     <TextView
                         android:id="@+id/url"
+                        android:textSize="?attr/font_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
@@ -81,19 +82,37 @@
                         android:layout_toEndOf="@+id/language"
                         android:gravity="start"
                         android:textColor="#fff"
-                        android:textSize="14sp"
                         tools:text="www.augsburg.de" />
                 </RelativeLayout>
             </RelativeLayout>
 
-
-            <TextView
+            <RelativeLayout
                 android:id="@+id/emptyView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/header"
-                android:text="Empty"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_centerInParent="true"
+                    android:adjustViewBounds="false"
+                    android:src="@drawable/inbox_empty" />
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/imageView"
+                    android:layout_centerHorizontal="true"
+                    android:singleLine="true"
+                    android:textSize="?attr/font_large"
+                    android:text="Keine Einträge gefunden"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#555555" />
+            </RelativeLayout>
 
             <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
                 android:id="@+id/recycler_view"

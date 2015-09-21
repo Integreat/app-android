@@ -1,6 +1,8 @@
 package augsburg.se.alltagsguide.common;
 
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class Location implements Serializable, Comparable {
@@ -59,7 +61,12 @@ public class Location implements Serializable, Comparable {
     }
 
     @Override
-    public int compareTo(Object another) {
+    public int compareTo(@NonNull Object another) {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return mName;
     }
 }

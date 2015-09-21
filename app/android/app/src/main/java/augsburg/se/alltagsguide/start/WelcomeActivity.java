@@ -2,7 +2,6 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -11,7 +10,7 @@ import com.google.inject.Inject;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.category.OverviewActivity;
+import augsburg.se.alltagsguide.page.OverviewActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.ContentView;

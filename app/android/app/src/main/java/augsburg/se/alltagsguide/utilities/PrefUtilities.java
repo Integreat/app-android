@@ -21,6 +21,8 @@ import static android.os.Build.VERSION_CODES.GINGERBREAD;
 @SuppressLint("CommitPrefEdits")
 @Singleton
 public class PrefUtilities {
+    public static final String MULTIPLE_COLUMNS_PORTRAIT = "multiple_columns_portrait";
+    public static final String MULTIPLE_COLUMNS_LANDSCAPE = "multiple_columns_landscape";
     private static final String LOCATION = "location";
     private static final String LANGUAGE = "language";
     private static final String USER_LEARNED_DRAWER = "navigation_drawer_learned";
@@ -100,6 +102,22 @@ public class PrefUtilities {
 
     public void removeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
+    public boolean useMultipleColumnsLandscape() {
+        return preferences.getBoolean(MULTIPLE_COLUMNS_LANDSCAPE, true);
+    }
+
+    public void setMultipleColumnsLandscape(boolean multipleColumns) {
+        save(preferences.edit().putBoolean(MULTIPLE_COLUMNS_LANDSCAPE, multipleColumns));
+    }
+
+    public boolean useMultipleColumnsPortrait() {
+        return preferences.getBoolean(MULTIPLE_COLUMNS_PORTRAIT, false);
+    }
+
+    public void setMultipleColumnsPortrait(boolean multipleColumns) {
+        save(preferences.edit().putBoolean(MULTIPLE_COLUMNS_PORTRAIT, multipleColumns));
     }
 
     public FontStyle getFontStyle() {

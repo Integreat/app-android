@@ -2,11 +2,9 @@ package augsburg.se.alltagsguide.network;
 
 import java.util.List;
 
-import augsburg.se.alltagsguide.common.Article;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Language;
-import augsburg.se.alltagsguide.common.Category;
-import retrofit.Callback;
+import augsburg.se.alltagsguide.common.Page;
 import retrofit.http.GET;
 import retrofit.http.Path;
 
@@ -17,11 +15,9 @@ public interface NetworkService {
     @GET("/alive")
     Boolean isServerAlive();
 
-    @GET("/{location}/{language}/wp-json/wp/v2/terms/category")
-    List<Category> getContents(@Path("language") Language language, @Path("location") Location location); //todo toString ueberschreiben
-
-    @GET("/{location}/{language}/wp-json/wp/v2/terms/category/{categoryId}")
-    List<Article> getContent(@Path("language") Language language, @Path("location") Location location, @Path("categoryId") String categoryId); //todo toString ueberschreiben
+    @GET("/{location}/{language}/?rest_route=/modified_content/posts_and_pages/15-08-31%2017:38:14")
+        //TODO datetime
+    List<Page> getPages(@Path("language") Language language, @Path("location") Location location);
 
     @GET("/locations")
     List<Location> getAvailableLocations();

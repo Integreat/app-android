@@ -7,27 +7,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
-import augsburg.se.alltagsguide.common.Category;
+import augsburg.se.alltagsguide.common.Page;
 
 public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.NavigationViewHolder> {
     private OnNavigationSelected mListener;
     private static final int HEADER = 0;
     private static final int ITEM = 1;
-    private Category rootCategory;
-    private List<Category> categories;
+    private List<Page> mPages;
 
-    public void setCategory(Category category) {
-        rootCategory = category;
-        categories = rootCategory.getSubCategoriesRecursive();
+    public void setPages(List<Page> pages) {
+        mPages = pages;
         notifyDataSetChanged();
     }
 
     public interface OnNavigationSelected {
-        void onNavigationClicked(Category item);
+        void onNavigationClicked(Page item);
     }
 
     public NavigationAdapter(OnNavigationSelected listener) {
@@ -51,29 +48,29 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
     @Override
     public int getItemViewType(int position) {
-        if (categories == null) {
+        if (mPages == null) {
             return 0;
         }
-        Category item = categories.get(position);
-        return item.getSubCategories() != null ? HEADER : ITEM;
+        Page item = mPages.get(position);
+        return item.getSubPages() != null ? HEADER : ITEM;
     }
 
     @Override
     public int getItemCount() {
-        if (rootCategory == null) {
+        if (mPages == null) {
             return 0;
         }
-        return rootCategory.getArticlesRecursive().size();
+        return mPages.size();
     }
 
 
     @Override
     public void onBindViewHolder(NavigationViewHolder holder, int position) {
-        if (categories == null) {
+        if (mPages == null) {
             return;
         }
-        final Category item = categories.get(position);
-        holder.counter.setText(String.valueOf(item.countItems()));
+        final Page item = mPages.get(position);
+        holder.counter.setText(String.valueOf(item.getContentCount()));
         holder.title.setText(generatePadding(item.getDepth(), item.getTitle()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

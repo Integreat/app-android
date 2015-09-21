@@ -61,4 +61,9 @@ public class Language implements Serializable, Comparable {
     public Location getLocation() {
         return mLocation;
     }
+
+    @Override
+    public String toString() {
+        return mShortName;
+    }
 }

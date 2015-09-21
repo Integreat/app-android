@@ -12,17 +12,17 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".category.OverviewActivity"
+            android:name=".page.OverviewActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".article.ArticleActivity"
+            android:name=".page.PageActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".category.OverviewActivity">
+            android:parentActivityName=".page.OverviewActivity">
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".category.OverviewActivity" />
+                android:value=".page.OverviewActivity" />
         </activity>
 
         <activity

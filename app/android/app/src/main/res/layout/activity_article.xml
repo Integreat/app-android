@@ -14,29 +14,30 @@
         <include
             layout="@layout/toolbar_default"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:title="Huhu" />
+            android:layout_height="wrap_content" />
 
-        <android.support.v7.widget.CardView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:minHeight="130dp"
-            app:cardCornerRadius="6dp"
-            tools:context="augsburg.se.alltagsguide.category.InformationActivity">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/image"
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:minHeight="130dp"
+                android:padding="5dp"
+                app:cardCornerRadius="6dp"
+                tools:context="augsburg.se.alltagsguide.category.InformationActivity">
 
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="7dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:text="Wir trennen Müll, um durch Recycling die Umwelt zu schonen. Werfen Sie Papier und Kartons in den Papiermüll und ihre Dosen in dafür vorgesehen Container. Diese finden Sie..." />
-        </android.support.v7.widget.CardView>
+                <org.sufficientlysecure.htmltextview.HtmlTextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="7dp"
+                    android:textSize="?attr/font_small"
+                    tools:text="Wir trennen Müll, um durch Recycling die Umwelt zu schonen. Werfen Sie Papier und Kartons in den Papiermüll und ihre Dosen in dafür vorgesehen Container. Diese finden Sie..." />
+
+            </android.support.v7.widget.CardView>
+        </ScrollView>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

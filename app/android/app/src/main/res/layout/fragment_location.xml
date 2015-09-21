@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Empty"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textSize="?attr/font_large" />
 
     <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
         android:id="@+id/recycler_view"

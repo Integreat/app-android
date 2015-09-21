@@ -8,6 +8,10 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -30,8 +34,8 @@ public class BaseActivity extends RoboActionBarActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
         getTheme().applyStyle(mPrefUtilities.getFontStyle().getResId(), true);
+        super.setContentView(layoutResID);
         mToolbar = (Toolbar) super.findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -39,6 +43,13 @@ public class BaseActivity extends RoboActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
         }
         setLastColor();
+        setupWindowAnimations();
+    }
+
+    private void setupWindowAnimations() {
+        Transition transition = TransitionInflater.from(this).inflateTransition(R.transition.slide_and_changebounds_sequential_with_interpolators);
+        getWindow().setExitTransition(transition);
+        getWindow().setEnterTransition(transition);
     }
 
     protected boolean setDisplayHomeAsUp() {

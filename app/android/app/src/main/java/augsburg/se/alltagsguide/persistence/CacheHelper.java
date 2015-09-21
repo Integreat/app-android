@@ -14,31 +14,21 @@ public class CacheHelper extends SQLiteOpenHelper {
     /**
      * Version constant to increment when the database should be rebuilt
      */
-    private static final int VERSION = 49;
+    private static final int VERSION = 3;
 
     /**
      * Name of database file
      */
     private static final String NAME = "cache.db";
 
-    public static final String TABLE_ARTICLE = "articles";
-    public static final String ARTICLE_ID = "_id";
-    public static final String ARTICLE_TITLE = "title";
-    public static final String ARTICLE_SUMMARY = "summary";
-    public static final String ARTICLE_DESCRIPTION = "description";
-    public static final String ARTICLE_URL = "url";
-    public static final String ARTICLE_IMAGE = "image";
-    public static final String ARTICLE_CATEGORY = "category";
-    public static final String ARTICLE_LOCATION = "location";
-    public static final String ARTICLE_LANGUAGE = "language";
-
-    public static final String TABLE_CATEGORY = "categories";
-    public static final String CATEGORY_ID = "_id";
-    public static final String CATEGORY_LANGUAGE = "language";
-    public static final String CATEGORY_LOCATION = "location";
-    public static final String CATEGORY_TITLE = "title";
-    public static final String CATEGORY_DESCRIPTION = "description";
-    public static final String CATEGORY_PARENT = "parent";
+    public static final String TABLE_PAGE = "pages";
+    public static final String PAGE_ID = "_id";
+    public static final String PAGE_TITLE = "title";
+    public static final String PAGE_CONTENT = "content";
+    public static final String PAGE_DESCRIPTION = "description";
+    public static final String PAGE_LOCATION = "location";
+    public static final String PAGE_LANGUAGE = "language";
+    public static final String PAGE_PARENT_ID = "parent";
 
     public static final String TABLE_LANGUAGE = "languages";
     public static final String LANGUAGE_PATH = "path";
@@ -63,26 +53,14 @@ public class CacheHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(final SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_ARTICLE + "(" +
-                ARTICLE_ID + " INTEGER PRIMARY KEY," +
-                ARTICLE_TITLE + " TEXT," +
-                ARTICLE_DESCRIPTION + " TEXT," +
-                ARTICLE_SUMMARY + " TEXT," +
-                ARTICLE_URL + " TEXT," +
-                ARTICLE_IMAGE + " TEXT," +
-                ARTICLE_CATEGORY + " INTEGER," +
-                ARTICLE_LOCATION + " TEXT," +
-                ARTICLE_LANGUAGE + " TEXT" +
-                ")");
-
-        db.execSQL("CREATE TABLE " + TABLE_CATEGORY + "(" +
-                CATEGORY_ID + " INTEGER PRIMARY KEY," +
-                CATEGORY_TITLE + " TEXT," +
-                CATEGORY_DESCRIPTION + " TEXT," +
-                CATEGORY_LOCATION + " TEXT," +
-                CATEGORY_LANGUAGE + " TEXT," +
-                CATEGORY_PARENT + " INTEGER" +
-                ")");
+        db.execSQL("CREATE TABLE " + TABLE_PAGE + "(" +
+                PAGE_ID + " INTEGER PRIMARY KEY," +
+                PAGE_TITLE + " TEXT," +
+                PAGE_DESCRIPTION + " TEXT," +
+                PAGE_CONTENT + " TEXT," +
+                PAGE_PARENT_ID + " INTEGER," +
+                PAGE_LOCATION + " TEXT," +
+                PAGE_LANGUAGE + " TEXT)");
 
         db.execSQL("CREATE TABLE " + TABLE_LOCATION + "(" +
                 LOCATION_NAME + " TEXT PRIMARY KEY," +
@@ -101,10 +79,17 @@ public class CacheHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PAGE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
+        onCreate(db);
+    }
+
+    @Override
     public void onUpgrade(final SQLiteDatabase db, final int oldVersion,
                           final int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ARTICLE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PAGE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
         onCreate(db);

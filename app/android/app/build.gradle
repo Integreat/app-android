@@ -45,7 +45,6 @@ dependencies {
     compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
     compile 'me.grantland:autofittextview:0.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.2@aar'
 
     compile 'org.sufficientlysecure:html-textview:1.2'
     compile 'org.roboguice:roboguice:3.0.1'
