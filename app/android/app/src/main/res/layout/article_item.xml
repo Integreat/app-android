@@ -25,21 +25,26 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/myAccentColor"
             android:gravity="center"
-            android:minHeight="50dp"
-            android:padding="7dp"
+            android:minHeight="30dp"
+            android:padding="3dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
+            android:textSize="?attr/font_medium"
+            tools:background="@color/myAccentColor"
             tools:text="Hausordnung" />
 
-        <TextView
+        <org.sufficientlysecure.htmltextview.HtmlTextView
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:padding="7dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
+
+            android:textSize="?attr/font_small"
             tools:text="Wir trennen Müll, um durch Recycling die Umwelt zu schonen. Werfen Sie Papier und Kartons in den Papiermüll und ihre Dosen in dafür vorgesehen Container. Diese finden Sie..." />
 
         <TextView
@@ -52,7 +57,8 @@
             android:padding="5dp"
             android:text="Mehr"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/myAccentColor" />
+            android:textSize="?attr/font_small"
+            tools:textColor="@color/myAccentColor" />
 
 
     </LinearLayout>

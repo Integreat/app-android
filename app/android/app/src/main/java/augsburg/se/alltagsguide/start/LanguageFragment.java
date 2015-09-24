@@ -1,34 +1,40 @@
 package augsburg.se.alltagsguide.start;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.network.NetworkHandler;
-import augsburg.se.alltagsguide.network.NetworkHandlerMock;
-import augsburg.se.alltagsguide.network.SimpleCallback;
+import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
-import retrofit.client.Response;
+import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
+import roboguice.inject.InjectView;
 
 
-public class LanguageFragment extends BaseFragment {
+public class LanguageFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Language>> {
     private static final String ARG_LOCATION = "location";
-
     private Location mLocation;
-    private List<Language> mLanguages;
-
     private OnLanguageFragmentInteractionListener mListener;
+    private LanguageAdapter mAdapter;
+
+    @InjectView(R.id.recycler_view)
+    private EmptyRecyclerView mRecyclerView;
+
+    @InjectView(R.id.emptyView)
+    private View mEmptyView;
+
+    @InjectView(R.id.city_name)
+    private TextView cityTextView;
 
     public static LanguageFragment newInstance(Location location) {
         LanguageFragment fragment = new LanguageFragment();
@@ -50,35 +56,14 @@ public class LanguageFragment extends BaseFragment {
         } else {
             throw new IllegalStateException("Location should not be null");
         }
-        mLanguages = new ArrayList<>();
+        getLoaderManager().initLoader(0, null, this);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_language, container, false);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(container.getContext(), 2));
-        NetworkHandler network = new NetworkHandlerMock();
-        network.getAvailableLanguages(mLocation, new SimpleCallback<List<Language>>() {
-            @Override
-            public void onSuccess(List<Language> languages, Response response) {
-                mLanguages.addAll(languages);
-            }
-        });
-        LanguageAdapter adapter = new LanguageAdapter(mLanguages, new LanguageAdapter.LanguageClickListener() {
-            @Override
-            public void onLanguageClick(Language language) {
-                mListener.onLanguageSelected(mLocation, language);
-            }
-        }, getActivity());
-        recyclerView.setAdapter(adapter);
-
-
-        TextView cityText = (TextView) rootView.findViewById(R.id.city_name);
-        cityText.setText(mLocation.getName());
-        return rootView;
+        return inflater.inflate(R.layout.fragment_language, container, false);
     }
 
     @Override
@@ -86,15 +71,26 @@ public class LanguageFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         setTitle("SELECT A LANGUAGE");
         setSubTitle("What language do you speak?");
+
+        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+        mAdapter = new LanguageAdapter(new LanguageAdapter.LanguageClickListener() {
+            @Override
+            public void onLanguageClick(Language language) {
+                mListener.onLanguageSelected(mLocation, language);
+            }
+        }, getActivity());
+        mRecyclerView.setAdapter(mAdapter);
+        cityTextView.setText(mLocation.getName());
+        mRecyclerView.setEmptyView(mEmptyView);
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnLanguageFragmentInteractionListener) activity;
+            mListener = (OnLanguageFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnLanguageFragmentInteractionListener");
         }
     }
@@ -103,6 +99,20 @@ public class LanguageFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public Loader<List<Language>> onCreateLoader(int i, Bundle bundle) {
+        return new LanguageLoader(getActivity(), mLocation);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Language>> loader, List<Language> languages) {
+        mAdapter.add(languages);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Language>> loader) {
     }
 
     public interface OnLanguageFragmentInteractionListener {

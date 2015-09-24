@@ -7,34 +7,49 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.google.inject.Inject;
 
 import java.io.Serializable;
 
 import augsburg.se.alltagsguide.R;
+import roboguice.activity.RoboActionBarActivity;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends RoboActionBarActivity {
     private static final int DURATION = 400;
     private Drawable oldBackgroundActivity = null;
     private Drawable oldBackgroundTabs = null;
     private Integer oldStatusBarColor = null;
+    protected Toolbar mToolbar;
+
+    @Inject
     protected PrefUtilities mPrefUtilities;
 
     @Override
     public void setContentView(int layoutResID) {
+        getTheme().applyStyle(mPrefUtilities.getFontStyle().getResId(), true);
         super.setContentView(layoutResID);
-        getTheme().applyStyle(PrefUtilities.getInstance().getFontStyle().getResId(), true);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) super.findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDefaultDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
+            actionBar.setDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
         }
         setLastColor();
-        mPrefUtilities = PrefUtilities.getInstance();
+        setupWindowAnimations();
+    }
+
+    private void setupWindowAnimations() {
+        Transition transition = TransitionInflater.from(this).inflateTransition(R.transition.slide_and_changebounds_sequential_with_interpolators);
+        getWindow().setExitTransition(transition);
+        getWindow().setEnterTransition(transition);
     }
 
     protected boolean setDisplayHomeAsUp() {
@@ -43,7 +58,7 @@ public class BaseActivity extends AppCompatActivity {
 
 
     private void setLastColor() {
-        int primaryColor = PrefUtilities.getInstance().getCurrentColor();
+        int primaryColor = mPrefUtilities.getCurrentColor();
         changeColor(primaryColor);
     }
 
@@ -72,7 +87,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         oldBackgroundActivity = colorDrawableActivity;
         oldBackgroundTabs = colorDrawableTabs;
-        PrefUtilities.getInstance().saveCurrentColor(primaryColor);
+        mPrefUtilities.saveCurrentColor(primaryColor);
     }
 
     private void animateStatusBar(final int secondaryColor) {

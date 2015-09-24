@@ -19,12 +19,20 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:padding="10dp"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:textSize="?attr/font_medium"
             tools:text="Augsburg" />
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/navigation"
+        android:textSize="?attr/font_large"
+        android:text="Empty"/>
+
+    <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

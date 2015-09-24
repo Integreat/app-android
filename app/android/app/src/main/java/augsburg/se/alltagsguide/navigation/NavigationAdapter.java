@@ -10,31 +10,35 @@ import android.widget.TextView;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
-import augsburg.se.alltagsguide.utilities.BaseAdapter;
+import augsburg.se.alltagsguide.common.Page;
 
-/**
- * Created by Daniel-L on 16.08.2015.
- */
-public class NavigationAdapter extends BaseAdapter<NavigationAdapter.NavigationViewHolder, NavigationItem> {
+public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.NavigationViewHolder> {
     private OnNavigationSelected mListener;
+    private static final int HEADER = 0;
+    private static final int ITEM = 1;
+    private List<Page> mPages;
 
-    public interface OnNavigationSelected {
-        void onNavigationClicked(NavigationItem item);
+    public void setPages(List<Page> pages) {
+        mPages = pages;
+        notifyDataSetChanged();
     }
 
-    public NavigationAdapter(List<NavigationItem> items, OnNavigationSelected listener) {
-        super(items);
+    public interface OnNavigationSelected {
+        void onNavigationClicked(Page item);
+    }
+
+    public NavigationAdapter(OnNavigationSelected listener) {
         mListener = listener;
     }
 
     @Override
     public NavigationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layout;
+        int layout = ITEM;
         switch (viewType) {
-            case 0:
+            case HEADER:
                 layout = R.layout.navigation_header;
                 break;
-            default:
+            case ITEM:
                 layout = R.layout.navigation_item;
                 break;
         }
@@ -44,15 +48,30 @@ public class NavigationAdapter extends BaseAdapter<NavigationAdapter.NavigationV
 
     @Override
     public int getItemViewType(int position) {
-        NavigationItem item = get(position);
-        return item.hasChilds() ? 0 : 1;
+        if (mPages == null) {
+            return 0;
+        }
+        Page item = mPages.get(position);
+        return item.getSubPages() != null ? HEADER : ITEM;
     }
 
     @Override
+    public int getItemCount() {
+        if (mPages == null) {
+            return 0;
+        }
+        return mPages.size();
+    }
+
+
+    @Override
     public void onBindViewHolder(NavigationViewHolder holder, int position) {
-        final NavigationItem item = get(position);
-        holder.counter.setText("" + item.getCategory().countItems());
-        holder.title.setText(generatePadding(item.getDepth(), item.getCategory().getTitle()));
+        if (mPages == null) {
+            return;
+        }
+        final Page item = mPages.get(position);
+        holder.counter.setText(String.valueOf(item.getContentCount()));
+        holder.title.setText(generatePadding(item.getDepth(), item.getTitle()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,20 +91,6 @@ public class NavigationAdapter extends BaseAdapter<NavigationAdapter.NavigationV
             image = (ImageView) itemView.findViewById(R.id.image);
             title = (TextView) itemView.findViewById(R.id.title);
             counter = (TextView) itemView.findViewById(R.id.counter);
-        }
-    }
-
-    public class NavigationHeaderViewHolder extends NavigationViewHolder {
-
-        public NavigationHeaderViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    public class NavigationItemViewHolder extends NavigationViewHolder {
-
-        public NavigationItemViewHolder(View itemView) {
-            super(itemView);
         }
     }
 

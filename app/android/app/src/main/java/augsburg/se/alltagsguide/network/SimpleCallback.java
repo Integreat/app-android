@@ -15,6 +15,11 @@ public abstract class SimpleCallback<T> implements Callback<T> {
         onEnd();
     }
 
+    public final void onSuccess(T t) {
+        success(t, null);
+    }
+
+
     /**
      * Called if the request was successfull
      *

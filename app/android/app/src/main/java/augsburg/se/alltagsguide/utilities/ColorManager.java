@@ -9,9 +9,8 @@ import augsburg.se.alltagsguide.R;
 public class ColorManager {
     private final int[] colors;
     private final int[] darkColors;
-    private static ColorManager _instance;
 
-    private ColorManager(Context context) {
+    public ColorManager(Context context) {
         final TypedArray typedArrayDefault = context.getResources().obtainTypedArray(R.array.colors);
         colors = new int[typedArrayDefault.length()];
         darkColors = new int[typedArrayDefault.length()];
@@ -58,14 +57,6 @@ public class ColorManager {
 
     public int getColor(int id) {
         return colors[id % colors.length];
-    }
-
-    public static void init(Context context) {
-        _instance = new ColorManager(context);
-    }
-
-    public static ColorManager getInstance() {
-        return _instance;
     }
 
     public static int moreAlpha(int currentColor, int alpha) {

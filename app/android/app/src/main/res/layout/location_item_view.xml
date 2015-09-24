@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:textSize="?attr/font_medium"
             tools:text="Augsburg" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -22,11 +22,11 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
     }
 
     public Item get(int index) {
-        return getItems().get(index);
+        return mItems.get(index);
     }
 
     private int indexOf(Item item) {
-        return getItems().indexOf(item);
+        return mItems.indexOf(item);
     }
 
     public List<Item> getItems() {

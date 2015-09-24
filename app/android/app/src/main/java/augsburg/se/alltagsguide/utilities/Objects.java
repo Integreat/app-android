@@ -7,4 +7,8 @@ public class Objects {
     public static boolean equals(Object a, Object b) {
         return (a == null) ? (b == null) : a.equals(b);
     }
+
+    public static boolean isNullOrEmpty(String s) {
+        return Objects.equals(s, null) || Objects.equals("", s);
+    }
 }
