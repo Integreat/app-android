@@ -79,7 +79,7 @@ public class DatabaseCache {
             throws IOException {
         SQLiteOpenHelper helper = helperProvider.get();
         try {
-            List<E> items = loadFromDB(helper, persistableResource);
+            List<E> items = null;//loadFromDB(helper, persistableResource);
             if (items != null) {
                 Log.d(TAG, "CACHE HIT: Found " + items.size() + " items for "
                         + persistableResource);

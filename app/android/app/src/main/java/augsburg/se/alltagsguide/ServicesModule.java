@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -17,6 +18,7 @@ import augsburg.se.alltagsguide.network.NetworkServiceMock;
 import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 import retrofit.converter.GsonConverter;
 import retrofit.http.Path;
 
@@ -33,7 +35,8 @@ public class ServicesModule extends AbstractModule {
     NetworkService networkService(Context context, GsonConverter gsonConverter) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/wordpress/")
+                        //.setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/wordpress_test/")
+                .setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/")
                 .setConverter(gsonConverter)
                 .build();
         final NetworkService service = restAdapter.create(NetworkService.class);
@@ -46,17 +49,32 @@ public class ServicesModule extends AbstractModule {
 
             @Override
             public List<Page> getPages(@Path("language") Language language, @Path("location") Location location) {
-                return service.getPages(language, location);
+                try {
+                    return service.getPages(language, location);
+                } catch (RetrofitError e) {
+                    Log.e("ServicesModule", e.getMessage() != null ? e.getMessage() : "Error");
+                    return new ArrayList<>();
+                }
             }
 
             @Override
             public List<Location> getAvailableLocations() {
-                return mock.getAvailableLocations();
+                try {
+                    return service.getAvailableLocations();
+                } catch (RetrofitError e) {
+                    Log.e("ServicesModule", e.getMessage() != null ? e.getMessage() : "Error");
+                    return new ArrayList<>();
+                }
             }
 
             @Override
             public List<Language> getAvailableLanguages(Location location) {
-                return mock.getAvailableLanguages(location);
+                try {
+                    return service.getAvailableLanguages(location);
+                } catch (RetrofitError e) {
+                    Log.e("ServicesModule", e.getMessage() != null ? e.getMessage() : "Error");
+                    return new ArrayList<>();
+                }
             }
         };
     }

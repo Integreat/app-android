@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.network;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
 
@@ -32,7 +33,7 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
      * @param activity
      */
     @Inject
-    public LanguageLoader(Activity activity, Location location) {
+    public LanguageLoader(Activity activity, @NonNull Location location) {
         super(activity);
         mLocation = location;
     }

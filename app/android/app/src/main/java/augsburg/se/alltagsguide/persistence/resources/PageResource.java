@@ -15,6 +15,7 @@ import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 /**
  * Created by Daniel-L on 07.09.2015.
@@ -32,14 +33,16 @@ public class PageResource implements PersistableResource<Page> {
     private final Location mLocation;
 
     private NetworkService mNetwork;
+    private PrefUtilities mPrefUtilities;
 
     @Inject
     public PageResource(@Assisted Language language,
                         @Assisted Location location,
-                        NetworkService network) {
+                        NetworkService network, PrefUtilities prefUtilities) {
         mLanguage = language;
         mLocation = location;
         mNetwork = network;
+        mPrefUtilities = prefUtilities;
     }
 
     @Override

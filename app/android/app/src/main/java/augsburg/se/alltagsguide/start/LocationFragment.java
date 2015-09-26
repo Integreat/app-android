@@ -2,10 +2,11 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,13 @@ import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
 import roboguice.inject.InjectView;
 
 
-public class LocationFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Location>> {
+public class LocationFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Location>>, SwipeRefreshLayout.OnRefreshListener {
 
     private OnLocationFragmentInteractionListener mListener;
     private LocationAdapter mAdapter;
+
+    @InjectView(R.id.swipe_refresh)
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @InjectView(R.id.recycler_view)
     private EmptyRecyclerView mRecyclerView;
@@ -45,7 +49,6 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -57,6 +60,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
         setTitle("SELECT A CITY");
         setSubTitle("Where do you live?");
 
@@ -70,6 +74,12 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
         }, getActivity());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setEmptyView(mEmptyView);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        onRefresh();
     }
 
     @Override
@@ -91,17 +101,35 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public Loader<List<Location>> onCreateLoader(int i, Bundle bundle) {
-        return new LocationLoader(getActivity());
+        Loader<List<Location>> loader = new LocationLoader(getActivity());
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+        return loader;
     }
 
 
     @Override
     public void onLoadFinished(Loader<List<Location>> loader, List<Location> locations) {
         mAdapter.add(locations);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 1000);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Location>> loader) {
+    }
+
+    @Override
+    public void onRefresh() {
+        getLoaderManager().initLoader(0, null, this);
     }
 
     public interface OnLocationFragmentInteractionListener {

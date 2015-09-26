@@ -7,6 +7,9 @@ import com.google.gson.JsonObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Daniel-L on 20.09.2015.
@@ -30,6 +33,30 @@ public class Page implements Serializable, Comparable {
 
     public List<Page> getSubPages() {
         return subPages;
+    }
+
+    public List<Page> getSubPagesRecursively(int depth) {
+        List<Page> recPages = new ArrayList<>();
+        recPages.add(this);
+        if (depth != 0) {
+            if (getSubPages() != null) {
+                for (Page page : subPages) {
+                    recPages.addAll(page.getSubPagesRecursively(depth - 1));
+                }
+            }
+        }
+        return recPages;
+    }
+
+    public List<Page> getSubPagesRecursively() {
+        List<Page> recPages = new ArrayList<>();
+        recPages.add(this);
+        if (getSubPages() != null) {
+            for (Page page : subPages) {
+                recPages.addAll(page.getSubPagesRecursively());
+            }
+        }
+        return recPages;
     }
 
     public int getDepth() {
@@ -77,7 +104,14 @@ public class Page implements Serializable, Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        return Integer.compare(id, ((Page) o).getId());
+        int otherId = ((Page) o).getId();
+        if (otherId > id) {
+            return -1;
+        }
+        if (otherId < id) {
+            return 1;
+        }
+        return 0;
     }
 
     public int getContentCount() {
@@ -87,4 +121,5 @@ public class Page implements Serializable, Comparable {
         }
         return count;
     }
+
 }

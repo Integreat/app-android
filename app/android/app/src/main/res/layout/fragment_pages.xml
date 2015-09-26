@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="augsburg.se.alltagsguide.start.LocationFragment">
-
+    android:minHeight="100dp"
+    tools:context="augsburg.se.alltagsguide.category.ContentFragment">
 
     <include
         layout="@layout/no_entries_found_view"
@@ -23,4 +23,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
 </RelativeLayout>

@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -10,8 +11,10 @@ import com.google.inject.Inject;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.page.OverviewActivity;
+import augsburg.se.alltagsguide.overview.OverviewActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
+import augsburg.se.alltagsguide.utilities.ColorManager;
+import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.ContentView;
 
@@ -21,13 +24,31 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
     @Inject
     private PrefUtilities prefUtilities;
 
+    @Inject
+    private ColorManager mColorManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, LocationFragment.newInstance())
-                .commit();
+
+
+        String preBuildLocation = getString(R.string.pre_build_location);
+        if (!Objects.equals("", preBuildLocation)) {
+            // location was set during gradle build, so dont show location here
+            throw new IllegalStateException("Not implemented yet");
+        }
+
+        if (prefUtilities.getLocation() != null && prefUtilities.getLanguage() != null) {
+            startOverview();
+        }
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, LocationFragment.newInstance())
+                    .commit();
+        }
+
     }
 
 
@@ -47,8 +68,12 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
     public void onLanguageSelected(Location location, Language language) {
         mPrefUtilities.setLanguage(language);
         mPrefUtilities.setLocation(location);
+        startOverview();
+    }
+
+    private void startOverview() {
         Intent intent = new Intent(WelcomeActivity.this, OverviewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }
@@ -60,15 +85,9 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
                 .replace(R.id.container, LanguageFragment.newInstance(location))
                 .addToBackStack(null)
                 .commit();
-        int color = location.getColor();
+        int color = mColorManager.getColor(location.getColor());
         prefUtilities.saveCurrentColor(color);
         changeColor(color);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (!getFragmentManager().popBackStackImmediate()) {
-            super.onBackPressed();
-        }
-    }
 }
