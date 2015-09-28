@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Willkommen</string>
+    <string name="action_settings">Einstellungen</string>
+
+    <string name="single_columns">Eine Spalte</string>
+    <string name="multiple_columns">Mehrere Spalten</string>
+
+    <string name="open_drawer">Öffnen</string>
+    <string name="close_drawer">Schließen</string>
+
+    <string name="preference_category_expert">Expertenansicht</string>
+    <string name="preference_category_general">Allgemeine Ansicht</string>
+
+    <string name="font_size_small">Klein</string>
+    <string name="font_size_medium">Medium</string>
+    <string name="font_size_large">Groß</string>
+    <string name="font_size_pref_summary">Setze die Schriftgröße</string>
+    <string name="font_size_pref_title">Schriftgröße</string>
+    <string name="font_size_xlarge">Sehr groß</string>
+    <string name="font_size_xsmall">Sehr klein</string>
+    <string name="no_entries_found">Keine Einträge gefunden</string>
+    <string name="dialog_exit">Schließen?</string>
+    <string name="dialog_sure_exit">Möchten Sie die Anwendung wirklich beenden?</string>
+    <string name="dialog_answer_no">Nein</string>
+    <string name="dialog_answer_yes">Ja</string>
+    <string name="change_language_location">Sprache/Ort ändern</string>
+</resources>

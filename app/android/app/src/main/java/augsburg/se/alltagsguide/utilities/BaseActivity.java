@@ -1,6 +1,5 @@
 package augsburg.se.alltagsguide.utilities;
 
-import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -8,14 +7,11 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.inject.Inject;
+import com.nineoldandroids.animation.ValueAnimator;
 
 import java.io.Serializable;
 
@@ -43,14 +39,8 @@ public class BaseActivity extends RoboActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
         }
         setLastColor();
-        setupWindowAnimations();
     }
 
-    private void setupWindowAnimations() {
-        Transition transition = TransitionInflater.from(this).inflateTransition(R.transition.slide_and_changebounds_sequential_with_interpolators);
-        getWindow().setExitTransition(transition);
-        getWindow().setEnterTransition(transition);
-    }
 
     protected boolean setDisplayHomeAsUp() {
         return false;
@@ -169,5 +159,13 @@ public class BaseActivity extends RoboActionBarActivity {
      */
     protected String[] getStringArrayExtra(final String name) {
         return getIntent().getStringArrayExtra(name);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (!getSupportFragmentManager().popBackStackImmediate()) {
+            super.onBackPressed();
+        }
     }
 }

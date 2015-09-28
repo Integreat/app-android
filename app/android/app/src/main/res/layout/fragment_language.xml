@@ -24,17 +24,23 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/emptyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/navigation"
-        android:textSize="?attr/font_large"
-        android:text="Empty"/>
 
-    <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
-        android:id="@+id/recycler_view"
+    <include
+        layout="@layout/no_entries_found_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/navigation" />
+        android:layout_below="@id/header" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header">
+
+
+        <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

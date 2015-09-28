@@ -14,7 +14,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     /**
      * Version constant to increment when the database should be rebuilt
      */
-    private static final int VERSION = 3;
+    private static final int VERSION = 56;
 
     /**
      * Name of database file

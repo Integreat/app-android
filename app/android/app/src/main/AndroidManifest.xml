@@ -7,22 +7,22 @@
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ref_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".page.OverviewActivity"
+            android:name=".overview.OverviewActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".page.PageActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".page.OverviewActivity">
+            android:parentActivityName=".overview.OverviewActivity">
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".page.OverviewActivity" />
+                android:value=".overview.OverviewActivity" />
         </activity>
 
         <activity

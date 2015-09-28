@@ -4,13 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Singleton;
 
+import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
+import augsburg.se.alltagsguide.common.UpdateTime;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.GINGERBREAD;
@@ -31,7 +34,7 @@ public class PrefUtilities {
 
     private final SharedPreferences preferences;
 
-    public PrefUtilities(Context context) {
+    public PrefUtilities(@NonNull Context context) {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
     }
@@ -40,7 +43,7 @@ public class PrefUtilities {
         return getObject(Language.class, LANGUAGE);
     }
 
-    public <T> T getObject(Class<T> clazz, String key) {
+    public <T> T getObject(@NonNull Class<T> clazz, @NonNull String key) {
         try {
             return new Gson().fromJson(preferences.getString(key, null), clazz);
         } catch (JsonSyntaxException e) {
@@ -48,6 +51,13 @@ public class PrefUtilities {
         }
     }
 
+    public void setUpdateTime(@NonNull Location location, @NonNull Language language, long time) {
+        save(preferences.edit().putLong(location.getName() + "-" + language.getShortName(), time));
+    }
+
+    public UpdateTime getUpdateTime(@NonNull Location location, @NonNull Language language) {
+        return new UpdateTime(preferences.getLong(location.getName() + "-" + language.getShortName(), 0));
+    }
 
     public void setLocation(Location location) {
         save(preferences.edit().putString(LOCATION, new Gson().toJson(location)));
@@ -79,7 +89,7 @@ public class PrefUtilities {
      *
      * @param editor
      */
-    private static void save(final SharedPreferences.Editor editor) {
+    private static void save(@NonNull final SharedPreferences.Editor editor) {
         if (isEditorApplyAvailable()) {
             editor.apply();
         } else {
@@ -92,15 +102,15 @@ public class PrefUtilities {
     }
 
     public int getCurrentColor() {
-        return preferences.getInt(CURRENT_COLOR, 0);
+        return preferences.getInt(CURRENT_COLOR, R.color.myPrimaryColor);
     }
 
 
-    public void addListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    public void addListener(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    public void removeListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    public void removeListener(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 

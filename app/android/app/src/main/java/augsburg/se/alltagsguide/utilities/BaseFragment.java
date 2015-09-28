@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.utilities;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
@@ -15,8 +16,9 @@ public class BaseFragment extends RoboFragment {
     private String subTitle;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Context context = getActivity();
         if (!(context instanceof AppCompatActivity)) {
             throw new IllegalStateException("Activity needs to be AppCompatActivity");
         }
@@ -24,10 +26,15 @@ public class BaseFragment extends RoboFragment {
         if (mActionBar == null) {
             throw new IllegalStateException("ActionBar is null");
         } else {
-            mActionBar.setTitle(title);
-            mActionBar.setSubtitle(subTitle);
+            if (title != null) {
+                mActionBar.setTitle(title);
+            }
+            if (subTitle != null) {
+                mActionBar.setSubtitle(subTitle);
+            }
         }
     }
+
 
     protected void setTitle(String title) {
         this.title = title;

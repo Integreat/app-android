@@ -2,6 +2,8 @@ package augsburg.se.alltagsguide.common;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.JsonObject;
+
 import java.io.Serializable;
 
 /**
@@ -28,7 +30,7 @@ public class Language implements Serializable, Comparable {
         return mShortName;
     }
 
-    public Language(String iconPath, String name, String shortName) {
+    public Language(String iconPath, String name, @NonNull String shortName) {
         mIconPath = iconPath;
         mName = name;
         mShortName = shortName;
@@ -42,7 +44,7 @@ public class Language implements Serializable, Comparable {
         return 1;
     }
 
-    public void setShortName(String shortName) {
+    public void setShortName(@NonNull String shortName) {
         mShortName = shortName;
     }
 
@@ -64,6 +66,18 @@ public class Language implements Serializable, Comparable {
 
     @Override
     public String toString() {
-        return mShortName;
+        return mShortName; //TODO currently required for retrofit get parameter
+    }
+
+    public static Language fromJson(JsonObject jsonPage) {
+        Language language = new Language();
+        int id = jsonPage.get("id").getAsInt();
+        String shortName = jsonPage.get("code").getAsString();
+        String nativeName = jsonPage.get("native_name").getAsString();
+        String countryFlagUrl = jsonPage.get("country_flag_url").getAsString();
+        language.setName(nativeName);
+        language.setShortName(shortName);
+        language.setIconPath(countryFlagUrl);
+        return language;
     }
 }

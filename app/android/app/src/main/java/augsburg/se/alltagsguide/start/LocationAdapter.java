@@ -44,7 +44,7 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
         final Location location = get(position);
         holder.title.setText(location.getName());
         Picasso.with(mContext)
-                .load(location.getPath())
+                .load(location.getIcon())
                 .placeholder(R.drawable.placeholder_location)
                 .error(R.drawable.placeholder_location)
                 .fit()

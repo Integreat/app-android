@@ -36,7 +36,7 @@ public class LocationResource implements PersistableResource<Location> {
         Location location = new Location();
         location.setName(cursor.getString(0));
         location.setPath(cursor.getString(1));
-        location.setUrl(cursor.getString(2));
+        location.setDescription(cursor.getString(2));
         location.setColor(cursor.getInt(3));
         return location;
     }

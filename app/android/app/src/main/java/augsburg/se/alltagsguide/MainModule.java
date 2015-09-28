@@ -11,14 +11,16 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
 
 import java.io.File;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
+import augsburg.se.alltagsguide.common.Language;
+import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.persistence.resources.LanguageResource;
-import augsburg.se.alltagsguide.utilities.PageSerializer;
+import augsburg.se.alltagsguide.serialization.LanguageSerializer;
+import augsburg.se.alltagsguide.serialization.LocationSerializer;
+import augsburg.se.alltagsguide.serialization.PageSerializer;
 import retrofit.converter.GsonConverter;
 
 /**
@@ -40,11 +42,13 @@ public class MainModule extends AbstractModule {
     @Provides
     GsonConverter gsonConverter() {
         Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'")
                 .registerTypeAdapter(new TypeToken<List<Page>>() {
                 }.getType(), new PageSerializer())
+                .registerTypeAdapter(new TypeToken<List<Language>>() {
+                }.getType(), new LanguageSerializer())
+                .registerTypeAdapter(new TypeToken<List<Location>>() {
+                }.getType(), new LocationSerializer())
                 .create();
-        //add custom deserializers here
         return new GsonConverter(gson);
     }
 
