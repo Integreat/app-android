@@ -18,14 +18,13 @@ public interface NetworkService {
     @GET("/alive")
     Boolean isServerAlive();
 
-    //TODO
-    @GET("/{location}/{language}/?rest_route=%2Fextensions%2Fv0%2Fmodified_content%2Fposts_and_pages%2F2014-08-30+12%3A00%3A00")
-    List<Page> getPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location); //  @Query("time") UpdateTime time
+    @GET("/{location}/{language}/wp-json/extensions/v0/modified_content/pages")
+    List<Page> getPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time);
 
-    @GET("/wordpress/?rest_route=/extensions/v0/multisites/")
+    @GET("/wordpress/wp-json/extensions/v0/multisites/")
     List<Location> getAvailableLocations();
 
-    @GET("/{location}/de/?rest_route=/extensions/v0/languages/wpml")
+    @GET("/{location}/de/wp-json/extensions/v0/languages/wpml")
     List<Language> getAvailableLanguages(@Path(value = "location", encode = false) Location location);
 
 }

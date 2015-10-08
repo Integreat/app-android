@@ -1,15 +1,22 @@
 package augsburg.se.alltagsguide.overview;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +25,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,56 +35,63 @@ import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.navigation.NavigationAdapter;
+import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.page.PageActivity;
+import augsburg.se.alltagsguide.settings.SettingsActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
+import augsburg.se.alltagsguide.utilities.BaseFragment;
 import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
-import augsburg.se.alltagsguide.utilities.PrefFragment;
+import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_overview)
 public class OverviewActivity extends BaseActivity
-        implements OverviewFragment.OnPageFragmentInteractionListener, NavigationAdapter.OnNavigationSelected, SwipeRefreshLayout.OnRefreshListener {
+        implements OverviewFragment.OnPageFragmentInteractionListener, BaseFragment.OnBaseFragmentInteractionListener, NavigationAdapter.OnNavigationSelected, LoaderManager.LoaderCallbacks<List<Language>> {
+
+    private NavigationAdapter mNavigationAdapter;
+
+    @InjectView(R.id.emptyNavView)
+    private View mEmptyView;
+
+    @InjectView(R.id.recycler_view_nav)
+    private EmptyRecyclerView mRecyclerView;
+
+    @InjectView(R.id.navigation)
+    private NavigationView navigationView;
 
     @InjectView(R.id.header)
     private View navigationHeaderView;
 
-    @InjectView(R.id.navigation)
-    private View navigationView;
-
     @InjectView(R.id.location)
     private TextView locationNameTextView;
 
-    @InjectView(R.id.url)
-    private TextView locationUrlTextView;
+    @InjectView(R.id.description)
+    private TextView locationDescriptionTextView;
+
+    @InjectView(R.id.settings)
+    private View settingsView;
+
+    @InjectView(R.id.change_login)
+    private View changeLogin;
 
     @InjectView(R.id.language)
     private ImageView languageFlagImageView;
 
-    @InjectView(R.id.recycler_view)
-    private EmptyRecyclerView mRecyclerView;
-
-    @InjectView(R.id.emptyView)
-    private View mEmptyView;
-
     @InjectView(R.id.drawer)
     private DrawerLayout drawerLayout;
 
-    @InjectView(R.id.swipe_refresh)
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private OverviewFragment mOverviewFragment;
-    private NavigationAdapter mNavigationAdapter;
     private Location mLocation;
     private Language mLanguage;
 
     private MenuItem columnsMenu;
+    private List<Page> mPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
         initNavigationDrawer();
@@ -87,6 +102,18 @@ public class OverviewActivity extends BaseActivity
                     .replace(R.id.container, mOverviewFragment)
                     .commit();
         }
+        changeLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startWelcome();
+            }
+        });
+        settingsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(OverviewActivity.this, SettingsActivity.class));
+            }
+        });
     }
 
     @Override
@@ -96,20 +123,41 @@ public class OverviewActivity extends BaseActivity
 
     private void initNavigationDrawer() {
         locationNameTextView.setText(mLocation.getName());
-        locationUrlTextView.setText(mLocation.getUrl());
+        locationDescriptionTextView.setText(mLocation.getDescription());
 
         if (mLanguage.getIconPath() != null) {
             Picasso.with(this)
                     .load(mLanguage.getIconPath())
-                    .placeholder(R.drawable.placeholder_language)
-                    .error(R.drawable.placeholder_language)
+                    .placeholder(R.drawable.ic_location_not_found_black)
+                    .error(R.drawable.ic_location_not_found_black)
                     .into(languageFlagImageView);
         }
+        Picasso.with(this)
+                .load(mLocation.getCityImage())
+                .placeholder(R.drawable.ic_no_language_found_black)
+                .error(R.drawable.ic_no_language_found_black)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        navigationHeaderView.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                    }
 
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        navigationHeaderView.setBackgroundResource(R.drawable.ic_location_not_found_black);
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        navigationHeaderView.setBackgroundResource(R.drawable.ic_location_not_found_black);
+                    }
+                });
+
+        mRecyclerView.setEmptyView(mEmptyView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mNavigationAdapter = new NavigationAdapter(this);
         mRecyclerView.setAdapter(mNavigationAdapter);
-        mRecyclerView.setEmptyView(mEmptyView);
+
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer) {
 
@@ -130,8 +178,34 @@ public class OverviewActivity extends BaseActivity
             @Override
             public void onClick(View view) {
                 mOverviewFragment.onRefresh();
+                drawerLayout.closeDrawers();
             }
         });
+    }
+
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener = null;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPreferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String string) {
+                if (Objects.equals(string, "font_style")) {
+                    restartActivity();
+                }
+            }
+        };
+        mPrefUtilities.addListener(mPreferenceListener);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPreferenceListener != null) {
+            mPrefUtilities.removeListener(mPreferenceListener);
+        }
     }
 
     @Override
@@ -139,7 +213,35 @@ public class OverviewActivity extends BaseActivity
         getMenuInflater().inflate(R.menu.overview, menu);
         columnsMenu = menu.findItem(R.id.menu_columns);
         updateMenu();
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterByText(newText);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void filterByText(String filterText) {
+        List<Page> pages = new ArrayList<>();
+        for (Page page : mPages) {
+            String relevantContent = page.getTitle();
+            if (page.getContent() != null) {
+                relevantContent += page.getContent();
+            }
+
+            if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
+                pages.add(page);
+            }
+        }
+        mOverviewFragment.setPages(pages);
     }
 
 
@@ -178,12 +280,13 @@ public class OverviewActivity extends BaseActivity
         startActivity(intent);
     }
 
+
     @Override
     public void onPagesLoaded(final List<Page> pages) {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+                mPages = pages;
                 mNavigationAdapter.setPages(pages);
                 drawerLayout.closeDrawers();
             }
@@ -243,42 +346,33 @@ public class OverviewActivity extends BaseActivity
 
                 updateMenu();
                 break;
-            case R.id.action_settings:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.container, new PrefFragment())
-                        .commit();
-                break;
-            case R.id.action_start:
-                startWelcome();
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void startWelcome() {
         mPrefUtilities.setLocation(null);
         mPrefUtilities.setLanguage(null);
         Intent intent = new Intent(OverviewActivity.this, WelcomeActivity.class);
         intent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("reset", true);
         startActivity(intent);
         finish();
     }
 
     @Override
-    public void onRefresh() {
-        mOverviewFragment.onRefresh();
+    public Loader<List<Language>> onCreateLoader(int id, Bundle args) {
+        return new LanguageLoader(this, mLocation);
     }
 
     @Override
-    public void onRefreshOverview() {
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+    public void onLoadFinished(Loader<List<Language>> loader, List<Language> languages) {
+        mOverviewFragment.loadLanguages(languages);
     }
+
+    @Override
+    public void onLoaderReset(Loader<List<Language>> loader) {
+
+    }
+
 }

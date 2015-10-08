@@ -12,10 +12,38 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/toolbar_default"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="?attr/font_medium"
+                    android:textStyle="bold"
+                    tools:title="Title" />
+
+                <TextView
+                    android:id="@+id/toolbar_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="?attr/font_small"
+                    android:textStyle="bold"
+                    tools:title="Subtitle" />
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
 
         <FrameLayout
             android:id="@+id/container"
@@ -29,23 +57,26 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#ffffff">
+        android:background="#ffffff"
+        android:fitsSystemWindows="true">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
             <RelativeLayout
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
-                android:background="@drawable/augsburg"
+                android:fitsSystemWindows="true"
                 android:paddingTop="24dp">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:background="#4c000000">
 
@@ -54,17 +85,19 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_margin="10dp"
-                        app:border_color="#64ffffff"
-                        app:border_width="1dp" />
+                        app:civ_border_color="#64ffffff"
+                        app:civ_border_width="1dp" />
 
                     <TextView
                         android:id="@+id/location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_above="@+id/url"
+                        android:layout_above="@+id/description"
                         android:layout_toEndOf="@+id/language"
+                        android:layout_toRightOf="@+id/language"
                         android:gravity="start"
                         android:paddingBottom="4dp"
                         android:textColor="#FFF"
@@ -73,12 +106,13 @@
                         tools:text="Augsburg" />
 
                     <TextView
-                        android:id="@+id/url"
+                        android:id="@+id/description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="8dp"
                         android:layout_toEndOf="@+id/language"
+                        android:layout_toRightOf="@+id/language"
                         android:gravity="start"
                         android:textColor="#fff"
                         android:textSize="?attr/font_small"
@@ -86,25 +120,74 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/emptyNavView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/header"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
 
-            <include
-                layout="@layout/no_entries_found_view"
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:adjustViewBounds="false"
+                    android:src="@drawable/empty_entries_white" />
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/imageView"
+                    android:layout_centerHorizontal="true"
+                    android:singleLine="true"
+                    android:text="@string/no_entries_found"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/white"
+                    android:textSize="?attr/font_large" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/footer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/header" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/swipe_refresh"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/header">
-
-
-                <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
-                    android:id="@+id/recycler_view"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </android.support.v4.widget.SwipeRefreshLayout>
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+
+                <TextView
+                    android:id="@+id/settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@android:drawable/ic_menu_manage"
+                    android:drawablePadding="20dp"
+                    android:drawableStart="@android:drawable/ic_menu_manage"
+                    android:text="@string/action_settings"
+                    android:textSize="?attr/font_small" />
+
+                <TextView
+                    android:id="@+id/change_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@android:drawable/ic_menu_mapmode"
+                    android:drawablePadding="20dp"
+                    android:drawableStart="@android:drawable/ic_menu_mapmode"
+                    android:text="@string/change_language_location"
+                    android:textSize="?attr/font_small" />
+            </LinearLayout>
+
+            <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
+                android:id="@+id/recycler_view_nav"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/footer"
+                android:layout_below="@id/header" />
         </RelativeLayout>
 
     </android.support.design.widget.NavigationView>

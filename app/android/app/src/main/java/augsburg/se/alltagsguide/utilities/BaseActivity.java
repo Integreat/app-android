@@ -1,14 +1,18 @@
 package augsburg.se.alltagsguide.utilities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -17,13 +21,20 @@ import java.io.Serializable;
 
 import augsburg.se.alltagsguide.R;
 import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.InjectView;
 
-public class BaseActivity extends RoboActionBarActivity {
+public class BaseActivity extends RoboActionBarActivity implements BaseFragment.OnBaseFragmentInteractionListener {
     private static final int DURATION = 400;
     private Drawable oldBackgroundActivity = null;
     private Drawable oldBackgroundTabs = null;
     private Integer oldStatusBarColor = null;
     protected Toolbar mToolbar;
+
+    @InjectView(R.id.toolbar_title)
+    private TextView toolbarTitleTextView;
+
+    @InjectView(R.id.toolbar_subtitle)
+    private TextView toolbarSubTitleTextView;
 
     @Inject
     protected PrefUtilities mPrefUtilities;
@@ -39,6 +50,20 @@ public class BaseActivity extends RoboActionBarActivity {
             actionBar.setDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
         }
         setLastColor();
+        updateTextViews();
+    }
+
+    private void updateTextViews() {
+        if (toolbarSubTitleTextView != null) {
+            toolbarSubTitleTextView.setVisibility(
+                    Objects.isNullOrEmpty(
+                            toolbarSubTitleTextView.getText()) ? View.GONE : View.VISIBLE);
+        }
+        if (toolbarTitleTextView != null) {
+            toolbarTitleTextView.setVisibility(
+                    Objects.isNullOrEmpty(
+                            toolbarTitleTextView.getText()) ? View.GONE : View.VISIBLE);
+        }
     }
 
 
@@ -46,6 +71,12 @@ public class BaseActivity extends RoboActionBarActivity {
         return false;
     }
 
+    protected void restartActivity() {
+        Intent intent = getIntent();
+        intent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        finish();
+        startActivity(intent);
+    }
 
     private void setLastColor() {
         int primaryColor = mPrefUtilities.getCurrentColor();
@@ -86,7 +117,7 @@ public class BaseActivity extends RoboActionBarActivity {
             if (oldStatusBarColor == null) {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.setStatusBarColor(secondaryColor);
+                window.setStatusBarColor(alpha(secondaryColor));
             } else {
                 // animation here
                 ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
@@ -99,7 +130,7 @@ public class BaseActivity extends RoboActionBarActivity {
                         // Apply blended color to the status bar.
                         int blended = blendColors(oldStatusBarColor, secondaryColor, position);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            window.setStatusBarColor(blended);
+                            window.setStatusBarColor(alpha(blended));
                         }
                     }
                 });
@@ -107,6 +138,14 @@ public class BaseActivity extends RoboActionBarActivity {
             }
         }
         oldStatusBarColor = secondaryColor;
+    }
+
+    private int alpha(int color) {
+        int alpha = Math.round(Color.alpha(color) * 0.6f);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        return Color.argb(alpha, red, green, blue);
     }
 
     private int blendColors(int from, int to, float ratio) {
@@ -167,5 +206,22 @@ public class BaseActivity extends RoboActionBarActivity {
         if (!getSupportFragmentManager().popBackStackImmediate()) {
             super.onBackPressed();
         }
+    }
+
+
+    @Override
+    public void setTitle(String title) {
+        if (toolbarTitleTextView != null) {
+            toolbarTitleTextView.setText(title);
+        }
+        updateTextViews();
+    }
+
+    @Override
+    public void setSubTitle(String subTitle) {
+        if (toolbarSubTitleTextView != null) {
+            toolbarSubTitleTextView.setText(subTitle);
+        }
+        updateTextViews();
     }
 }

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -18,20 +19,22 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
     private OnNavigationSelected mListener;
     private static final int HEADER = 0;
     private static final int ITEM = 1;
-    private static final int depth = 0;
     private List<Page> mPages;
 
     public void setPages(List<Page> pages) {
-        mPages = expandPages(pages, depth);
+        mPages = filterParents(pages);
+        Collections.sort(mPages);
         notifyDataSetChanged();
     }
 
-    private List<Page> expandPages(@NonNull List<Page> pages, int depth) {
-        List<Page> expandedPages = new ArrayList<>();
+    private List<Page> filterParents(@NonNull List<Page> pages) {
+        List<Page> parentPages = new ArrayList<>();
         for (Page page : pages) {
-            expandedPages.addAll(page.getSubPagesRecursively(depth));
+            if (page.getParent() == null) {
+                parentPages.add(page);
+            }
         }
-        return expandedPages;
+        return parentPages;
     }
 
     public interface OnNavigationSelected {

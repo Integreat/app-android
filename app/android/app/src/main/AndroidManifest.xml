@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="augsburg.se.alltagsguide">
+    package="augsburg.se.alltagsguide" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -9,31 +9,38 @@
         android:allowBackup="true"
         android:icon="@mipmap/ref_logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".overview.OverviewActivity"
             android:label="@string/app_name" />
         <activity
             android:name=".page.PageActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".overview.OverviewActivity">
+            android:parentActivityName=".overview.OverviewActivity" >
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".overview.OverviewActivity" />
         </activity>
-
         <activity
             android:name=".start.WelcomeActivity"
-            android:label="@string/app_name">
-
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="f924d18deb2e9d2465d46a10753e654bb1332e4a" />
+
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

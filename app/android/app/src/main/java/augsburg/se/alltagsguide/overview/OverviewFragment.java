@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,38 +14,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.inject.Inject;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.PagesLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
-import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
 public class OverviewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<List<Page>> {
-    private ArrayList<Page> mPages;
 
     @InjectView(R.id.recycler_view)
-    private EmptyRecyclerView mRecyclerView;
+    private SuperRecyclerView mRecyclerView;
 
-    @InjectView(R.id.emptyView)
-    private View mEmptyView;
-
-    @InjectView(R.id.swipe_refresh)
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    private PageAdapter mPageAdapter;
-
+    private PageAdapter mAdapter;
     @Inject
     private PrefUtilities mPrefUtilities;
 
     private OnPageFragmentInteractionListener mListener;
     private StaggeredGridLayoutManager mLayoutManager;
-    private boolean shouldRefreshWhenInitialized = false;
 
     public static OverviewFragment newInstance() {
         return new OverviewFragment();
@@ -57,7 +49,6 @@ public class OverviewFragment extends BaseFragment implements SwipeRefreshLayout
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPages = new ArrayList<>();
         addListener();
     }
 
@@ -88,43 +79,35 @@ public class OverviewFragment extends BaseFragment implements SwipeRefreshLayout
 
     private void updateColumnCount() {
         if (mLayoutManager != null && isAdded()) {
-            switch (getResources().getConfiguration().orientation) {
-                case Configuration.ORIENTATION_LANDSCAPE:
-                    boolean useMultipleLandscape = mPrefUtilities.useMultipleColumnsLandscape();
-                    mLayoutManager.setSpanCount(useMultipleLandscape ? 2 : 1);
-                    break;
-                case Configuration.ORIENTATION_PORTRAIT:
-                    boolean useMultiplePortrait = mPrefUtilities.useMultipleColumnsPortrait();
-                    mLayoutManager.setSpanCount(useMultiplePortrait ? 2 : 1);
-                    break;
-            }
+            mLayoutManager.setSpanCount(getSpanCount());
         }
     }
+
+    private int getSpanCount() {
+        switch (getResources().getConfiguration().orientation) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                return mPrefUtilities.useMultipleColumnsLandscape() ? 2 : 1;
+            case Configuration.ORIENTATION_PORTRAIT:
+                return mPrefUtilities.useMultipleColumnsPortrait() ? 2 : 1;
+        }
+        return 1;
+    }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        if (shouldRefreshWhenInitialized) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            shouldRefreshWhenInitialized = false;
-        }
-        mPageAdapter = new PageAdapter(mPages, mListener, mPrefUtilities.getCurrentColor());
-        mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setEmptyView(mEmptyView);
-        mRecyclerView.setAdapter(mPageAdapter);
+        setTitle(getString(R.string.welcome_to_x, mPrefUtilities.getLocation().getName()));
+        //setSubTitle("This is the subtitle");
+        mLayoutManager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+        mRecyclerView.setRefreshListener(this);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
         onRefresh();
     }
 
@@ -153,13 +136,14 @@ public class OverviewFragment extends BaseFragment implements SwipeRefreshLayout
     }
 
     public void changePage(Page item) {
-        mPageAdapter.setItems(item.getSubPagesRecursively());
+        if (mAdapter != null) {
+            mAdapter.setItems(item.getSubPagesRecursively());
+        }
     }
 
     @Override
     public void onRefresh() {
-        mListener.onRefreshOverview();
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -169,18 +153,38 @@ public class OverviewFragment extends BaseFragment implements SwipeRefreshLayout
 
     @Override
     public void onLoadFinished(Loader<List<Page>> loader, final List<Page> pages) {
+        switch (loader.getId()) {
+
+        }
+        if (mAdapter == null) {
+            mAdapter = new PageAdapter(pages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
+        } else {
+            mAdapter.setItems(pages);
+        }
+        if (mRecyclerView.getAdapter() == null) {
+            mRecyclerView.setAdapter(mAdapter);
+        }
         mListener.onPagesLoaded(pages);
-        mPageAdapter.setItems(pages);
-        mSwipeRefreshLayout.post(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+                mRecyclerView.getSwipeToRefresh().setRefreshing(false);
             }
-        });
+        }, 500);
+    }
+
+    public void setPages(List<Page> pages) {
+        mAdapter.setItems(pages);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Page>> loader) {
+    }
+
+    public void loadLanguages(List<Language> languages) {
+        for (Language language : languages) {
+
+        }
     }
 
 
@@ -188,8 +192,6 @@ public class OverviewFragment extends BaseFragment implements SwipeRefreshLayout
         void onOpenPage(Page page);
 
         void onPagesLoaded(List<Page> pages);
-
-        void onRefreshOverview();
     }
 
 }

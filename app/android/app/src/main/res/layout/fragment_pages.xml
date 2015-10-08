@@ -1,27 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="100dp"
     tools:context="augsburg.se.alltagsguide.category.ContentFragment">
 
-    <include
-        layout="@layout/no_entries_found_view"
+    <com.malinskiy.superrecyclerview.SuperRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/header" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header">
-
-
-        <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+        app:layout_empty="@layout/pages_empty_view"
+        app:recyclerClipToPadding="false"
+        app:recyclerPadding="6dp"
+        app:scrollbarStyle="insideInset" />
 
 </RelativeLayout>

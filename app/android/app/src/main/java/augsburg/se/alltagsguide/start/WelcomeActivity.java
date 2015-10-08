@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 
@@ -17,6 +18,7 @@ import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_welcome)
 public class WelcomeActivity extends BaseActivity implements LanguageFragment.OnLanguageFragmentInteractionListener, LocationFragment.OnLocationFragmentInteractionListener {
@@ -26,6 +28,7 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
 
     @Inject
     private ColorManager mColorManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

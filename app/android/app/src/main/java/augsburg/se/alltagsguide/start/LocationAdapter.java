@@ -8,13 +8,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import roboguice.RoboGuice;
 
 /**
  * Created by Daniel-L on 16.08.2015.
@@ -23,15 +27,18 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
 
     private LocationClickListener mListener;
     private Context mContext;
+    @Inject
+    private Picasso mPicasso;
 
     public interface LocationClickListener {
         void onLocationClick(Location location);
     }
 
-    public LocationAdapter(LocationClickListener listener, Context context) {
-        super(new ArrayList<Location>());
+    public LocationAdapter(List<Location> locations, LocationClickListener listener, Context context) {
+        super(locations);
         mListener = listener;
         mContext = context;
+        RoboGuice.injectMembers(context, this);
     }
 
     @Override
@@ -43,10 +50,9 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
     public void onBindViewHolder(LocationViewHolder holder, int position) {
         final Location location = get(position);
         holder.title.setText(location.getName());
-        Picasso.with(mContext)
-                .load(location.getIcon())
-                .placeholder(R.drawable.placeholder_location)
-                .error(R.drawable.placeholder_location)
+        mPicasso.load(location.getIcon())
+                .placeholder(R.drawable.ic_location_not_found_black)
+                .error(R.drawable.ic_location_not_found_black)
                 .fit()
                 .into(holder.image);
 

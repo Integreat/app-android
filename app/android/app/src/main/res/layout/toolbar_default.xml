@@ -6,5 +6,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
-    tools:title="Title"
-    android:minHeight="@dimen/abc_action_bar_default_height_material" />
+    android:minHeight="?attr/actionBarSize"
+    tools:title="Title" />

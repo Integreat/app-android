@@ -16,6 +16,7 @@ import java.util.List;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.persistence.DatabaseInfo;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.persistence.resources.LanguageResource;
 import augsburg.se.alltagsguide.serialization.LanguageSerializer;
@@ -27,6 +28,16 @@ import retrofit.converter.GsonConverter;
  * Created by Daniel-L on 01.09.2015.
  */
 public class MainModule extends AbstractModule {
+
+    /**
+     * Name of database file
+     */
+    public static final String NAME = "cache.db";
+    /**
+     * Version of database
+     */
+    public static final int VERSION = 8;
+
     public MainModule() {
     }
 
@@ -37,6 +48,11 @@ public class MainModule extends AbstractModule {
                 .build(LanguageResource.Factory.class));
         install(new FactoryModuleBuilder()
                 .build(PageResource.Factory.class));
+    }
+
+    @Provides
+    DatabaseInfo getDatabaseInfo() {
+        return new DatabaseInfo(NAME, VERSION);
     }
 
     @Provides
@@ -58,4 +74,6 @@ public class MainModule extends AbstractModule {
     File cacheDir(Context context) {
         return new File(context.getFilesDir(), "cache");
     }
+
+
 }

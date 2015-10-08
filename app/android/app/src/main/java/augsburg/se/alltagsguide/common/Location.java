@@ -7,68 +7,31 @@ import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 
+import augsburg.se.alltagsguide.utilities.Objects;
+
 public class Location implements Serializable, Comparable {
+    private int mId;
+    private String mName;
     private String mIcon;
     private String mPath;
-    private String mName;
-    private String mUrl;
+    private String mDescription;
+    private boolean mGlobal;
     private int mColor;
+    private String mCityImage;
+    private float mLatitude;
+    private float mLongitude;
 
-    public String getPath() {
-        return mPath;
-    }
-
-    public String getIcon() {
-        return mIcon;
-    }
-
-    public int getColor() {
-        return mColor;
-    }
-
-    public String getUrl() {
-        return mUrl;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-
-    public void setName(@NonNull String name) {
+    public Location(int id, @NonNull String name, String icon, @NonNull String path, String description, boolean global, int color, String cityImage, float latitude, float longitude) {
+        mId = id;
         mName = name;
-    }
-
-    public void setDescription(String url) {
-        mUrl = url;
-    }
-
-    public void setPath(String path) {
-        mPath = path;
-    }
-
-    public void setIcon(String icon) {
         mIcon = icon;
-    }
-
-    public void setColor(int color) {
-        mColor = color;
-    }
-
-    public Location() {
-    }
-
-    public Location(String path, @NonNull String name, String url) {
         mPath = path;
-        mName = name;
-        mUrl = url;
-    }
-
-    public Location(String path, @NonNull String name, String url, int color) {
-        mPath = path;
-        mName = name;
-        mUrl = url;
+        mDescription = description;
+        mGlobal = global;
         mColor = color;
+        mCityImage = cityImage;
+        mLatitude = latitude;
+        mLongitude = longitude;
     }
 
     @Override
@@ -76,26 +39,87 @@ public class Location implements Serializable, Comparable {
         if (another instanceof Location) {
             return mName.compareTo(((Location) another).mName);
         }
-        return 1;
+        return 0;
     }
 
     @Override
     public String toString() {
+        //TODO currently required for retrofit get parameter
         return mPath.substring(1, mPath.length() - 1);
-    } //TODO currently required for retrofit get parameter
+    }
 
     public static Location fromJson(JsonObject jsonPage) {
-        Location location = new Location();
         int id = jsonPage.get("id").getAsInt();
         String name = jsonPage.get("name").getAsString();
+        String icon = jsonPage.get("icon").isJsonNull() ? null : jsonPage.get("icon").getAsString();
         String path = jsonPage.get("path").getAsString();
         String description = jsonPage.get("description").getAsString();
-        String icon = jsonPage.get("icon").getAsString();
-        location.setPath(path);
-        location.setName(name);
-        location.setIcon(icon);
-        location.setColor(id); //TODO
-        location.setDescription(description); //TODO or not TODO :D
-        return location;
+        boolean global = jsonPage.get("global").getAsBoolean();
+        int color = id; //TODO CALCULATE
+        String cityImage = loadCityImage(name.toLowerCase());  //TODO
+        float latitude = 0.0f; //TODO
+        float longitude = 0.0f; //TODO
+        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
+    }
+
+    private static String loadCityImage(String name) {
+        if (Objects.equals("muenchen", name) || Objects.equals("münchen", name)) {
+            return "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/M%C3%BCnchen_Panorama.JPG/300px-M%C3%BCnchen_Panorama.JPG";
+        }
+        if (Objects.equals("augsburg", name)) {
+            return "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Augsburg_-_Markt.jpg/297px-Augsburg_-_Markt.jpg";
+        }
+        if (Objects.equals("pre arrival", name)) {
+            return "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/EU-Germany.svg/800px-EU-Germany.svg.png";
+        }
+        if (Objects.equals("deutschland", name)) {
+            return "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/300px-Brandenburger_Tor_abends.jpg";
+        }
+        return "";
+    }
+
+    public float getLatitude() {
+        return mLatitude;
+    }
+
+    public float getLongitude() {
+        return mLongitude;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public int getColor() {
+        return mColor;
+    }
+
+    public String getPath() {
+        return mPath;
+    }
+
+    public boolean isGlobal() {
+        return mGlobal;
+    }
+
+    public String getIcon() {
+        return mIcon;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public String getCityImage() {
+        return mCityImage;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    @Override
+    public boolean equals(@NonNull Object another) {
+        return another instanceof Location && mId == ((Location) another).getId();
     }
 }
