@@ -11,29 +11,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.inject.Inject;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
+
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.LocationLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
-import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
 
-public class LocationFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Location>>, SwipeRefreshLayout.OnRefreshListener {
+public class LocationFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Location>> {
 
     private OnLocationFragmentInteractionListener mListener;
     private LocationAdapter mAdapter;
 
-    @InjectView(R.id.swipe_refresh)
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
     @InjectView(R.id.recycler_view)
-    private EmptyRecyclerView mRecyclerView;
+    private SuperRecyclerView mRecyclerView;
 
-    @InjectView(R.id.emptyView)
-    private View mEmptyView;
+    @Inject
+    private PrefUtilities mPrefUtilities;
 
     public static LocationFragment newInstance() {
         LocationFragment fragment = new LocationFragment();
@@ -60,26 +60,28 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        setTitle("SELECT A CITY");
-        setSubTitle("Where do you live?");
+        setTitle("SELECT A LOCATION");
+        setSubTitle("Where do you are?");
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
-
-        mAdapter = new LocationAdapter(new LocationAdapter.LocationClickListener() {
+        mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+        mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onLocationClick(Location location) {
-                mListener.onLocationSelected(location);
+            public void onRefresh() {
+                refresh();
             }
-        }, getActivity());
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setEmptyView(mEmptyView);
+        });
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        onRefresh();
+        refresh();
+    }
+
+
+    private void refresh() {
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -101,35 +103,35 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public Loader<List<Location>> onCreateLoader(int i, Bundle bundle) {
-        Loader<List<Location>> loader = new LocationLoader(getActivity());
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
-        return loader;
+        return new LocationLoader(getActivity());
     }
 
 
     @Override
     public void onLoadFinished(Loader<List<Location>> loader, List<Location> locations) {
-        mAdapter.add(locations);
+        if (mAdapter == null) {
+            mAdapter = new LocationAdapter(locations, new LocationAdapter.LocationClickListener() {
+                @Override
+                public void onLocationClick(Location location) {
+                    mListener.onLocationSelected(location);
+                }
+            }, getActivity());
+        } else {
+            mAdapter.add(locations);
+        }
+        if (mRecyclerView.getAdapter() == null) {
+            mRecyclerView.setAdapter(mAdapter);
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+                mRecyclerView.getSwipeToRefresh().setRefreshing(false);
             }
-        }, 1000);
+        }, 500);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Location>> loader) {
-    }
-
-    @Override
-    public void onRefresh() {
-        getLoaderManager().initLoader(0, null, this);
     }
 
     public interface OnLocationFragmentInteractionListener {

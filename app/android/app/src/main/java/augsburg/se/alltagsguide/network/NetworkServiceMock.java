@@ -11,9 +11,11 @@ import java.util.List;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.common.UpdateTime;
 import augsburg.se.alltagsguide.utilities.ColorManager;
 import retrofit.Callback;
 import retrofit.http.Path;
+import retrofit.http.Query;
 import roboguice.RoboGuice;
 
 
@@ -48,17 +50,17 @@ public class NetworkServiceMock implements NetworkService {
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Muenchen_Kleines_Stadtwappen.svg/818px-Muenchen_Kleines_Stadtwappen.svg.png"};
 
         for (int i = 0; i < locationNames.length; i++) {
-            locations.add(new Location(locationPictures[i], locationNames[i], locationUrl[i], locationColors[i]));
+            locations.add(new Location(i, locationNames[i], locationPictures[i], locationNames[i], locationUrl[i], false, locationColors[i], null, 0f, 0f));
         }
         return sendDelayed(locations);
     }
 
     @Override
     public List<Language> getAvailableLanguages(Location location) {
-        Language english = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/100px-Flag_of_the_United_Kingdom.svg.png", "English", "en");
-        Language german = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/100px-Flag_of_Germany.svg.png", "Deutsch", "de");
-        Language spanish = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Flag_of_Spain.svg/100px-Flag_of_Spain.svg.png", "Espanol", "es");
-        Language frensh = new Language("https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/100px-Flag_of_France.svg.png", "Francais", "fr");
+        Language english = new Language(0, "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/100px-Flag_of_the_United_Kingdom.svg.png", "English", "en");
+        Language german = new Language(1, "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/100px-Flag_of_Germany.svg.png", "Deutsch", "de");
+        Language spanish = new Language(2, "https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Flag_of_Spain.svg/100px-Flag_of_Spain.svg.png", "Espanol", "es");
+        Language frensh = new Language(3, "https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/100px-Flag_of_France.svg.png", "Francais", "fr");
 
         List<Language> languages = new ArrayList<>();
         languages.add(german);
@@ -103,7 +105,7 @@ public class NetworkServiceMock implements NetworkService {
     }
 
     @Override
-    public List<Page> getPages(@Path("language") Language language, @Path("location") Location location) {
+    public List<Page> getPages(@Path("language") Language language, @Path("location") Location location, @Query("since") UpdateTime updateTime) {
         return new ArrayList<>();
     }
 

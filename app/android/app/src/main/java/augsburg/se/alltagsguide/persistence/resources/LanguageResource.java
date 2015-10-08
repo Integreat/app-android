@@ -42,34 +42,47 @@ public class LanguageResource implements PersistableResource<Language> {
         builder.setTables(CacheHelper.TABLE_LANGUAGE);
         return builder.query(readableDatabase, new String[]{},
                 CacheHelper.LANGUAGE_LOCATION + "=?",
-                new String[]{mLocation.getName()}, null, null,
+                new String[]{String.valueOf(mLocation.getId())}, null, null,
+                null);
+    }
+
+    @Override
+    public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(CacheHelper.TABLE_PAGE);
+        return builder.query(readableDatabase, new String[]{},
+                CacheHelper.LANGUAGE_LOCATION + "=? AND " + CacheHelper.LANGUAGE_ID + "=?",
+                new String[]{String.valueOf(mLocation.getId()), String.valueOf(id)}, null, null,
                 null);
     }
 
     @Override
     public Language loadFrom(Cursor cursor) {
-        Language language = new Language();
-        language.setShortName(cursor.getString(0));
-        language.setName(cursor.getString(1));
-        language.setIconPath(cursor.getString(2));
+        int index = 0;
+        int id = cursor.getInt(index++);
+        String shortName = cursor.getString(index++);
+        String name = cursor.getString(index++);
+        String path = cursor.getString(index++);
+        int location = cursor.getInt(index++); //only required for sql query
+        Language language = new Language(id, shortName, name, path);
         language.setLocation(mLocation);
         return language;
     }
 
     @Override
     public void store(SQLiteDatabase db, List<Language> languages) {
-        if (languages.isEmpty()) {
+        if (languages == null || languages.isEmpty()) {
             return;
         }
-        //db.delete(CacheHelper.TABLE_LANGUAGE, null, null); //TODO dont drop everything
 
-        ContentValues values = new ContentValues(3);
+        ContentValues values = new ContentValues(5);
         for (Language language : languages) {
             values.clear();
-            values.put(CacheHelper.LANGUAGE_SHORT, language.getShortName());
-            values.put(CacheHelper.LANGUAGE_NAME, language.getName());
-            values.put(CacheHelper.LANGUAGE_PATH, language.getIconPath());
-            values.put(CacheHelper.LANGUAGE_LOCATION, mLocation.getName());
+            values.put(CacheHelper.LANGUAGE_ID, language.getId()); //1
+            values.put(CacheHelper.LANGUAGE_SHORT, language.getShortName()); //2
+            values.put(CacheHelper.LANGUAGE_NAME, language.getName()); //3
+            values.put(CacheHelper.LANGUAGE_PATH, language.getIconPath()); //4
+            values.put(CacheHelper.LANGUAGE_LOCATION, mLocation.getId()); //5
 
             db.replace(CacheHelper.TABLE_LANGUAGE, null, values);
         }
@@ -78,5 +91,11 @@ public class LanguageResource implements PersistableResource<Language> {
     @Override
     public List<Language> request() {
         return mNetwork.getAvailableLanguages(mLocation);
+    }
+
+
+    @Override
+    public boolean shouldUpdate() {
+        return false;
     }
 }

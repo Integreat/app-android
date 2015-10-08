@@ -11,4 +11,6 @@
     <integer name="anim_duration_very_long">1500</integer>
     <integer name="anim_duration_long">500</integer>
     <integer name="anim_duration_medium">300</integer>
+    <dimen name="horizontalMargin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

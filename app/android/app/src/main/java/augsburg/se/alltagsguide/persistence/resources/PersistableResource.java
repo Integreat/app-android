@@ -24,6 +24,13 @@ public interface PersistableResource<E> {
     Cursor getCursor(SQLiteDatabase readableDatabase);
 
     /**
+     * @param readableDatabase
+     * @return a cursor capable of reading the required information out of the
+     * database.
+     */
+    Cursor getCursor(SQLiteDatabase readableDatabase, int id);
+
+    /**
      * @param cursor
      * @return a single item, read from this row of the cursor
      */
@@ -45,4 +52,12 @@ public interface PersistableResource<E> {
      * @throws IOException
      */
     List<E> request() throws IOException;
+
+    /**
+     * Determines if a update should be made
+     *
+     * @return true, if update is required, false otherwise
+     */
+    boolean shouldUpdate();
+
 }

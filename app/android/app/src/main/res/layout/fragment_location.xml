@@ -2,25 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="augsburg.se.alltagsguide.start.LocationFragment">
 
 
-    <include
-        layout="@layout/no_entries_found_view"
+    <com.malinskiy.superrecyclerview.SuperRecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/header" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header">
-
-
-        <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+        app:layout_empty="@layout/locations_empty_view"
+        app:recyclerClipToPadding="false"
+        app:recyclerPadding="10dp"
+        app:scrollbarStyle="insideInset"/>
 </RelativeLayout>

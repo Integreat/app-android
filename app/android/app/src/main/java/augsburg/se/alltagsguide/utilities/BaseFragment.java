@@ -2,18 +2,14 @@ package augsburg.se.alltagsguide.utilities;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
-import roboguice.activity.RoboActionBarActivity;
 import roboguice.fragment.RoboFragment;
 
 
 public class BaseFragment extends RoboFragment {
 
-    private ActionBar mActionBar;
-    private String title;
-    private String subTitle;
+    private OnBaseFragmentInteractionListener mListener;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -22,31 +18,30 @@ public class BaseFragment extends RoboFragment {
         if (!(context instanceof AppCompatActivity)) {
             throw new IllegalStateException("Activity needs to be AppCompatActivity");
         }
-        mActionBar = ((RoboActionBarActivity) context).getSupportActionBar();
-        if (mActionBar == null) {
-            throw new IllegalStateException("ActionBar is null");
-        } else {
-            if (title != null) {
-                mActionBar.setTitle(title);
-            }
-            if (subTitle != null) {
-                mActionBar.setSubtitle(subTitle);
-            }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnBaseFragmentInteractionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnLanguageFragmentInteractionListener");
         }
     }
 
-
     protected void setTitle(String title) {
-        this.title = title;
-        if (mActionBar != null) {
-            mActionBar.setTitle(title);
-        }
+        mListener.setTitle(title);
     }
 
     protected void setSubTitle(String subTitle) {
-        this.subTitle = subTitle;
-        if (mActionBar != null) {
-            mActionBar.setSubtitle(subTitle);
-        }
+        mListener.setSubTitle(subTitle);
+    }
+
+    public interface OnBaseFragmentInteractionListener {
+        void setTitle(String title);
+
+        void setSubTitle(String title);
     }
 }

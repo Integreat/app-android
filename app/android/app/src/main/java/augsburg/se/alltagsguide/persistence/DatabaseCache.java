@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -18,14 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.persistence.resources.PersistableResource;
+import roboguice.util.Ln;
 
 /**
  * Given a PersistableResource, this class will take support loading/storing
  * it's data or requesting fresh data, as appropriate.
  */
 public class DatabaseCache {
-
-    private static final String TAG = "DatabaseCache";
 
     @Inject
     private Provider<CacheHelper> helperProvider;
@@ -68,6 +66,16 @@ public class DatabaseCache {
         }
     }
 
+    public <E> List<E> load(PersistableResource<E> persistableResource) {
+        SQLiteOpenHelper helper = helperProvider.get();
+        return loadFromDB(helper, persistableResource);
+    }
+
+    public <E> E load(PersistableResource<E> persistableResource, int id) {
+        SQLiteOpenHelper helper = helperProvider.get();
+        return loadFromDB(helper, persistableResource, id);
+    }
+
     /**
      * Load or request given resources
      *
@@ -79,10 +87,18 @@ public class DatabaseCache {
             throws IOException {
         SQLiteOpenHelper helper = helperProvider.get();
         try {
-            List<E> items = null;//loadFromDB(helper, persistableResource);
-            if (items != null) {
-                Log.d(TAG, "CACHE HIT: Found " + items.size() + " items for "
-                        + persistableResource);
+            List<E> items = loadFromDB(helper, persistableResource);
+            if (items != null && !items.isEmpty()) {
+                if (persistableResource.shouldUpdate()) {
+                    Ln.d("Items exist in database. ShouldUpdate is true, so check network data first");
+                    List<E> newItems = requestAndStore(helper, persistableResource);
+                    if (newItems != null && !newItems.isEmpty()) {
+                        Ln.d("shouldUpdate is true and new requested items are not null -> save and return new date");
+                        return loadFromDB(helper, persistableResource);
+                    }
+                    Ln.d("shouldUpdate is true but no new requested items -> return data from database");
+                }
+                Ln.d("CACHE HIT: Found %d items for %s", items.size(), persistableResource);
                 return items;
             }
             return requestAndStore(helper, persistableResource);
@@ -112,6 +128,9 @@ public class DatabaseCache {
                                         final PersistableResource<E> persistableResource)
             throws IOException {
         final List<E> items = persistableResource.request();
+        if (items == null || items.isEmpty()) {
+            return new ArrayList<>();
+        }
 
         final SQLiteDatabase db = getWritable(helper);
         if (db == null) {
@@ -137,7 +156,7 @@ public class DatabaseCache {
         Cursor cursor = persistableResource.getCursor(db);
         try {
             if (!cursor.moveToFirst()) {
-                return null;
+                return new ArrayList<>();
             }
 
             List<E> cached = new ArrayList<>();
@@ -146,6 +165,23 @@ public class DatabaseCache {
             }
             while (cursor.moveToNext());
             return cached;
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private <E> E loadFromDB(final SQLiteOpenHelper helper,
+                             final PersistableResource<E> persistableResource, int id) {
+        final SQLiteDatabase db = getReadable(helper);
+        if (db == null)
+            return null;
+
+        Cursor cursor = persistableResource.getCursor(db, id);
+        try {
+            if (!cursor.moveToFirst()) {
+                return null;
+            }
+            return persistableResource.loadFrom(cursor);
         } finally {
             cursor.close();
         }

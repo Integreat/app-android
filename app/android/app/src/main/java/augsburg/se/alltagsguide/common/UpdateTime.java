@@ -13,7 +13,7 @@ public class UpdateTime {
     private String mDate;
 
     public UpdateTime(long time) {
-        mDate = new SimpleDateFormat("yyyy-MM-DD hh:mm:ss", Locale.getDefault()).format(new Date(time));
+        mDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault()).format(new Date(time));
     }
 
     @Override

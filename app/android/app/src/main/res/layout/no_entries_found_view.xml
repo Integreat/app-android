@@ -1,17 +1,16 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/emptyView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="200dp"
-        android:layout_centerInParent="true"
         android:adjustViewBounds="false"
-        android:src="@drawable/inbox_empty" />
+        android:src="@drawable/empty_entries_white" />
 
     <TextView
         android:id="@+id/name"
@@ -23,6 +22,6 @@
         android:singleLine="true"
         android:text="@string/no_entries_found"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#555555"
+        android:textColor="@android:color/white"
         android:textSize="?attr/font_large" />
 </RelativeLayout>

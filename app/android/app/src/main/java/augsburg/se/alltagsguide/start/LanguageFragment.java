@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.inject.Inject;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
+
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -19,27 +22,24 @@ import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
-import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
 
-public class LanguageFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Language>>, SwipeRefreshLayout.OnRefreshListener {
+public class LanguageFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Language>> {
     private static final String ARG_LOCATION = "location";
     private Location mLocation;
     private OnLanguageFragmentInteractionListener mListener;
     private LanguageAdapter mAdapter;
 
-    @InjectView(R.id.swipe_refresh)
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
     @InjectView(R.id.recycler_view)
-    private EmptyRecyclerView mRecyclerView;
-
-    @InjectView(R.id.emptyView)
-    private View mEmptyView;
+    private SuperRecyclerView mRecyclerView;
 
     @InjectView(R.id.city_name)
     private TextView cityTextView;
+
+    @Inject
+    private PrefUtilities mPrefUtilities;
 
     public static LanguageFragment newInstance(Location location) {
         LanguageFragment fragment = new LanguageFragment();
@@ -75,25 +75,26 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
         super.onViewCreated(view, savedInstanceState);
         setTitle("SELECT A LANGUAGE");
         setSubTitle("What language do you speak?");
-        mSwipeRefreshLayout.setOnRefreshListener(this);
+        cityTextView.setText(mLocation.getName());
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
-        mAdapter = new LanguageAdapter(new LanguageAdapter.LanguageClickListener() {
+        mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+        mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onLanguageClick(Language language) {
-                mListener.onLanguageSelected(mLocation, language);
+            public void onRefresh() {
+                refresh();
             }
-        }, getActivity());
-        mRecyclerView.setAdapter(mAdapter);
-        cityTextView.setText(mLocation.getName());
-        mRecyclerView.setEmptyView(mEmptyView);
-
+        });
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        onRefresh();
+        refresh();
+    }
+
+    private void refresh() {
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -115,34 +116,34 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public Loader<List<Language>> onCreateLoader(int i, Bundle bundle) {
-        Loader<List<Language>> loader = new LanguageLoader(getActivity(), mLocation);
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
-        return loader;
+        return new LanguageLoader(getActivity(), mLocation);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Language>> loader, List<Language> languages) {
-        mAdapter.add(languages);
+        if (mAdapter == null) {
+            mAdapter = new LanguageAdapter(languages, new LanguageAdapter.LanguageClickListener() {
+                @Override
+                public void onLanguageClick(Language language) {
+                    mListener.onLanguageSelected(mLocation, language);
+                }
+            }, getActivity());
+        } else {
+            mAdapter.add(languages);
+        }
+        if (mRecyclerView.getAdapter() == null) {
+            mRecyclerView.setAdapter(mAdapter);
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+                mRecyclerView.getSwipeToRefresh().setRefreshing(false);
             }
-        }, 1000);
+        }, 500);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Language>> loader) {
-    }
-
-    @Override
-    public void onRefresh() {
-        getLoaderManager().initLoader(0, null, this);
     }
 
     public interface OnLanguageFragmentInteractionListener {

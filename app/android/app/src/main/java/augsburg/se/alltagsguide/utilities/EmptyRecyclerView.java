@@ -8,11 +8,6 @@ import android.view.View;
 public class EmptyRecyclerView extends RecyclerView {
     private View mEmptyView;
 
-    /**
-     * If lazy, it means the first time the adapter attached with zero items, the empty view(if exist) won' t show
-     */
-    private boolean mLazy = false;
-
     private boolean mObserverAttached = false;
 
     public EmptyRecyclerView(Context context) {
@@ -29,22 +24,7 @@ public class EmptyRecyclerView extends RecyclerView {
 
     public void setEmptyView(View emptyView) {
         mEmptyView = emptyView;
-    }
-
-    public void setLazy(boolean lazy) {
-        mLazy = lazy;
-    }
-
-    public void setEager(boolean eager) {
-        mLazy = !eager;
-    }
-
-    public boolean isLazy() {
-        return mLazy;
-    }
-
-    public boolean isEager() {
-        return !mLazy;
+        updateEmptyStatus(isEmpty());
     }
 
     private void updateEmptyStatus(boolean empty) {
@@ -79,13 +59,9 @@ public class EmptyRecyclerView extends RecyclerView {
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
-
         adapter.registerAdapterDataObserver(mObserver);
         mObserverAttached = true;
-
-        if (isEager()) {
-            updateEmptyStatus(isEmpty());
-        }
+        updateEmptyStatus(isEmpty());
     }
 
     private AdapterDataObserver mObserver = new AdapterDataObserver() {

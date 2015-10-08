@@ -2,8 +2,10 @@ package augsburg.se.alltagsguide;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.inject.Injector;
 
+import io.fabric.sdk.android.Fabric;
 import roboguice.RoboGuice;
 
 /**
@@ -18,6 +20,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         RoboGuice.setUseAnnotationDatabases(false);
         injector = RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
                 RoboGuice.newDefaultRoboModule(this), new MainModule());

@@ -24,4 +24,11 @@
     <string name="dialog_answer_no">Nein</string>
     <string name="dialog_answer_yes">Ja</string>
     <string name="change_language_location">Sprache/Ort ändern</string>
+    <string name="page_more">Mehr</string>
+    <string name="no_languages_found">Es wurden keine Sprachen gefunden.\nEs scheint, als würde der angegebene Ort derzeit nicht verfügbar sein.\nBitte versuchen Sie es später erneut.</string>
+    <string name="no_locations_found">Es wurden keine Orte gefunden.\nEs scheint, als würde die App derzeit nicht zur Verfügung stehen.\nBitte versuchen Sie es später erneut.</string>
+    <string name="welcome_to_x">Willkommen in %s</string>
+    <string name="dialog_choose_language_title">Wähle eine Sprache</string>
+    <string name="search_title">Suche</string>
+    <string name="preferences">Einstellungen</string>
 </resources>
