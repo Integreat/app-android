@@ -34,6 +34,10 @@ public class PrefUtilities {
 
     private final SharedPreferences preferences;
 
+    public void clear() {
+        preferences.edit().clear().commit();
+    }
+
     public PrefUtilities(@NonNull Context context) {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -51,13 +55,6 @@ public class PrefUtilities {
         }
     }
 
-    public void setUpdateTime(@NonNull Location location, @NonNull Language language, long time) {
-        save(preferences.edit().putLong(location.getName() + "-" + language.getShortName(), time));
-    }
-
-    public UpdateTime getUpdateTime(@NonNull Location location, @NonNull Language language) {
-        return new UpdateTime(preferences.getLong(location.getName() + "-" + language.getShortName(), 0));
-    }
 
     public void setLocation(Location location) {
         save(preferences.edit().putString(LOCATION, new Gson().toJson(location)));
@@ -139,4 +136,23 @@ public class PrefUtilities {
         }
     }
 
+    //TODO get rid of this
+    public UpdateTime getUpdateTime(@NonNull Location location, @NonNull Language language) {
+        return new UpdateTime(preferences.getLong(location.getName() + "-" + language.getShortName(), 0));
+    }
+
+    //TODO get rid of this
+    public void setUpdateTime(@NonNull Location location, @NonNull Language language, long time) {
+        save(preferences.edit().putLong(location.getName() + "-" + language.getShortName(), time));
+    }
+
+    //TODO get rid of this
+    public UpdateTime getEventUpdateTime(@NonNull Location location, @NonNull Language language) {
+        return new UpdateTime(preferences.getLong("event_" + location.getName() + "-" + language.getShortName(), 0));
+    }
+
+    //TODO get rid of this
+    public void setEventUpdateTime(Location location, Language language, long time) {
+        save(preferences.edit().putLong("event_" + location.getName() + "-" + language.getShortName(), time));
+    }
 }

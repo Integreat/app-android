@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.common;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -9,7 +10,7 @@ import java.util.Locale;
 /**
  * Created by Daniel-L on 23.09.2015.
  */
-public class UpdateTime {
+public class UpdateTime implements Serializable {
     private String mDate;
 
     public UpdateTime(long time) {

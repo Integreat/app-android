@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="3dp"
     android:maxHeight="130dp"
-    android:minHeight="100dp"
-    app:cardCornerRadius="6dp"
+    android:minHeight="90dp"
+    app:cardCornerRadius="4dp"
     tools:context="augsburg.se.alltagsguide.category.InformationActivity">
 
     <LinearLayout
@@ -22,7 +22,7 @@
             android:gravity="center"
             android:minHeight="30dp"
             android:padding="3dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white"
             android:textSize="?attr/font_medium"
             tools:background="@color/myAccentColor"
@@ -35,24 +35,39 @@
             android:layout_weight="5"
             android:ellipsize="end"
             android:maxLines="3"
-            android:padding="7dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-
-            android:textSize="?attr/font_small"
+            android:padding="5dp"
+            android:textSize="?attr/font_xsmall"
             tools:text="Wir trennen Müll, um durch Recycling die Umwelt zu schonen. Werfen Sie Papier und Kartons in den Papiermüll und ihre Dosen in dafür vorgesehen Container. Diese finden Sie..." />
 
-        <TextView
-            android:id="@+id/more"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:gravity="end|bottom"
-            android:padding="5dp"
-            android:text="@string/page_more"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="?attr/font_small"
-            tools:textColor="@color/myAccentColor" />
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:padding="5dp"
+                android:textSize="?attr/font_xsmall"
+                tools:text="Date"
+                tools:textColor="@color/myAccentColor" />
+
+            <TextView
+                android:id="@+id/more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="end"
+                android:gravity="end|bottom"
+                android:padding="5dp"
+                android:text="@string/page_more"
+                android:textSize="?attr/font_small"
+                tools:textColor="@color/myAccentColor" />
+        </RelativeLayout>
 
 
     </LinearLayout>

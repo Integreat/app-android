@@ -91,7 +91,7 @@ public class DatabaseCache {
             if (items != null && !items.isEmpty()) {
                 if (persistableResource.shouldUpdate()) {
                     Ln.d("Items exist in database. ShouldUpdate is true, so check network data first");
-                    List<E> newItems = requestAndStore(helper, persistableResource);
+                    List<? extends E> newItems = requestAndStore(helper, persistableResource);
                     if (newItems != null && !newItems.isEmpty()) {
                         Ln.d("shouldUpdate is true and new requested items are not null -> save and return new date");
                         return loadFromDB(helper, persistableResource);
@@ -161,7 +161,7 @@ public class DatabaseCache {
 
             List<E> cached = new ArrayList<>();
             do {
-                cached.add(persistableResource.loadFrom(cursor));
+                cached.add(persistableResource.loadFrom(cursor, db));
             }
             while (cursor.moveToNext());
             return cached;
@@ -181,7 +181,7 @@ public class DatabaseCache {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-            return persistableResource.loadFrom(cursor);
+            return persistableResource.loadFrom(cursor, db);
         } finally {
             cursor.close();
         }

@@ -10,13 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
+import roboguice.util.Ln;
 
 public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, Page> {
 
@@ -75,10 +79,18 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         titleHolder.title.setText(page.getTitle());
     }
 
+    SimpleDateFormat dateFormatFrom = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY);
+    SimpleDateFormat dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
+
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final Page page) {
         contentHolder.title.setText(page.getTitle());
         contentHolder.title.setBackgroundColor(mColor);
         String desc = page.getDescription();
+        try {
+            contentHolder.date.setText(dateFormatTo.format(dateFormatFrom.parse(page.getModified())));
+        } catch (ParseException e) {
+            Ln.e(e);
+        }
         contentHolder.description.setText(Html.fromHtml(desc));
         contentHolder.description.setVisibility(Objects.isNullOrEmpty(desc) ? View.GONE : View.VISIBLE);
         contentHolder.more.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +123,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         TextView description;
         ImageView image;
         TextView more;
+        TextView date;
 
         public ContentViewHolder(View itemView) {
             super(itemView);
@@ -118,6 +131,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
             description = (TextView) itemView.findViewById(R.id.description);
             image = (ImageView) itemView.findViewById(R.id.image);
             more = (TextView) itemView.findViewById(R.id.more);
+            date = (TextView) itemView.findViewById(R.id.date);
         }
     }
 }

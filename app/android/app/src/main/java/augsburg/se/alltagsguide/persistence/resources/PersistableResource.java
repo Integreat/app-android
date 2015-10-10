@@ -32,9 +32,10 @@ public interface PersistableResource<E> {
 
     /**
      * @param cursor
+     * @param db     for having n:m joins
      * @return a single item, read from this row of the cursor
      */
-    E loadFrom(Cursor cursor);
+    E loadFrom(Cursor cursor, SQLiteDatabase db);
 
     /**
      * Store supplied items in DB, removing or updating prior entries
@@ -42,7 +43,7 @@ public interface PersistableResource<E> {
      * @param writableDatabase
      * @param items
      */
-    void store(SQLiteDatabase writableDatabase, List<E> items);
+    void store(SQLiteDatabase writableDatabase, List<? extends E> items);
 
     /**
      * Request the data directly from the GitHub API, rather than attempting to

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.google.inject.Inject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ public class PagesLoader extends BasicLoader<List<Page>> {
         try {
             List<Page> pages = dbCache.loadOrRequest(pagesFactory.under(mLanguage, mLocation));
             Page.recreateRelations(pages);
+
             return pages;
         } catch (IOException e) {
             Ln.e(e);

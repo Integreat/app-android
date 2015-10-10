@@ -21,4 +21,11 @@ public class Objects {
         }
         return 0;
     }
+
+    public static String emptyIfNull(Object object) {
+        if (object == null) {
+            return "";
+        }
+        return object.toString();
+    }
 }

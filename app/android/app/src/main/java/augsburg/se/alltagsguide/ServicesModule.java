@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
@@ -82,6 +83,16 @@ public class ServicesModule extends AbstractModule {
             public List<Page> getPages(@Path("language") Language language, @Path("location") Location location, @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getPages(language, location, updateTime);
+                } catch (RetrofitError e) {
+                    Ln.e(e);
+                    return new ArrayList<>();
+                }
+            }
+
+            @Override
+            public List<EventPage> getEventPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime updateTime) {
+                try {
+                    return service.getEventPages(language, location, updateTime);
                 } catch (RetrofitError e) {
                     Ln.e(e);
                     return new ArrayList<>();
