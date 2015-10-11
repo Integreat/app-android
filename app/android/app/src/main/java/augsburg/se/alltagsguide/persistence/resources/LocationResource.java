@@ -39,7 +39,7 @@ public class LocationResource implements PersistableResource<Location> {
     }
 
     @Override
-    public Location loadFrom(Cursor cursor) {
+    public Location loadFrom(Cursor cursor, SQLiteDatabase db) {
         int index = 0;
         int id = cursor.getInt(index++);
         String name = cursor.getString(index++);
@@ -55,7 +55,7 @@ public class LocationResource implements PersistableResource<Location> {
     }
 
     @Override
-    public void store(SQLiteDatabase db, List<Location> locations) {
+    public void store(SQLiteDatabase db, List<? extends Location> locations) {
         if (locations.isEmpty()) {
             return;
         }

@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.network;
 
 import java.util.List;
 
+import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Page;
@@ -20,6 +21,9 @@ public interface NetworkService {
 
     @GET("/{location}/{language}/wp-json/extensions/v0/modified_content/pages")
     List<Page> getPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time);
+
+    @GET("/{location}/{language}/wp-json/extensions/v0/modified_content/events")
+    List<EventPage> getEventPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time);
 
     @GET("/wordpress/wp-json/extensions/v0/multisites/")
     List<Location> getAvailableLocations();

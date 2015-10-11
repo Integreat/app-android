@@ -57,7 +57,7 @@ public class LanguageResource implements PersistableResource<Language> {
     }
 
     @Override
-    public Language loadFrom(Cursor cursor) {
+    public Language loadFrom(Cursor cursor, SQLiteDatabase db) {
         int index = 0;
         int id = cursor.getInt(index++);
         String shortName = cursor.getString(index++);
@@ -70,7 +70,7 @@ public class LanguageResource implements PersistableResource<Language> {
     }
 
     @Override
-    public void store(SQLiteDatabase db, List<Language> languages) {
+    public void store(SQLiteDatabase db, List<? extends Language> languages) {
         if (languages == null || languages.isEmpty()) {
             return;
         }

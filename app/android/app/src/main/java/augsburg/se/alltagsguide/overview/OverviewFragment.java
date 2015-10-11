@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;

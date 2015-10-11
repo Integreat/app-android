@@ -4,20 +4,20 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteReadOnlyDatabaseException;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import augsburg.se.alltagsguide.common.Author;
+import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.common.UpdateTime;
 import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
@@ -54,7 +54,8 @@ public class PageResource implements PersistableResource<Page> {
     @Override
     public Cursor getCursor(SQLiteDatabase readableDatabase) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        builder.setTables(CacheHelper.TABLE_PAGE);
+        builder.setTables(getTables());
+
         return builder.query(readableDatabase, new String[]{},
                 CacheHelper.PAGE_LANGUAGE + "=? AND " + CacheHelper.PAGE_LOCATION + "=? AND " +
                         CacheHelper.PAGE_STATUS + " != ?",
@@ -62,10 +63,15 @@ public class PageResource implements PersistableResource<Page> {
                 null);
     }
 
+    private String getTables() {
+        return CacheHelper.TABLE_PAGE
+                + " join " + CacheHelper.TABLE_AUTHOR + " ON " + CacheHelper.PAGE_AUTHOR + "=" + CacheHelper.AUTHOR_USERNAME;
+    }
+
     @Override
     public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        builder.setTables(CacheHelper.TABLE_PAGE);
+        builder.setTables(getTables());
         return builder.query(readableDatabase, new String[]{},
                 CacheHelper.PAGE_LANGUAGE + "=? AND " + CacheHelper.PAGE_LOCATION + "=? AND " +
                         CacheHelper.PAGE_ID + "=?",
@@ -74,51 +80,92 @@ public class PageResource implements PersistableResource<Page> {
     }
 
     @Override
-    public Page loadFrom(Cursor cursor) {
+    public Page loadFrom(Cursor cursor, SQLiteDatabase db) {
         int index = 0;
-        int id = cursor.getInt(index++);
-        String title = cursor.getString(index++);
-        String type = cursor.getString(index++);
-        String status = cursor.getString(index++);
-        String modified = cursor.getString(index++);
-        String description = cursor.getString(index++);
-        String content = cursor.getString(index++);
-        int parentId = cursor.getInt(index++);
-        int order = cursor.getInt(index++);
-        String availableLanguages = cursor.getString(index++);
+        int id = cursor.getInt(index++); // 1
+        String title = cursor.getString(index++); // 2
+        String type = cursor.getString(index++); // 3
+        String status = cursor.getString(index++); // 4
+        String modified = cursor.getString(index++); // 5
+        String description = cursor.getString(index++); // 6
+        String content = cursor.getString(index++); // 7
+        int parentId = cursor.getInt(index++); // 8
+        int order = cursor.getInt(index++); // 9
+        String thumbnail = cursor.getString(index++); // 10
 
-        return new Page(id, title, type, status, modified, description, content, parentId, order, availableLanguages);
+        Author author = Author.fromCursor(cursor, index + 2); // TODO 2 = Language, Location - SELECT ONLY TO THE OTHER FIELDS!
+        List<AvailableLanguage> languages = getAvailableLanguages(db, id);
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, languages);
+    }
+
+    private Cursor getAvailableLanguagesCursor(SQLiteDatabase readableDatabase, int pageId) {
+        //TODO testen!!
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(CacheHelper.TABLE_PAGE_AVAILABLE_LANGUAGE);
+        return builder.query(readableDatabase, new String[]{},
+                CacheHelper.PAGE_AVAIL_PAGE_LANGUAGE + "=? AND " + CacheHelper.PAGE_AVAIL_PAGE_LOCATION + "=? AND " +
+                        CacheHelper.PAGE_AVAIL_PAGE_ID + "=?",
+                new String[]{String.valueOf(mLanguage.getId()), String.valueOf(mLocation.getId()), String.valueOf(pageId)}, null, null,
+                null);
+    }
+
+    public List<AvailableLanguage> getAvailableLanguages(SQLiteDatabase db, int pageId) {
+        Cursor cursor = getAvailableLanguagesCursor(db, pageId);
+        List<AvailableLanguage> cached = new ArrayList<>();
+        do {
+            cached.add(AvailableLanguage.loadFrom(cursor));
+        }
+        while (cursor.moveToNext());
+        return cached;
     }
 
     @Override
-    public void store(SQLiteDatabase db, List<Page> mPages) {
+    public void store(SQLiteDatabase db, List<? extends Page> mPages) {
         if (mPages.isEmpty()) {
             return;
         }
 
-        ContentValues values = new ContentValues(12);
+        ContentValues pageValues = new ContentValues(14);
+        ContentValues authorValues = new ContentValues(3);
+        ContentValues languageValues = new ContentValues(5);
         for (Page mPage : mPages) {
             List<Page> pages = new ArrayList<>();
             pages.add(mPage);
-            if (mPage.getSubPages() != null) {
+            if (mPage.getSubPages() != null) { //TODO check recursive stuff
                 pages.addAll(mPage.getSubPages());
             }
             for (Page page : pages) {
-                values.clear();
-                values.put(CacheHelper.PAGE_ID, page.getId()); //1
-                values.put(CacheHelper.PAGE_TITLE, page.getTitle()); //2
-                values.put(CacheHelper.PAGE_TYPE, page.getType()); //3
-                values.put(CacheHelper.PAGE_STATUS, page.getStatus()); //4
-                values.put(CacheHelper.PAGE_MODIFIED, page.getModified()); //5
-                values.put(CacheHelper.PAGE_DESCRIPTION, page.getDescription()); //6
-                values.put(CacheHelper.PAGE_CONTENT, page.getContent()); //7
-                values.put(CacheHelper.PAGE_PARENT_ID, page.getParentId()); //8
-                values.put(CacheHelper.PAGE_ORDER, page.getOrder()); //9
-                values.put(CacheHelper.PAGE_AVAILABLE_LANGUAGES, page.getAvailableLanguages()); //10
-                values.put(CacheHelper.PAGE_LOCATION, mLocation.getId()); //11
-                values.put(CacheHelper.PAGE_LANGUAGE, mLanguage.getId()); //12
+                pageValues.clear();
+                pageValues.put(CacheHelper.PAGE_ID, page.getId()); //1
+                pageValues.put(CacheHelper.PAGE_TITLE, page.getTitle()); //2
+                pageValues.put(CacheHelper.PAGE_TYPE, page.getType()); //3
+                pageValues.put(CacheHelper.PAGE_STATUS, page.getStatus()); //4
+                pageValues.put(CacheHelper.PAGE_MODIFIED, page.getModified()); //5
+                pageValues.put(CacheHelper.PAGE_DESCRIPTION, page.getDescription()); //6
+                pageValues.put(CacheHelper.PAGE_CONTENT, page.getContent()); //7
+                pageValues.put(CacheHelper.PAGE_PARENT_ID, page.getParentId()); //8
+                pageValues.put(CacheHelper.PAGE_ORDER, page.getOrder()); //9
+                pageValues.put(CacheHelper.PAGE_THUMBNAIL, page.getThumbnail()); //11
+                pageValues.put(CacheHelper.PAGE_LOCATION, mLocation.getId()); //12
+                pageValues.put(CacheHelper.PAGE_LANGUAGE, mLanguage.getId()); //13
+                pageValues.put(CacheHelper.PAGE_AUTHOR, page.getAuthor().getLogin()); //14
+                db.replace(CacheHelper.TABLE_PAGE, null, pageValues);
 
-                db.replace(CacheHelper.TABLE_PAGE, null, values);
+                authorValues.clear();
+                authorValues.put(CacheHelper.AUTHOR_USERNAME, page.getAuthor().getLogin()); // 1
+                authorValues.put(CacheHelper.AUTHOR_FIRSTNAME, page.getAuthor().getFirstName()); // 2
+                authorValues.put(CacheHelper.AUTHOR_LASTNAME, page.getAuthor().getLastName()); // 3
+                db.replace(CacheHelper.TABLE_AUTHOR, null, authorValues);
+
+                for (AvailableLanguage language : page.getAvailableLanguages()) {
+                    languageValues.clear();
+                    languageValues.put(CacheHelper.PAGE_AVAIL_PAGE_ID, page.getId()); // 1
+                    languageValues.put(CacheHelper.PAGE_AVAIL_PAGE_LOCATION, mLocation.getId()); // 2
+                    languageValues.put(CacheHelper.PAGE_AVAIL_PAGE_LANGUAGE, mLanguage.getId()); // 3
+                    languageValues.put(CacheHelper.PAGE_AVAIL_OTHER_PAGE, language.getPageId()); // 4
+                    languageValues.put(CacheHelper.PAGE_AVAIL_OTHER_LANGUAGE, language.getLanguage()); // 5
+                    db.replace(CacheHelper.TABLE_PAGE_AVAILABLE_LANGUAGE, null, languageValues);
+                }
             }
         }
         mPrefUtilities.setUpdateTime(mLocation, mLanguage, new Date().getTime());

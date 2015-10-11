@@ -3,7 +3,10 @@ package augsburg.se.alltagsguide.common;
 import android.support.annotation.NonNull;
 import android.text.Html;
 
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,22 +21,25 @@ import augsburg.se.alltagsguide.utilities.Objects;
  */
 public class Page implements Serializable, Comparable {
 
-
     private final int mId;
     private final String mTitle;
     private final String mType;
     private final String mStatus;
+    private final int mParentId;
     private final String mModified;
     private final String mDescription;
     private final String mContent;
-    private final int mParentId;
     private final int mOrder;
-    private String mAvailableLanguages;
+    private String mThumbnail;
+    private Author mAuthor;
 
     private Page mParent;
     final List<Page> mSubPages;
+    private List<Page> mAvailablePages;
 
-    public Page(int id, String title, String type, String status, String modified, String excerpt, String content, int parentId, int order, String availableLanguages) {
+    private List<AvailableLanguage> mAvailableLanguages;
+
+    public Page(int id, String title, String type, String status, String modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, List<AvailableLanguage> availableLanguages) {
         mId = id;
         mTitle = title;
         mType = type;
@@ -43,7 +49,10 @@ public class Page implements Serializable, Comparable {
         mContent = content;
         mParentId = parentId;
         mOrder = order;
+        mThumbnail = thumbnail;
+        mAuthor = author;
         mAvailableLanguages = availableLanguages;
+        mAvailablePages = new ArrayList<>();
         mSubPages = new ArrayList<>();
     }
 
@@ -51,27 +60,34 @@ public class Page implements Serializable, Comparable {
         mSubPages.addAll(subPages);
     }
 
+
     public Page getParent() {
         return mParent;
     }
 
     public static Page fromJson(@NonNull final JsonObject jsonPage) {
-        return new Page(
-                jsonPage.get("id").getAsInt(),
-                jsonPage.get("title").getAsString(),
-                jsonPage.get("type").getAsString(),
-                jsonPage.get("status").getAsString(),
-                jsonPage.get("modified_gmt").getAsString(),
-                jsonPage.get("excerpt").getAsString(),
-                jsonPage.get("content").getAsString(),
-                jsonPage.get("parent").getAsInt(),
-                jsonPage.get("order").getAsInt(),
-                jsonPage.get("availableLanguages") == null ? "" : jsonPage.get("availableLanguages").getAsString()
-        );
+        int id = jsonPage.get("id").getAsInt();
+        String title = jsonPage.get("title").getAsString();
+        String type = jsonPage.get("type").getAsString();
+        String status = jsonPage.get("status").getAsString();
+        String modified = jsonPage.get("modified_gmt").getAsString();
+        String description = jsonPage.get("excerpt").getAsString();
+        String content = jsonPage.get("content").getAsString();
+        int parentId = jsonPage.get("parent").getAsInt();
+        int order = jsonPage.get("order").getAsInt();
+        String thumbnail = jsonPage.get("thumbnail").isJsonNull() ? "" : jsonPage.get("thumbnail").getAsString();
+        Author author = Author.fromJson(jsonPage.get("author").getAsJsonObject());
+        List<AvailableLanguage> languages = AvailableLanguage.fromJson(jsonPage.get("available_languages"));
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, languages);
     }
 
     public void setParent(Page parent) {
         mParent = parent;
+    }
+
+
+    public Author getAuthor() {
+        return mAuthor;
     }
 
     @Override
@@ -196,7 +212,7 @@ public class Page implements Serializable, Comparable {
         return 1 + getParent().getDepth();
     }
 
-    public static void recreateRelations(List<Page> pages) {
+    public static void recreateRelations(List<? extends Page> pages) {
         /* add page-page connection */
         Map<Integer, Page> pageIdMap = new HashMap<>();
         for (Page page : pages) {
@@ -211,12 +227,20 @@ public class Page implements Serializable, Comparable {
         }
     }
 
-    public String getAvailableLanguages() {
+    public List<AvailableLanguage> getAvailableLanguages() {
         return mAvailableLanguages;
+    }
+
+    public List<Page> getAvailablePages() {
+        return mAvailablePages;
     }
 
     @Override
     public boolean equals(@NonNull Object another) {
         return another instanceof Page && mId == ((Page) another).getId();
+    }
+
+    public String getThumbnail() {
+        return mThumbnail;
     }
 }

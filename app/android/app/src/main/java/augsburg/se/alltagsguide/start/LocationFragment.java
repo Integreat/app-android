@@ -61,7 +61,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle("SELECT A LOCATION");
-        setSubTitle("Where do you are?");
+        setSubTitle("Where are you?");
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
         mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
