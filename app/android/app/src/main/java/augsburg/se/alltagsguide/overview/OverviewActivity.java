@@ -35,6 +35,7 @@ import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.event.EventActivity;
 import augsburg.se.alltagsguide.event.EventOverviewFragment;
 import augsburg.se.alltagsguide.navigation.NavigationAdapter;
 import augsburg.se.alltagsguide.page.PageActivity;
@@ -382,7 +383,9 @@ public class OverviewActivity extends BaseActivity
 
     @Override
     public void onOpenEventPage(EventPage page) {
-
+        Intent intent = new Intent(OverviewActivity.this, EventActivity.class);
+        intent.putExtra(EventActivity.ARG_INFO, page);
+        startActivity(intent);
     }
 
 

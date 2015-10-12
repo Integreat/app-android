@@ -1,6 +1,5 @@
 package augsburg.se.alltagsguide.page;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
@@ -61,36 +61,34 @@ public class PageActivity extends BaseActivity {
             e.printStackTrace();
         }
         setupLanguagesButton();
-
     }
 
     private void setupLanguagesButton() {
-        //TODO ausgrauen von nicht verfügbaren sprachen
-        Language english = new Language(0, "en", "English", "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/100px-Flag_of_the_United_Kingdom.svg.png");
-        Language german = new Language(1, "de", "Deutsch", "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/100px-Flag_of_Germany.svg.png");
-        Language spanish = new Language(2, "es", "Espanol", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Flag_of_Spain.svg/100px-Flag_of_Spain.svg.png");
-        Language frensh = new Language(3, "fr", "Francais", "https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/100px-Flag_of_France.svg.png");
 
-        final List<Language> languages = new ArrayList<>();
-        languages.add(german);
-        languages.add(frensh);
-        languages.add(english);
-        languages.add(spanish);
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(PageActivity.this)
                         .title(R.string.dialog_choose_language_title)
-                        .adapter(new LanguageItemAdapter(PageActivity.this, languages),
+                        .adapter(new LanguageItemAdapter(PageActivity.this, mPage.getAvailableLanguages()),
                                 new MaterialDialog.ListCallback() {
                                     @Override
                                     public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                        loadLanguage(mPage.getAvailableLanguages().get(which));
                                         Ln.d("Clicked item %d", which);
+                                        dialog.cancel();
                                     }
                                 })
                         .show();
             }
         });
+    }
+
+    private void loadLanguage(AvailableLanguage language) {
+        //load page from db
+        //if fail, load language for city from network
+        // load page from db
+
     }
 
     private String convertContent(String content) throws IOException {

@@ -37,6 +37,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
     private OnEventPageFragmentInteractionListener mListener;
 
+    //TODO categories, tags
+
     @Override
     public Loader<List<EventPage>> onCreateLoader(int i, Bundle bundle) {
         return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage());

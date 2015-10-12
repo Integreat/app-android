@@ -210,13 +210,16 @@ public class Page implements Serializable, Comparable {
         for (Page page : pages) {
             pageIdMap.put(page.getId(), page);
         }
-        Map<Integer, AvailableLanguage> shortNameLanguageMap = new HashMap<>();
+        Map<Integer, List<AvailableLanguage>> shortNameLanguageMap = new HashMap<>();
         for (AvailableLanguage language : languages) {
-            shortNameLanguageMap.put(language.getPageId(), language);
+            if (!shortNameLanguageMap.containsKey(language.getPageId())) {
+                shortNameLanguageMap.put(language.getPageId(), new ArrayList<AvailableLanguage>());
+            }
+            shortNameLanguageMap.get(language.getPageId()).add(language);
         }
         for (Page page : pages) {
             if (shortNameLanguageMap.containsKey(page.getId())) {
-                page.getAvailableLanguages().add(shortNameLanguageMap.get(page.getId()));
+                page.getAvailableLanguages().addAll(shortNameLanguageMap.get(page.getId()));
             }
             if (pageIdMap.containsKey(page.getParentId())) {
                 Page parent = pageIdMap.get(page.getParentId());
