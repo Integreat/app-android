@@ -1,26 +1,25 @@
 package augsburg.se.alltagsguide;
-/*
+
 import android.app.Application;
 import android.content.Context;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 import junit.framework.Assert;
+
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
@@ -29,6 +28,7 @@ import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.network.NetworkServiceMock;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
+import augsburg.se.alltagsguide.persistence.DatabaseInfo;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -45,8 +45,8 @@ public class DatabaseTest {
     @Inject
     private PageResource.Factory pagesFactory;
 
-    private Language german = new Language();
-    private Location augsburg = new Location();
+    private Language german = new Language(1, "de", "Deutsch", null);
+    private Location augsburg = new Location(1, "Augsburg", null, "", null, false, 0, null, 0.0f, 0.0f);
     private PageResource pageResource;
 
     @Before
@@ -62,6 +62,10 @@ public class DatabaseTest {
         RoboGuice.Util.reset();
     }
 
+    public void performanceTest(){
+
+    }
+
     @Test
     public void addPagesToDatabase() throws IOException {
         List<Page> pages = helper.requestAndStore(pageResource);
@@ -72,14 +76,13 @@ public class DatabaseTest {
     public class MyTestModule extends AbstractModule {
         @Override
         protected void configure() {
-            bindConstant().annotatedWith(CacheHelper.DatabaseName.class).to("TestDB");
-            bindConstant().annotatedWith(CacheHelper.DatabaseVersion.class).to(42);
         }
 
-    @Provides
-    DatabaseInfo getDatabaseInfo() {
-        return new DatabaseInfo("test.db", 1);
-    }
+        @Provides
+        DatabaseInfo getDatabaseInfo() {
+            return new DatabaseInfo("test.db", 1);
+        }
+
         @Provides
         NetworkService networkService(Context context) {
             final NetworkService mock = new NetworkServiceMock(context);
@@ -95,6 +98,11 @@ public class DatabaseTest {
                 }
 
                 @Override
+                public List<EventPage> getEventPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time) {
+                    return mock.getEventPages(language, location, time);
+                }
+
+                @Override
                 public List<Location> getAvailableLocations() {
                     return mock.getAvailableLocations();
                 }
@@ -107,4 +115,4 @@ public class DatabaseTest {
         }
 
     }
-}*/
+}

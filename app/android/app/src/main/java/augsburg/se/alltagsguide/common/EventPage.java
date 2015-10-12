@@ -2,10 +2,15 @@ package augsburg.se.alltagsguide.common;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Daniel-L on 20.09.2015.
@@ -17,7 +22,7 @@ public class EventPage extends Page implements Serializable {
     private List<EventTag> mTags;
     private List<EventCategory> mCategories;
 
-    public EventPage(@NonNull Page page, @NonNull Event event, @NonNull EventLocation location, @NonNull List<EventTag> tags, @NonNull List<EventCategory> categories) {
+    public EventPage(@NonNull Page page, @NonNull Event event, EventLocation location, @NonNull List<EventTag> tags, @NonNull List<EventCategory> categories) {
         super(page.getId(), page.getTitle(), page.getType(), page.getStatus(), page.getModified(), page.getTitle(),
                 page.getDescription(), page.getParentId(), page.getOrder(), page.getThumbnail(), page.getAuthor(), page.getAvailableLanguages());
         mEvent = event;
@@ -28,8 +33,13 @@ public class EventPage extends Page implements Serializable {
 
     public static EventPage fromJson(@NonNull final JsonObject jsonPage) {
         Page page = Page.fromJson(jsonPage);
-        Event event = Event.fromJson(jsonPage.get("event").getAsJsonObject(), jsonPage.get("page_id").getAsInt());
-        EventLocation location = EventLocation.fromJson(jsonPage.get("location").getAsJsonObject());
+        //TODO jsonPage.get("page") !?
+        Event event = Event.fromJson(jsonPage.get("event").getAsJsonObject(), page.getId());
+        JsonElement locationElement = jsonPage.get("location");
+        EventLocation location = null;
+        if (locationElement != JsonNull.INSTANCE) {
+            location = EventLocation.fromJson(locationElement.getAsJsonObject());
+        }
         List<EventTag> tags = EventTag.fromJson(jsonPage.get("tags").getAsJsonArray());
         List<EventCategory> categories = EventCategory.fromJson(jsonPage.get("categories").getAsJsonArray());
         return new EventPage(page, event, location, tags, categories);
@@ -38,8 +48,8 @@ public class EventPage extends Page implements Serializable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-
-        return 0; //TODO compare by start_date of event
+        EventPage other = (EventPage) o;
+        return Long.valueOf(getEvent().getStartTime()).compareTo(other.getEvent().getStartTime());
     }
 
     public Event getEvent() {
@@ -58,4 +68,32 @@ public class EventPage extends Page implements Serializable {
         return mTags;
     }
 
+    public static void recreateRelations(List<EventPage> pages, List<EventCategory> categories, List<EventTag> tags, List<AvailableLanguage> languages) {
+        Page.recreateRelations(pages, languages);
+
+        Map<Integer, List<EventCategory>> eventIdCategoryMap = new HashMap<>();
+        for (EventCategory category : categories) {
+            if (!eventIdCategoryMap.containsKey(category.getEventId())) {
+                eventIdCategoryMap.put(category.getEventId(), new ArrayList<EventCategory>());
+            }
+            eventIdCategoryMap.get(category.getEventId()).add(category);
+        }
+        Map<Integer, List<EventTag>> eventIdTagMap = new HashMap<>();
+        for (EventTag tag : tags) {
+            if (!eventIdTagMap.containsKey(tag.getEventId())) {
+                eventIdTagMap.put(tag.getEventId(), new ArrayList<EventTag>());
+            }
+            eventIdTagMap.get(tag.getEventId()).add(tag);
+        }
+
+        for (EventPage page : pages) {
+            int eventId = page.getEvent().getId();
+            if (eventIdCategoryMap.containsKey(eventId)) {
+                page.getCategories().addAll(eventIdCategoryMap.get(eventId));
+            }
+            if (eventIdTagMap.containsKey(eventId)) {
+                page.getTags().addAll(eventIdTagMap.get(eventId));
+            }
+        }
+    }
 }

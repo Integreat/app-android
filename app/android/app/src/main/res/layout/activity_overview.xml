@@ -45,11 +45,25 @@
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
-        <FrameLayout
-            android:id="@+id/container"
+        <LinearLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true" />
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/events_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:id="@+id/pages_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4" />
+        </LinearLayout>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

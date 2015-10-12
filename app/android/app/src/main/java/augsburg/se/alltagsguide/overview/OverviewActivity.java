@@ -8,10 +8,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
-import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,15 +26,17 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.event.EventOverviewFragment;
 import augsburg.se.alltagsguide.navigation.NavigationAdapter;
-import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.settings.SettingsActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
@@ -48,9 +49,15 @@ import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_overview)
 public class OverviewActivity extends BaseActivity
-        implements OverviewFragment.OnPageFragmentInteractionListener, BaseFragment.OnBaseFragmentInteractionListener, NavigationAdapter.OnNavigationSelected, LoaderManager.LoaderCallbacks<List<Language>> {
+        implements PageOverviewFragment.OnPageFragmentInteractionListener, EventOverviewFragment.OnEventPageFragmentInteractionListener, BaseFragment.OnBaseFragmentInteractionListener, NavigationAdapter.OnNavigationSelected {
 
     private NavigationAdapter mNavigationAdapter;
+
+    @InjectView(R.id.content)
+    private View mContentView;
+
+    @InjectView(R.id.events_container)
+    private View mEventContainerView;
 
     @InjectView(R.id.emptyNavView)
     private View mEmptyView;
@@ -82,7 +89,10 @@ public class OverviewActivity extends BaseActivity
     @InjectView(R.id.drawer)
     private DrawerLayout drawerLayout;
 
-    private OverviewFragment mOverviewFragment;
+    private EventPagesHandler eventPagesHandler = new EventPagesHandler(this);
+    private PageOverviewFragment mPageOverviewFragment;
+    private EventOverviewFragment mEventOverviewFragment;
+
     private Location mLocation;
     private Language mLanguage;
 
@@ -95,11 +105,16 @@ public class OverviewActivity extends BaseActivity
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
         initNavigationDrawer();
-        mOverviewFragment = OverviewFragment.newInstance();
+        mEventOverviewFragment = EventOverviewFragment.newInstance();
+        mPageOverviewFragment = PageOverviewFragment.newInstance();
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.container, mOverviewFragment)
+                    .replace(R.id.events_container, mEventOverviewFragment)
+                    .commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.pages_container, mPageOverviewFragment)
                     .commit();
         }
         changeLogin.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +143,7 @@ public class OverviewActivity extends BaseActivity
         if (mLanguage.getIconPath() != null) {
             Picasso.with(this)
                     .load(mLanguage.getIconPath())
-                    .placeholder(R.drawable.ic_location_not_found_black)
+                    .placeholder(R.drawable.empty_locations_white)
                     .error(R.drawable.ic_location_not_found_black)
                     .into(languageFlagImageView);
         }
@@ -139,7 +154,11 @@ public class OverviewActivity extends BaseActivity
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        navigationHeaderView.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            navigationHeaderView.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                        } else {
+                            navigationHeaderView.setBackground(new BitmapDrawable(getResources(), bitmap));
+                        }
                     }
 
                     @Override
@@ -177,7 +196,8 @@ public class OverviewActivity extends BaseActivity
         navigationHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mOverviewFragment.onRefresh();
+                mPageOverviewFragment.onRefresh();
+                mEventOverviewFragment.onRefresh();
                 drawerLayout.closeDrawers();
             }
         });
@@ -241,7 +261,7 @@ public class OverviewActivity extends BaseActivity
                 pages.add(page);
             }
         }
-        mOverviewFragment.setPages(pages);
+        mPageOverviewFragment.setPages(pages);
     }
 
 
@@ -296,7 +316,7 @@ public class OverviewActivity extends BaseActivity
 
     @Override
     public void onNavigationClicked(Page item) {
-        mOverviewFragment.changePage(item);
+        mPageOverviewFragment.changePage(item);
         drawerLayout.closeDrawers();
     }
 
@@ -361,18 +381,43 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    public Loader<List<Language>> onCreateLoader(int id, Bundle args) {
-        return new LanguageLoader(this, mLocation);
+    public void onOpenEventPage(EventPage page) {
+
     }
 
+
     @Override
-    public void onLoadFinished(Loader<List<Language>> loader, List<Language> languages) {
-        mOverviewFragment.loadLanguages(languages);
+    public void onEventPagesLoaded(final List<EventPage> pages) {
+        int messageCode = pages == null || pages.isEmpty() ? 0 : 1;
+        eventPagesHandler.sendEmptyMessage(messageCode);
     }
 
-    @Override
-    public void onLoaderReset(Loader<List<Language>> loader) {
+    static class EventPagesHandler extends Handler {
+        private final WeakReference<OverviewActivity> mActivity;
 
+        EventPagesHandler(OverviewActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            OverviewActivity activity = mActivity.get();
+            if (activity != null) {
+                if (msg.what == 1) {
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .show(activity.mEventOverviewFragment)
+                            .commit();
+                    activity.mEventContainerView.setVisibility(View.VISIBLE);
+                } else {
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .hide(activity.mEventOverviewFragment)
+                            .commit();
+                    activity.mEventContainerView.setVisibility(View.GONE);
+                }
+                activity.mContentView.invalidate();
+            }
+
+        }
     }
 
 }

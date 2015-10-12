@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import java.io.Serializable;
 
 import augsburg.se.alltagsguide.BuildConfig;
+import augsburg.se.alltagsguide.persistence.CacheHelper;
 
 /**
  * Created by Daniel-L on 09.10.2015.
@@ -42,15 +43,15 @@ public class Author implements Serializable {
         return new Author(login, firstName, lastName);
     }
 
-    public static Author fromCursor(Cursor cursor, int index) {
+    public static Author fromCursor(Cursor cursor) {
         if (BuildConfig.DEBUG) {
-            if (!cursor.isClosed()) {
+            if (cursor.isClosed()) {
                 throw new IllegalStateException("Cursor should not be closed");
             }
         }
-        String login = cursor.getString(index++);
-        String firstName = cursor.getString(index++);
-        String lastName = cursor.getString(index++);
+        String login = cursor.getString(cursor.getColumnIndex(CacheHelper.AUTHOR_USERNAME));
+        String firstName = cursor.getString(cursor.getColumnIndex(CacheHelper.AUTHOR_FIRSTNAME));
+        String lastName = cursor.getString(cursor.getColumnIndex(CacheHelper.AUTHOR_LASTNAME));
         return new Author(login, firstName, lastName);
     }
 }

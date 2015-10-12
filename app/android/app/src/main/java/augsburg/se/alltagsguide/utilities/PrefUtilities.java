@@ -28,7 +28,6 @@ public class PrefUtilities {
     public static final String MULTIPLE_COLUMNS_LANDSCAPE = "multiple_columns_landscape";
     private static final String LOCATION = "location";
     private static final String LANGUAGE = "language";
-    private static final String USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private static final String CURRENT_COLOR = "current_color";
     private static final String FONT_STYLE = "font_style";
 
@@ -67,14 +66,6 @@ public class PrefUtilities {
 
     public void setLanguage(Language language) {
         save(preferences.edit().putString(LANGUAGE, new Gson().toJson(language)));
-    }
-
-    public void setDrawerLearned(boolean learned) {
-        save(preferences.edit().putBoolean(USER_LEARNED_DRAWER, learned));
-    }
-
-    public boolean getDrawerLearned() {
-        return preferences.getBoolean(USER_LEARNED_DRAWER, false);
     }
 
     private static boolean isEditorApplyAvailable() {
@@ -134,25 +125,5 @@ public class PrefUtilities {
         } catch (Exception e) {
             return FontStyle.Medium;
         }
-    }
-
-    //TODO get rid of this
-    public UpdateTime getUpdateTime(@NonNull Location location, @NonNull Language language) {
-        return new UpdateTime(preferences.getLong(location.getName() + "-" + language.getShortName(), 0));
-    }
-
-    //TODO get rid of this
-    public void setUpdateTime(@NonNull Location location, @NonNull Language language, long time) {
-        save(preferences.edit().putLong(location.getName() + "-" + language.getShortName(), time));
-    }
-
-    //TODO get rid of this
-    public UpdateTime getEventUpdateTime(@NonNull Location location, @NonNull Language language) {
-        return new UpdateTime(preferences.getLong("event_" + location.getName() + "-" + language.getShortName(), 0));
-    }
-
-    //TODO get rid of this
-    public void setEventUpdateTime(Location location, Language language, long time) {
-        save(preferences.edit().putLong("event_" + location.getName() + "-" + language.getShortName(), time));
     }
 }

@@ -18,7 +18,7 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
 /**
  * Created by Daniel-L on 07.09.2015.
  */
-public class LanguageResource implements PersistableResource<Language> {
+public class LanguageResource implements PersistableNetworkResource<Language> {
 
     /**
      * Creation factory
@@ -58,13 +58,7 @@ public class LanguageResource implements PersistableResource<Language> {
 
     @Override
     public Language loadFrom(Cursor cursor, SQLiteDatabase db) {
-        int index = 0;
-        int id = cursor.getInt(index++);
-        String shortName = cursor.getString(index++);
-        String name = cursor.getString(index++);
-        String path = cursor.getString(index++);
-        int location = cursor.getInt(index++); //only required for sql query
-        Language language = new Language(id, shortName, name, path);
+        Language language = Language.fromCursor(cursor);
         language.setLocation(mLocation);
         return language;
     }

@@ -8,10 +8,57 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.view.View;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import roboguice.util.Ln;
+
 public class Helper {
+    public static String quote(String s) {
+        return "'" + s + "'";
+    }
+
+    public static float getFloatOrDefault(JsonElement elem, float defaultValue) {
+        try {
+            return elem.getAsFloat();
+        } catch (Exception e) {
+            Ln.d(e);
+            return defaultValue;
+        }
+    }
+
+    public static boolean sameDate(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    public static String getStringOrDefault(JsonElement elem, String defaultValue) {
+        try {
+            return elem.getAsString();
+        } catch (Exception e) {
+            Ln.d(e);
+            return defaultValue;
+        }
+    }
+
+    public static int getIntOrDefault(JsonElement elem, int defaultValue) {
+        try {
+            return elem.getAsInt();
+        } catch (Exception e) {
+            Ln.d(e);
+            return defaultValue;
+        }
+    }
+
     public static boolean equals(Object a, Object b) {
         return (a == null) ? (b == null) : a.equals(b);
     }
@@ -100,4 +147,5 @@ public class Helper {
         }
         return sb.toString();
     }
+
 }
