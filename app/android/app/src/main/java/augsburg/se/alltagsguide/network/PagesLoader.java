@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
+import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
 import roboguice.util.Ln;
@@ -32,6 +34,9 @@ public class PagesLoader extends BasicLoader<List<Page>> {
 
     @Inject
     private PageResource.Factory pagesFactory;
+
+    @Inject
+    private AvailableLanguageResource.Factory availableLanguageFactory;
 
 
     /**
@@ -50,8 +55,8 @@ public class PagesLoader extends BasicLoader<List<Page>> {
     public List<Page> load() {
         try {
             List<Page> pages = dbCache.loadOrRequest(pagesFactory.under(mLanguage, mLocation));
-            Page.recreateRelations(pages);
-
+            List<AvailableLanguage> languages = dbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
+            Page.recreateRelations(pages, languages);
             return pages;
         } catch (IOException e) {
             Ln.e(e);

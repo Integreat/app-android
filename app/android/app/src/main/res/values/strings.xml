@@ -90,4 +90,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="search_title">Search</string>
     <string name="preferences">Preferences</string>
+    <string name="title_activity_event">EventActivity</string>
 </resources>

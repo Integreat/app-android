@@ -13,12 +13,19 @@ import com.google.inject.name.Named;
 import java.io.File;
 import java.util.List;
 
+import augsburg.se.alltagsguide.common.EventCategory;
+import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.DatabaseInfo;
+import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
+import augsburg.se.alltagsguide.persistence.resources.EventCategoryResource;
+import augsburg.se.alltagsguide.persistence.resources.EventPageResource;
+import augsburg.se.alltagsguide.persistence.resources.EventTagResource;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.persistence.resources.LanguageResource;
+import augsburg.se.alltagsguide.serialization.EventPageSerializer;
 import augsburg.se.alltagsguide.serialization.LanguageSerializer;
 import augsburg.se.alltagsguide.serialization.LocationSerializer;
 import augsburg.se.alltagsguide.serialization.PageSerializer;
@@ -36,7 +43,7 @@ public class MainModule extends AbstractModule {
     /**
      * Version of database
      */
-    public static final int VERSION = 17;
+    public static final int VERSION = 27;
 
     public MainModule() {
     }
@@ -48,6 +55,14 @@ public class MainModule extends AbstractModule {
                 .build(LanguageResource.Factory.class));
         install(new FactoryModuleBuilder()
                 .build(PageResource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .build(EventPageResource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .build(EventTagResource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .build(EventCategoryResource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .build(AvailableLanguageResource.Factory.class));
     }
 
     @Provides
@@ -64,6 +79,8 @@ public class MainModule extends AbstractModule {
                 }.getType(), new LanguageSerializer())
                 .registerTypeAdapter(new TypeToken<List<Location>>() {
                 }.getType(), new LocationSerializer())
+                .registerTypeAdapter(new TypeToken<List<EventPage>>() {
+                }.getType(), new EventPageSerializer())
                 .create();
         return new GsonConverter(gson);
     }

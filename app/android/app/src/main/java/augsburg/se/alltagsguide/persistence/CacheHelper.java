@@ -37,6 +37,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String PAGE_AVAIL_PAGE_LANGUAGE = "pa_language"; // 3
     public static final String PAGE_AVAIL_OTHER_LANGUAGE = "pa_other_lang"; // 4
     public static final String PAGE_AVAIL_OTHER_PAGE = "pa_other_page"; // 5
+    public static final int PAGE_AVAIL_OFFSET = 5; //TODO CHANGABLE
 
     public static final String TABLE_EVENT = "events";
     public static final String EVENT_ID = "e_id"; //1
@@ -59,6 +60,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String EVENT_CATEGORY_LANGUAGE = "ec_language"; // 3
     public static final String EVENT_CATEGORY_PAGE = "ec_page"; // 4
     public static final String EVENT_CATEGORY_EVENT_ID = "ec_event_id"; // 5
+    public static final int EVENT_OFFSET = 5;
 
     public static final String TABLE_EVENT_TAG = "event_tags";
     public static final String EVENT_TAG_NAME = "et_name"; // 1
@@ -74,20 +76,23 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String AUTHOR_USERNAME = "a_username"; // 1
     public static final String AUTHOR_FIRSTNAME = "a_firstname"; // 2
     public static final String AUTHOR_LASTNAME = "a_lastname"; //  3
+    public static final int AUTHOR_OFFSET = 3; //TODO CHANGABLE
 
     public static final String TABLE_EVENT_LOCATION = "event_location";
-    public static final String EVENT_LOCATION_NAME = "el_location_name"; // 1
-    public static final String EVENT_LOCATION_ADDRESS = "el_location_address"; // 2
-    public static final String EVENT_LOCATION_TOWN = "el_location_town"; // 3
-    public static final String EVENT_LOCATION_STATE = "el_location_state"; // 4
-    public static final String EVENT_LOCATION_POSTCODE = "el_location_postcode"; // 5
-    public static final String EVENT_LOCATION_REGION = "el_location_region"; // 6
-    public static final String EVENT_LOCATION_COUNTRY = "el_location_country"; // 7
-    public static final String EVENT_LOCATION_LATITUDE = "el_location_latitude"; // 8
-    public static final String EVENT_LOCATION_LONGITUDE = "el_location_longitude"; // 9
-    public static final String EVENT_LOCATION_PAGE = "el_location_page"; //10
-    public static final String EVENT_LOCATION_LOCATION = "el_location"; //11
-    public static final String EVENT_LOCATION_LANGUAGE = "el_language"; //12
+    public static final String EVENT_LOCATION_ID = "el_location_id"; // 1
+    public static final String EVENT_LOCATION_NAME = "el_location_name"; // 2
+    public static final String EVENT_LOCATION_ADDRESS = "el_location_address"; // 3
+    public static final String EVENT_LOCATION_TOWN = "el_location_town"; // 4
+    public static final String EVENT_LOCATION_STATE = "el_location_state"; // 5
+    public static final String EVENT_LOCATION_POSTCODE = "el_location_postcode"; // 6
+    public static final String EVENT_LOCATION_REGION = "el_location_region"; // 7
+    public static final String EVENT_LOCATION_COUNTRY = "el_location_country"; // 8
+    public static final String EVENT_LOCATION_LATITUDE = "el_location_latitude"; // 9
+    public static final String EVENT_LOCATION_LONGITUDE = "el_location_longitude"; // 10
+    public static final String EVENT_LOCATION_PAGE = "el_location_page"; //11
+    public static final String EVENT_LOCATION_LOCATION = "el_location"; //12
+    public static final String EVENT_LOCATION_LANGUAGE = "el_language"; //13
+    public static final int EVENT_LOCATION_OFFSET = 13; //TODO CHANGABLE
 
     public static final String TABLE_LANGUAGE = "languages";
     public static final String LANGUAGE_ID = "l_id"; //1
@@ -113,6 +118,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     @Inject
     public CacheHelper(final Context context, DatabaseInfo databaseInfo, PrefUtilities prefUtilities) {
         super(context, databaseInfo.getName(), null, databaseInfo.getVersion());
+        Ln.d("Opening CacheHelper(Name: %s - Version: %d)", databaseInfo.getName(), databaseInfo.getVersion());
         mPrefUtilities = prefUtilities;
     }
 
@@ -204,6 +210,7 @@ public class CacheHelper extends SQLiteOpenHelper {
 
     private void createEventLocationTable(SQLiteDatabase db) {
         String eventLocationQuery = "CREATE TABLE " + TABLE_EVENT_LOCATION + "(" +
+                EVENT_LOCATION_ID + " INTEGER," +
                 EVENT_LOCATION_NAME + " TEXT," +
                 EVENT_LOCATION_ADDRESS + " TEXT," +
                 EVENT_LOCATION_TOWN + " TEXT," +
@@ -216,7 +223,7 @@ public class CacheHelper extends SQLiteOpenHelper {
                 EVENT_LOCATION_PAGE + " INTEGER," +
                 EVENT_LOCATION_LOCATION + " INTEGER," +
                 EVENT_LOCATION_LANGUAGE + " INTEGER," +
-                "PRIMARY KEY(" + EVENT_LOCATION_PAGE + "," + EVENT_LOCATION_LOCATION + "," + EVENT_LOCATION_LANGUAGE + ")" +
+                "PRIMARY KEY(" + EVENT_LOCATION_ID + "," + EVENT_LOCATION_PAGE + "," + EVENT_LOCATION_LOCATION + "," + EVENT_LOCATION_LANGUAGE + ")" +
                 ");";
         Ln.d(eventLocationQuery);
         db.execSQL(eventLocationQuery);

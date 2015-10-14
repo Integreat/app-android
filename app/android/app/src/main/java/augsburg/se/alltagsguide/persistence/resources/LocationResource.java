@@ -16,7 +16,7 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
 /**
  * Created by Daniel-L on 07.09.2015.
  */
-public class LocationResource implements PersistableResource<Location> {
+public class LocationResource implements PersistableNetworkResource<Location> {
     private NetworkService mNetwork;
 
     @Inject

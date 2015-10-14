@@ -3,10 +3,7 @@ package augsburg.se.alltagsguide.common;
 import android.support.annotation.NonNull;
 import android.text.Html;
 
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -115,12 +112,7 @@ public class Page implements Serializable, Comparable {
                     }
                 }
             }
-            if (mOrder < other.getOrder()) {
-                return -1;
-            }
-            if (mOrder > other.getOrder()) {
-                return 1;
-            }
+            return Integer.valueOf(mOrder).compareTo(other.getOrder());
         }
         return 0;
     }
@@ -212,13 +204,23 @@ public class Page implements Serializable, Comparable {
         return 1 + getParent().getDepth();
     }
 
-    public static void recreateRelations(List<? extends Page> pages) {
+    public static void recreateRelations(List<? extends Page> pages, List<AvailableLanguage> languages) {
         /* add page-page connection */
         Map<Integer, Page> pageIdMap = new HashMap<>();
         for (Page page : pages) {
             pageIdMap.put(page.getId(), page);
         }
+        Map<Integer, List<AvailableLanguage>> shortNameLanguageMap = new HashMap<>();
+        for (AvailableLanguage language : languages) {
+            if (!shortNameLanguageMap.containsKey(language.getPageId())) {
+                shortNameLanguageMap.put(language.getPageId(), new ArrayList<AvailableLanguage>());
+            }
+            shortNameLanguageMap.get(language.getPageId()).add(language);
+        }
         for (Page page : pages) {
+            if (shortNameLanguageMap.containsKey(page.getId())) {
+                page.getAvailableLanguages().addAll(shortNameLanguageMap.get(page.getId()));
+            }
             if (pageIdMap.containsKey(page.getParentId())) {
                 Page parent = pageIdMap.get(page.getParentId());
                 page.setParent(parent);

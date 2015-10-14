@@ -8,6 +8,9 @@ import com.google.gson.JsonObject;
 import java.io.Serializable;
 
 import augsburg.se.alltagsguide.BuildConfig;
+import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.utilities.Helper;
+import roboguice.util.Ln;
 
 /**
  * Created by Daniel-L on 08.10.2015.
@@ -78,37 +81,41 @@ public class EventLocation implements Serializable {
     }
 
     public static EventLocation fromJson(@NonNull JsonObject jsonPage) {
+        int id = Helper.getIntOrDefault(jsonPage.get("id"), -1);
+        if (id == -1) {
+            return null;
+        }
         return new EventLocation(
-                jsonPage.get("id").getAsInt(),
-                jsonPage.get("name").getAsString(),
-                jsonPage.get("address").getAsString(),
-                jsonPage.get("town").getAsString(),
-                jsonPage.get("state").getAsString(),
-                jsonPage.get("postcode").getAsInt(),
-                jsonPage.get("region").getAsString(),
-                jsonPage.get("country").getAsString(),
-                jsonPage.get("latitude").getAsFloat(),
-                jsonPage.get("longitude").getAsFloat());
+                id,
+                Helper.getStringOrDefault(jsonPage.get("name"), null),
+                Helper.getStringOrDefault(jsonPage.get("address"), null),
+                Helper.getStringOrDefault(jsonPage.get("town"), null),
+                Helper.getStringOrDefault(jsonPage.get("state"), null),
+                Helper.getIntOrDefault(jsonPage.get("postcode"), 0),
+                Helper.getStringOrDefault(jsonPage.get("region"), null),
+                Helper.getStringOrDefault(jsonPage.get("country"), null),
+                Helper.getFloatOrDefault(jsonPage.get("latitude"), 0.0f),
+                Helper.getFloatOrDefault(jsonPage.get("longitude"), 0.0f));
     }
 
-    public static EventLocation fromCursor(Cursor cursor, int index) {
+    public static EventLocation fromCursor(Cursor cursor) {
         if (BuildConfig.DEBUG) {
-            if (!cursor.isClosed()) {
+            Ln.d("Column count: %d", cursor.getColumnCount());
+            if (cursor.isClosed()) {
                 throw new IllegalStateException("Cursor should not be closed");
             }
         }
-        int locationId = cursor.getInt(index++);
-        String locationName = cursor.getString(index++);
-        String locationAddress = cursor.getString(index++);
-        String locationTown = cursor.getString(index++);
-        String locationState = cursor.getString(index++);
-        int locationPostcode = cursor.getInt(index++);
-        String locationRegion = cursor.getString(index++);
-        String locationCountry = cursor.getString(index++);
-        float locationLatitude = cursor.getFloat(index++);
-        float locationLongitude = cursor.getFloat(index++);
-        return new EventLocation(
-                locationId, locationName, locationAddress, locationTown, locationState, locationPostcode,
+        int locationId = cursor.getInt(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_ID));
+        String locationName = cursor.getString(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_NAME));
+        String locationAddress = cursor.getString(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_ADDRESS));
+        String locationTown = cursor.getString(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_TOWN));
+        String locationState = cursor.getString(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_STATE));
+        int locationPostcode = cursor.getInt(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_POSTCODE));
+        String locationRegion = cursor.getString(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_REGION));
+        String locationCountry = cursor.getString(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_COUNTRY));
+        float locationLatitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_LATITUDE));
+        float locationLongitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.EVENT_LOCATION_LONGITUDE));
+        return new EventLocation(locationId, locationName, locationAddress, locationTown, locationState, locationPostcode,
                 locationRegion, locationCountry, locationLatitude, locationLongitude);
     }
 }

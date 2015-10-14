@@ -50,7 +50,7 @@ public class Event implements Serializable {
         return mEndTime;
     }
 
-    public static Event fromJson(@NonNull final JsonObject jsonEvent, int pageId) {
+    public @NonNull static Event fromJson(@NonNull final JsonObject jsonEvent, int pageId) {
         int id = jsonEvent.get("id").getAsInt();
         String startDate = jsonEvent.get("start_date").getAsString();
         String endDate = jsonEvent.get("end_date").getAsString();

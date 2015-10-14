@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide;
 
 import android.app.Application;
+import android.app.Instrumentation;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.inject.Injector;
@@ -16,6 +17,15 @@ public class BaseApplication extends Application {
      * The injector which can inject objects later on
      */
     private static Injector injector;
+
+    public BaseApplication() {
+        super();
+    }
+
+    public BaseApplication(Instrumentation instrumentation) {
+        super();
+        attachBaseContext(instrumentation.getTargetContext());
+    }
 
     @Override
     public void onCreate() {

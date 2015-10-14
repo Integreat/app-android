@@ -1,10 +1,13 @@
 package augsburg.se.alltagsguide.common;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
+
+import augsburg.se.alltagsguide.persistence.CacheHelper;
 
 /**
  * Created by Daniel-L on 16.08.2015.
@@ -73,5 +76,13 @@ public class Language implements Serializable, Comparable {
     @Override
     public boolean equals(@NonNull Object another) {
         return another instanceof Language && mId == ((Language) another).getId();
+    }
+
+    public static Language fromCursor(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.LANGUAGE_ID));
+        String shortName = cursor.getString(cursor.getColumnIndex(CacheHelper.LANGUAGE_SHORT));
+        String name = cursor.getString(cursor.getColumnIndex(CacheHelper.LANGUAGE_NAME));
+        String path = cursor.getString(cursor.getColumnIndex(CacheHelper.LANGUAGE_PATH));
+        return new Language(id, shortName, name, path);
     }
 }

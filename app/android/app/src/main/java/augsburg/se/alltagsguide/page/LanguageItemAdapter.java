@@ -17,20 +17,21 @@ import com.squareup.picasso.Transformation;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Language;
 import roboguice.RoboGuice;
 
 /**
  * Simple adapter example for custom items in the dialog
  */
-class LanguageItemAdapter extends BaseAdapter implements View.OnClickListener {
+public class LanguageItemAdapter extends BaseAdapter implements View.OnClickListener {
 
     private final Context mContext;
-    private final List<Language> mItems;
+    private final List<AvailableLanguage> mItems;
     @Inject
     private Picasso mPicasso;
 
-    public LanguageItemAdapter(Context context, List<Language> items) {
+    public LanguageItemAdapter(Context context, List<AvailableLanguage> items) {
         mContext = context;
         mItems = items;
         RoboGuice.injectMembers(context, this);
@@ -65,9 +66,14 @@ class LanguageItemAdapter extends BaseAdapter implements View.OnClickListener {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Language language = mItems.get(position);
+        AvailableLanguage availableLanguage = mItems.get(position);
+        Language language = availableLanguage.getLoadedLanguage();
+
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.dialog_language_item, null);
+        }
+        if (language == null) {
+            return convertView;
         }
         ((TextView) convertView.findViewById(R.id.language_name)).setText(language.getName());
         mPicasso.load(language.getIconPath())

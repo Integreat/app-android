@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import augsburg.se.alltagsguide.persistence.CacheHelper;
+
 /**
  * Created by Daniel-L on 10.10.2015.
  */
@@ -18,9 +20,15 @@ public class AvailableLanguage implements Serializable {
     private String mLanguage;
     private int mPageId;
 
+    private Language mLoadedLanguage;
+
     public AvailableLanguage(String language, int pageId) {
         mLanguage = language;
         mPageId = pageId;
+    }
+
+    public void setLanguage(Language language) {
+        mLoadedLanguage = language;
     }
 
     public static List<AvailableLanguage> fromJson(JsonElement elem) {
@@ -33,6 +41,10 @@ public class AvailableLanguage implements Serializable {
         return languages;
     }
 
+    public Language getLoadedLanguage() {
+        return mLoadedLanguage;
+    }
+
     public String getLanguage() {
         return mLanguage;
     }
@@ -42,6 +54,8 @@ public class AvailableLanguage implements Serializable {
     }
 
     public static AvailableLanguage loadFrom(Cursor cursor) {
-        return new AvailableLanguage(cursor.getString(0), cursor.getInt(1));
+        String shortLanguage = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_AVAIL_PAGE_LANGUAGE));
+        int otherPageId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AVAIL_OTHER_PAGE));
+        return new AvailableLanguage(shortLanguage, otherPageId);
     }
 }

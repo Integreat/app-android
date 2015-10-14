@@ -17,10 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.persistence.resources.PersistableResource;
+import augsburg.se.alltagsguide.persistence.resources.PersistableNetworkResource;
 import roboguice.util.Ln;
 
 /**
- * Given a PersistableResource, this class will take support loading/storing
+ * Given a PersistableNetworkResource, this class will take support loading/storing
  * it's data or requesting fresh data, as appropriate.
  */
 public class DatabaseCache {
@@ -47,6 +48,16 @@ public class DatabaseCache {
         }
     }
 
+
+    public Cursor executeRawQuery(String query, String[] args) {
+        SQLiteOpenHelper helper = helperProvider.get();
+        final SQLiteDatabase db = getReadable(helper);
+        if (db == null) {
+            return null;
+        }
+        return db.rawQuery(query, args);
+    }
+
     /**
      * Get readable database
      *
@@ -57,10 +68,12 @@ public class DatabaseCache {
         try {
             return helper.getReadableDatabase();
         } catch (SQLiteException e1) {
+            Ln.e(e1);
             // Make second attempt
             try {
                 return helper.getReadableDatabase();
             } catch (SQLiteException e2) {
+                Ln.e(e2);
                 return null;
             }
         }
@@ -83,7 +96,7 @@ public class DatabaseCache {
      * @return resource
      * @throws IOException
      */
-    public <E> List<E> loadOrRequest(PersistableResource<E> persistableResource)
+    public <E> List<E> loadOrRequest(PersistableNetworkResource<E> persistableResource)
             throws IOException {
         SQLiteOpenHelper helper = helperProvider.get();
         try {
@@ -115,7 +128,7 @@ public class DatabaseCache {
      * @throws IOException
      */
     public <E> List<E> requestAndStore(
-            PersistableResource<E> persistableResource) throws IOException {
+            PersistableNetworkResource<E> persistableResource) throws IOException {
         SQLiteOpenHelper helper = helperProvider.get();
         try {
             return requestAndStore(helper, persistableResource);
@@ -125,7 +138,7 @@ public class DatabaseCache {
     }
 
     private <E> List<E> requestAndStore(final SQLiteOpenHelper helper,
-                                        final PersistableResource<E> persistableResource)
+                                        final PersistableNetworkResource<E> persistableResource)
             throws IOException {
         final List<E> items = persistableResource.request();
         if (items == null || items.isEmpty()) {
@@ -150,8 +163,10 @@ public class DatabaseCache {
     private <E> List<E> loadFromDB(final SQLiteOpenHelper helper,
                                    final PersistableResource<E> persistableResource) {
         final SQLiteDatabase db = getReadable(helper);
-        if (db == null)
+        if (db == null) {
+            Ln.d("SQLiteDatabase is null");
             return null;
+        }
 
         Cursor cursor = persistableResource.getCursor(db);
         try {
