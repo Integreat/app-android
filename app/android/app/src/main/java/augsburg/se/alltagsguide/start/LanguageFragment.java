@@ -129,7 +129,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
                 }
             }, getActivity());
         } else {
-            mAdapter.add(languages);
+            mAdapter.setItems(languages);
         }
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);

@@ -83,7 +83,7 @@ public class AvailableLanguageResource implements PersistableResource<AvailableL
             languageValues.put(CacheHelper.PAGE_AVAIL_PAGE_ID, page.getId());
             languageValues.put(CacheHelper.PAGE_AVAIL_PAGE_LOCATION, mLocation.getId());
             languageValues.put(CacheHelper.PAGE_AVAIL_PAGE_LANGUAGE, mLanguage.getId());
-            languageValues.put(CacheHelper.PAGE_AVAIL_OTHER_PAGE, language.getPageId());
+            languageValues.put(CacheHelper.PAGE_AVAIL_OTHER_PAGE, language.getOtherPageId());
             languageValues.put(CacheHelper.PAGE_AVAIL_OTHER_LANGUAGE, language.getLanguage());
             db.replace(CacheHelper.TABLE_PAGE_AVAILABLE_LANGUAGE, null, languageValues);
         }

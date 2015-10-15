@@ -63,7 +63,12 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
 
     @Override
     public Cursor getCursor(SQLiteDatabase readableDatabase) {
-        String tables = CacheHelper.TABLE_PAGE
+        SQLiteQueryBuilder builder = getCursorQueryBuilder(getTables()); // applies where location, language filter
+        return builder.query(readableDatabase, null, null, null, null, null, null);
+    }
+
+    private String getTables() {
+        return CacheHelper.TABLE_PAGE
                 + " left join " + CacheHelper.TABLE_AUTHOR + " ON "
                 + CacheHelper.PAGE_AUTHOR + "=" + CacheHelper.AUTHOR_USERNAME
                 + " left join " + CacheHelper.TABLE_EVENT + " ON "
@@ -74,9 +79,6 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
                 + CacheHelper.PAGE_ID + "=" + CacheHelper.EVENT_LOCATION_PAGE + " AND "
                 + CacheHelper.PAGE_LOCATION + "=" + CacheHelper.EVENT_LOCATION + " AND "
                 + CacheHelper.PAGE_LANGUAGE + "=" + CacheHelper.EVENT_LANGUAGE;
-
-        SQLiteQueryBuilder builder = getCursorQueryBuilder(tables); // applies where location, language filter
-        return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
     public SQLiteQueryBuilder getCursorQueryBuilder(String tables) {
@@ -91,7 +93,9 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
 
     @Override
     public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
-        return null;
+        SQLiteQueryBuilder builder = getCursorQueryBuilder(getTables());
+        builder.appendWhere(" AND " + CacheHelper.PAGE_ID + "=" + String.valueOf(id));
+        return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
     @Override

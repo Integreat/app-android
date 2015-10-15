@@ -66,6 +66,7 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
                 .placeholder(R.drawable.ic_location_not_found_black)
                 .error(R.drawable.ic_location_not_found_black)
                 .fit()
+                .centerInside()
                 .into(holder.image);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

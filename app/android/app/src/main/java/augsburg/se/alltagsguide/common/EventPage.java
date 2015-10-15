@@ -37,7 +37,7 @@ public class EventPage extends Page implements Serializable {
         Event event = Event.fromJson(jsonPage.get("event").getAsJsonObject(), page.getId());
         JsonElement locationElement = jsonPage.get("location");
         EventLocation location = null;
-        if (locationElement != JsonNull.INSTANCE) {
+        if (locationElement != null && !locationElement.isJsonNull()) {
             location = EventLocation.fromJson(locationElement.getAsJsonObject());
         }
         List<EventTag> tags = EventTag.fromJson(jsonPage.get("tags").getAsJsonArray());
@@ -68,8 +68,8 @@ public class EventPage extends Page implements Serializable {
         return mTags;
     }
 
-    public static void recreateRelations(List<EventPage> pages, List<EventCategory> categories, List<EventTag> tags, List<AvailableLanguage> languages) {
-        Page.recreateRelations(pages, languages);
+    public static void recreateRelations(List<EventPage> pages, List<EventCategory> categories, List<EventTag> tags, List<AvailableLanguage> languages, Language currentLanguage) {
+        Page.recreateRelations(pages, languages, currentLanguage);
 
         Map<Integer, List<EventCategory>> eventIdCategoryMap = new HashMap<>();
         for (EventCategory category : categories) {

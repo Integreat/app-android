@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 import augsburg.se.alltagsguide.BuildConfig;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.utilities.Objects;
 
 /**
  * Created by Daniel-L on 09.10.2015.
@@ -53,5 +54,20 @@ public class Author implements Serializable {
         String firstName = cursor.getString(cursor.getColumnIndex(CacheHelper.AUTHOR_FIRSTNAME));
         String lastName = cursor.getString(cursor.getColumnIndex(CacheHelper.AUTHOR_LASTNAME));
         return new Author(login, firstName, lastName);
+    }
+
+    public String toText() {
+        String text = "";
+        if (mFirstName != null) {
+            text += mFirstName + " ";
+        }
+        if (mLastName != null) {
+            text += mLastName;
+        }
+        text = text.trim();
+        if (Objects.isNullOrEmpty(text)) {
+            text += mLogin;
+        }
+        return text;
     }
 }

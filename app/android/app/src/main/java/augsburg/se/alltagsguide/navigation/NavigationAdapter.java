@@ -1,5 +1,7 @@
 package augsburg.se.alltagsguide.navigation;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,41 +10,47 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.Theme;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.utilities.Objects;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.NavigationViewHolder> {
     private OnNavigationSelected mListener;
     private static final int HEADER = 0;
     private static final int ITEM = 1;
     private List<Page> mPages;
+    private int mColor;
+    private Context mContext;
+    private int mCurrentPageId;
+
 
     public void setPages(List<Page> pages) {
-        mPages = filterParents(pages);
+        mPages = Page.filterParents(pages);
         Collections.sort(mPages);
         notifyDataSetChanged();
     }
 
-    private List<Page> filterParents(@NonNull List<Page> pages) {
-        List<Page> parentPages = new ArrayList<>();
-        for (Page page : pages) {
-            if (page.getParent() == null) {
-                parentPages.add(page);
-            }
-        }
-        return parentPages;
+    public void setSelectedIndex(int index) {
+        mCurrentPageId = index;
     }
+
 
     public interface OnNavigationSelected {
         void onNavigationClicked(Page item);
     }
 
-    public NavigationAdapter(OnNavigationSelected listener) {
+    public NavigationAdapter(OnNavigationSelected listener, int color, Context context, int currentPageId) {
         mListener = listener;
+        mColor = color;
+        mContext = context;
+        mCurrentPageId = currentPageId;
     }
 
     @Override
@@ -84,6 +92,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
             return;
         }
         final Page item = mPages.get(position);
+        boolean selected = Objects.equals(item.getId(), mCurrentPageId);
         holder.counter.setText(String.valueOf(item.getContentCount()));
         holder.title.setText(generatePadding(item.getDepth(), item.getTitle()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +101,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
                 mListener.onNavigationClicked(item);
             }
         });
+        holder.itemView.setBackgroundColor(selected ? mColor : mContext.getResources().getColor(android.R.color.white));
+        holder.counter.setTextColor(selected ? mContext.getResources().getColor(android.R.color.white) : mContext.getResources().getColor(android.R.color.primary_text_light));
+        holder.title.setTextColor(selected ? mContext.getResources().getColor(android.R.color.white) : mContext.getResources().getColor(android.R.color.primary_text_light));
     }
 
     public class NavigationViewHolder extends RecyclerView.ViewHolder {

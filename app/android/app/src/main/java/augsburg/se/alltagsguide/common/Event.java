@@ -6,9 +6,8 @@ import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
+import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.util.Ln;
 
@@ -50,7 +49,9 @@ public class Event implements Serializable {
         return mEndTime;
     }
 
-    public @NonNull static Event fromJson(@NonNull final JsonObject jsonEvent, int pageId) {
+    public
+    @NonNull
+    static Event fromJson(@NonNull final JsonObject jsonEvent, int pageId) {
         int id = jsonEvent.get("id").getAsInt();
         String startDate = jsonEvent.get("start_date").getAsString();
         String endDate = jsonEvent.get("end_date").getAsString();
@@ -58,12 +59,11 @@ public class Event implements Serializable {
         String endTime = jsonEvent.get("end_time").getAsString();
         boolean allDay = jsonEvent.get("all_day").getAsInt() == 1;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.GERMANY);
         long start = -1;
         long end = -1;
         try {
-            start = dateFormat.parse(startDate + " " + Objects.emptyIfNull(startTime)).getTime();
-            end = dateFormat.parse(endDate + " " + Objects.emptyIfNull(endTime)).getTime();
+            start = Helper.FROM_DATE_FORMAT.parse(startDate + " " + Objects.emptyIfNull(startTime)).getTime();
+            end = Helper.FROM_DATE_FORMAT.parse(endDate + " " + Objects.emptyIfNull(endTime)).getTime();
         } catch (ParseException e) {
             Ln.e(e);
 

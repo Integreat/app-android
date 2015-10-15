@@ -83,17 +83,12 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
         titleHolder.title.setText(page.getTitle());
     }
 
-    SimpleDateFormat dateFormatFrom = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY);
     SimpleDateFormat dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
 
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final EventPage page) {
         contentHolder.title.setText(page.getTitle());
         String desc = page.getDescription();
-        try {
-            contentHolder.date.setText(dateFormatTo.format(dateFormatFrom.parse(page.getModified())));
-        } catch (ParseException e) {
-            Ln.e(e);
-        }
+        contentHolder.date.setText(dateFormatTo.format(page.getModified()));
         contentHolder.description.setText(Html.fromHtml(desc));
         contentHolder.description.setVisibility(Objects.isNullOrEmpty(desc) ? View.GONE : View.VISIBLE);
         contentHolder.itemView.setOnClickListener(new View.OnClickListener() {

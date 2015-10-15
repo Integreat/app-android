@@ -13,6 +13,7 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:adjustViewBounds="false"
+        android:scaleType="centerCrop"
         android:src="@drawable/empty_languages_white" />
 
     <TextView

@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.google.inject.Inject;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.common.AvailableLanguage;
@@ -22,12 +22,13 @@ import roboguice.util.Ln;
 /**
  * Created by Daniel-L on 07.09.2015.
  */
-public class PagesLoader extends BasicLoader<List<Page>> {
+public class PageLoader extends BasicLoader<Page> {
 
     @Inject
     private DatabaseCache dbCache;
     private Location mLocation;
     private Language mLanguage;
+    private int mId;
 
     @Inject
     private PageResource.Factory pagesFactory;
@@ -42,22 +43,37 @@ public class PagesLoader extends BasicLoader<List<Page>> {
      * @param activity
      */
     @Inject
-    public PagesLoader(Activity activity, @NonNull Location location, @NonNull Language language) {
+    public PageLoader(Activity activity, @NonNull Location location, @NonNull Language language, int id) {
         super(activity);
         mLocation = location;
         mLanguage = language;
+        mId = id;
     }
 
     @Override
-    public List<Page> load() {
+    public Page load() {
+        PageResource resource = pagesFactory.under(mLanguage, mLocation);
         try {
-            List<Page> pages = dbCache.loadOrRequest(pagesFactory.under(mLanguage, mLocation));
+            Page translatedPage = dbCache.load(resource, mId);
+            if (translatedPage == null) {
+                dbCache.requestAndStore(resource);
+                translatedPage = dbCache.load(resource, mId);
+                if (translatedPage == null) {
+                    return null;
+                }
+            }
+            List<Page> pages = new ArrayList<>();
+            pages.add(translatedPage);
             List<AvailableLanguage> languages = dbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
             Page.recreateRelations(pages, languages, mLanguage);
-            return pages;
+            for (Page page : pages) {
+                if (page.getId() == mId) {
+                    return page;
+                }
+            }
         } catch (IOException e) {
             Ln.e(e);
-            return Collections.emptyList();
         }
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,16 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.inject.Inject;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
-import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.PagesLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
+import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
@@ -30,13 +32,11 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     @InjectView(R.id.recycler_view)
     private SuperRecyclerView mRecyclerView;
-
     private PageAdapter mAdapter;
-    @Inject
-    private PrefUtilities mPrefUtilities;
 
     private OnPageFragmentInteractionListener mListener;
     private StaggeredGridLayoutManager mLayoutManager;
+    private List<Page> mPages;
 
     public static PageOverviewFragment newInstance() {
         return new PageOverviewFragment();
@@ -49,7 +49,6 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addListener();
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
@@ -83,6 +82,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         }
     }
 
+
     private int getSpanCount() {
         switch (getResources().getConfiguration().orientation) {
             case Configuration.ORIENTATION_LANDSCAPE:
@@ -103,6 +103,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
         mRecyclerView.setRefreshListener(this);
+        addListener();
     }
 
     @Override
@@ -135,10 +136,8 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         mListener = null;
     }
 
-    public void changePage(Page item) {
-        if (mAdapter != null) {
-            mAdapter.setItems(item.getSubPagesRecursively());
-        }
+    public void changePage(@NonNull Page item) {
+        setOrInitPageAdapter(item.getSubPagesRecursively());
     }
 
     @Override
@@ -153,14 +152,8 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     @Override
     public void onLoadFinished(Loader<List<Page>> loader, final List<Page> pages) {
-        if (mAdapter == null) {
-            mAdapter = new PageAdapter(pages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
-        } else {
-            mAdapter.setItems(pages);
-        }
-        if (mRecyclerView.getAdapter() == null) {
-            mRecyclerView.setAdapter(mAdapter);
-        }
+        mPages = pages;
+        setOrInitPageAdapter(restoreVisiblePages(pages));
         mListener.onPagesLoaded(pages);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -170,14 +163,56 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         }, 500);
     }
 
-    public void setPages(List<Page> pages) {
-        mAdapter.setItems(pages);
+    private List<Page> restoreVisiblePages(List<Page> pages) {
+        int selectedPageId = mPrefUtilities.getSelectedPageId();
+        if (selectedPageId >= 0) {
+            List<Page> hierarchyPages = Page.filterParents(pages);
+            for (Page page : hierarchyPages) {
+                if (Objects.equals(selectedPageId, page.getId())) {
+                    return page.getSubPagesRecursively();
+                }
+            }
+        }
+        return pages;
     }
+
+    private void setOrInitPageAdapter(List<Page> pages) {
+        Collections.sort(pages);
+        if (mAdapter == null) {
+            mAdapter = new PageAdapter(pages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
+        } else {
+            mAdapter.setItems(pages);
+        }
+        if (mRecyclerView.getAdapter() == null) {
+            mRecyclerView.setAdapter(mAdapter);
+        }
+    }
+
 
     @Override
     public void onLoaderReset(Loader<List<Page>> loader) {
     }
 
+    public void filterByText(String filterText) {
+        if (mPages != null) { //TODO save attributes at orientation changes
+            if (Objects.isNullOrEmpty(filterText)) {
+                setOrInitPageAdapter(restoreVisiblePages(mPages));
+            } else {
+                List<Page> pages = new ArrayList<>();
+                for (Page page : mPages) {
+                    String relevantContent = page.getTitle();
+                    if (page.getContent() != null) {
+                        relevantContent += page.getContent();
+                    }
+
+                    if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
+                        pages.add(page);
+                    }
+                }
+                setOrInitPageAdapter(pages);
+            }
+        }
+    }
 
     public interface OnPageFragmentInteractionListener {
         void onOpenPage(Page page);

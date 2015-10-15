@@ -147,7 +147,13 @@ public class CacheHelper extends SQLiteOpenHelper {
                 PAGE_AVAIL_PAGE_LOCATION + " INTEGER," +
                 PAGE_AVAIL_PAGE_LANGUAGE + " INTEGER," +
                 PAGE_AVAIL_OTHER_LANGUAGE + " TEXT," +
-                PAGE_AVAIL_OTHER_PAGE + " INTEGER" +
+                PAGE_AVAIL_OTHER_PAGE + " INTEGER," +
+                "PRIMARY KEY(" +
+                PAGE_AVAIL_PAGE_ID + "," +
+                PAGE_AVAIL_PAGE_LOCATION + "," +
+                PAGE_AVAIL_PAGE_LANGUAGE + "," +
+                PAGE_AVAIL_OTHER_LANGUAGE + "," +
+                PAGE_AVAIL_OTHER_PAGE + ")" +
                 ");";
         Ln.d(availableLanguagesQuery);
         db.execSQL(availableLanguagesQuery);
@@ -291,7 +297,7 @@ public class CacheHelper extends SQLiteOpenHelper {
                 PAGE_TITLE + " TEXT," +
                 PAGE_TYPE + " TEXT," +
                 PAGE_STATUS + " TEXT," +
-                PAGE_MODIFIED + " TEXT," +
+                PAGE_MODIFIED + " LONG," +
                 PAGE_DESCRIPTION + " TEXT," +
                 PAGE_CONTENT + " TEXT," +
                 PAGE_PARENT_ID + " INTEGER," +

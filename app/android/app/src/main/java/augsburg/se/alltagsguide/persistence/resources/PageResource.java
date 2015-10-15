@@ -28,7 +28,7 @@ import augsburg.se.alltagsguide.utilities.Helper;
  */
 public class PageResource implements PersistableNetworkResource<Page> {
     public static final String PAGE_STATUS_TRASH = "trash";
-    public static final String PAGE_TYPE = "type";
+    public static final String PAGE_TYPE = "page";
 
     /**
      * Creation factory
@@ -77,10 +77,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
 
     @Override
     public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
-        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        builder.setTables(getTables());
-        builder.appendWhere(CacheHelper.PAGE_LANGUAGE + "=" + String.valueOf(mLanguage.getId()));
-        builder.appendWhere(" AND " + CacheHelper.PAGE_LOCATION + "=" + String.valueOf(mLocation.getId()));
+        SQLiteQueryBuilder builder = getCursorQueryBuilder(getTables());
         builder.appendWhere(" AND " + CacheHelper.PAGE_ID + "=" + String.valueOf(id));
         return builder.query(readableDatabase, null, null, null, null, null, null);
     }
@@ -91,7 +88,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
         String title = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TITLE));
         String type = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TYPE));
         String status = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_STATUS));
-        String modified = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_MODIFIED));
+        long modified = cursor.getLong(cursor.getColumnIndex(CacheHelper.PAGE_MODIFIED));
         String description = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_DESCRIPTION));
         String content = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_CONTENT));
         int parentId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_PARENT_ID));

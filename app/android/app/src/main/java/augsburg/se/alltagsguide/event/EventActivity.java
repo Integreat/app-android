@@ -1,10 +1,8 @@
 package augsburg.se.alltagsguide.event;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.JsResult;
@@ -14,21 +12,20 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.inject.Inject;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.EventPage;
-import augsburg.se.alltagsguide.common.Language;
-import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.page.LanguageItemAdapter;
+import augsburg.se.alltagsguide.network.EventPageLoader;
+import augsburg.se.alltagsguide.utilities.LanguageItemAdapter;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
@@ -36,10 +33,14 @@ import roboguice.inject.InjectView;
 import roboguice.util.Ln;
 
 @ContentView(R.layout.activity_event)
-public class EventActivity extends BaseActivity {
+public class EventActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<EventPage> {
 
+    private static final String ARG_LANGUAGE = "language";
     public static final String ARG_INFO = "info";
     private EventPage mPage;
+
+    @Inject
+    private Picasso mPicasso;
 
     @InjectView(R.id.description)
     private WebView descriptionView;
@@ -50,9 +51,14 @@ public class EventActivity extends BaseActivity {
     @InjectView(R.id.from_date)
     private TextView fromDateTextView;
 
+    @InjectView(R.id.author)
+    private TextView authorTextView;
 
     @InjectView(R.id.location)
     private TextView locationTextView;
+
+    @InjectView(R.id.other_language_count)
+    private TextView otherLanguageCountTextView;
 
     //TODO categories, tags
 
@@ -65,7 +71,11 @@ public class EventActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPage = (EventPage) getIntent().getSerializableExtra(ARG_INFO);
+        setEventPage((EventPage) getIntent().getSerializableExtra(ARG_INFO));
+    }
+
+    private void setEventPage(EventPage page) {
+        mPage = page;
         setSubTitle(mPage.getTitle());
         descriptionView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -94,6 +104,10 @@ public class EventActivity extends BaseActivity {
             toDateTextView.setText(dateFormatFrom.format(mPage.getEvent().getEndTime()));
         }
 
+        if (mPage.getAuthor() != null) {
+            authorTextView.setText(mPage.getAuthor().toText());
+        }
+
         if (mPage.getLocation() != null) {
             String location = "";
             String name = mPage.getLocation().getName();
@@ -106,6 +120,7 @@ public class EventActivity extends BaseActivity {
             }
             locationTextView.setText(location);
         }
+        otherLanguageCountTextView.setText("+" + mPage.getAvailableLanguages().size());
     }
 
     //TODO redundant
@@ -142,6 +157,11 @@ public class EventActivity extends BaseActivity {
     }
 
     private void setupLanguagesButton() {
+        mPicasso.load(mPage.getLanguage().getIconPath())
+                .placeholder(R.drawable.ic_location_not_found_black)
+                .error(R.drawable.ic_location_not_found_black)
+                .fit()
+                .into(circleImageView);
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,13 +181,12 @@ public class EventActivity extends BaseActivity {
         });
     }
 
-    //TODO maybe BASE-Activity for Event and Page!
     private void loadLanguage(AvailableLanguage language) {
-        //load page from db
-        //if fail, load language for city from network
-        // load page from db
-
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_LANGUAGE, language);
+        getSupportLoaderManager().restartLoader(0, bundle, this);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -177,5 +196,24 @@ public class EventActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<EventPage> onCreateLoader(int id, Bundle args) {
+        AvailableLanguage language = (AvailableLanguage) args.getSerializable(ARG_LANGUAGE);
+        if (language == null || language.getLoadedLanguage() == null) {
+            Ln.d("AvailableLanguage is null or has no language.");
+            return null;
+        }
+        return new EventPageLoader(this, mPrefUtilities.getLocation(), language.getLoadedLanguage(), language.getOtherPageId());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<EventPage> loader, EventPage data) {
+        setEventPage(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<EventPage> loader) {
     }
 }

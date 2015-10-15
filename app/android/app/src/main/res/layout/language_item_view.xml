@@ -19,7 +19,7 @@
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             tools:background="@drawable/german_flag" />
 
 

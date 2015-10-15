@@ -22,7 +22,6 @@ import static android.os.Build.VERSION_CODES.GINGERBREAD;
  * Created by Daniel-L on 16.08.2015.
  */
 @SuppressLint("CommitPrefEdits")
-@Singleton
 public class PrefUtilities {
     public static final String MULTIPLE_COLUMNS_PORTRAIT = "multiple_columns_portrait";
     public static final String MULTIPLE_COLUMNS_LANDSCAPE = "multiple_columns_landscape";
@@ -30,6 +29,7 @@ public class PrefUtilities {
     private static final String LANGUAGE = "language";
     private static final String CURRENT_COLOR = "current_color";
     private static final String FONT_STYLE = "font_style";
+    private static final String CURRENT_PAGE = "current_page";
 
     private final SharedPreferences preferences;
 
@@ -93,6 +93,13 @@ public class PrefUtilities {
         return preferences.getInt(CURRENT_COLOR, R.color.myPrimaryColor);
     }
 
+    public int getSelectedPageId() {
+        return preferences.getInt(CURRENT_PAGE, -1);
+    }
+
+    public void setSelectedPage(int pageId) {
+        save(preferences.edit().putInt(CURRENT_PAGE, pageId));
+    }
 
     public void addListener(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
         preferences.registerOnSharedPreferenceChangeListener(listener);

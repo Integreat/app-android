@@ -1,7 +1,6 @@
 package augsburg.se.alltagsguide.overview;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +18,6 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
-import roboguice.util.Ln;
 
 public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, Page> {
 
@@ -38,19 +35,18 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
     }
 
     @Override
-    public void setItems(@NonNull List<Page> pages) {
-        super.setItems(pages);
-        Collections.sort(pages);
-        notifyDataSetChanged();
-    }
-
-    @Override
     public int getItemViewType(int position) {
         final Page page = get(position);
         if (Objects.isNullOrEmpty(page.getContent())) {
             return TITLE;
         }
         return ENTRY;
+    }
+
+    @Override
+    public void setItems(List<Page> pages) {
+        Collections.sort(pages);
+        super.setItems(pages);
     }
 
     @Override
@@ -79,7 +75,6 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         titleHolder.title.setText(page.getTitle());
     }
 
-    SimpleDateFormat dateFormatFrom = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY);
     SimpleDateFormat dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
 
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final Page page) {
@@ -87,14 +82,10 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         contentHolder.title.setTextColor(mColor);
         // contentHolder.title.setBackgroundColor(mColor); //TODO?
         String desc = page.getDescription();
-        try {
-            contentHolder.date.setText(dateFormatTo.format(dateFormatFrom.parse(page.getModified())));
-        } catch (ParseException e) {
-            Ln.e(e);
-        }
+        contentHolder.date.setText(dateFormatTo.format(page.getModified()));
         contentHolder.description.setText(Html.fromHtml(desc));
         contentHolder.description.setVisibility(Objects.isNullOrEmpty(desc) ? View.GONE : View.VISIBLE);
-        contentHolder.more.setOnClickListener(new View.OnClickListener() {
+        contentHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onOpenPage(page);

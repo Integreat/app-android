@@ -43,7 +43,7 @@ public class MainModule extends AbstractModule {
     /**
      * Version of database
      */
-    public static final int VERSION = 27;
+    public static final int VERSION = 30;
 
     public MainModule() {
     }

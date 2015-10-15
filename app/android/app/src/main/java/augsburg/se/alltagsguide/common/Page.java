@@ -6,24 +6,27 @@ import android.text.Html;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
+import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Objects;
+import roboguice.util.Ln;
 
 /**
  * Created by Daniel-L on 20.09.2015.
  */
 public class Page implements Serializable, Comparable {
-
     private final int mId;
     private final String mTitle;
     private final String mType;
     private final String mStatus;
     private final int mParentId;
-    private final String mModified;
+    private final long mModified;
     private final String mDescription;
     private final String mContent;
     private final int mOrder;
@@ -35,8 +38,9 @@ public class Page implements Serializable, Comparable {
     private List<Page> mAvailablePages;
 
     private List<AvailableLanguage> mAvailableLanguages;
+    private Language mLanguage;
 
-    public Page(int id, String title, String type, String status, String modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, List<AvailableLanguage> availableLanguages) {
+    public Page(int id, String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, List<AvailableLanguage> availableLanguages) {
         mId = id;
         mTitle = title;
         mType = type;
@@ -62,12 +66,26 @@ public class Page implements Serializable, Comparable {
         return mParent;
     }
 
+    public Language getLanguage() {
+        return mLanguage;
+    }
+
+    public void setLanguage(Language language) {
+        mLanguage = language;
+    }
+
     public static Page fromJson(@NonNull final JsonObject jsonPage) {
         int id = jsonPage.get("id").getAsInt();
         String title = jsonPage.get("title").getAsString();
         String type = jsonPage.get("type").getAsString();
         String status = jsonPage.get("status").getAsString();
-        String modified = jsonPage.get("modified_gmt").getAsString();
+        long modified = 0;
+        try {
+            modified = Helper.FROM_DATE_FORMAT.parse(jsonPage.get("modified_gmt").getAsString()).getTime();
+        } catch (ParseException e) {
+            Ln.e(e);
+            modified = -1;
+        }
         String description = jsonPage.get("excerpt").getAsString();
         String content = jsonPage.get("content").getAsString();
         int parentId = jsonPage.get("parent").getAsInt();
@@ -89,32 +107,23 @@ public class Page implements Serializable, Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        //TODO, think about this....
+        int compare = 0;
         if (o instanceof Page) {
             Page other = (Page) o;
-            if (mParent != null) {
-                if (other.getParent() != null) {
-                    int comp = mParent.compareTo(other.getParent());
-                    if (comp != 0) {
-                        return comp;
-                    }
-                } else {
-                    int comp = mParent.compareTo(other);
-                    if (comp != 0) {
-                        return comp;
-                    }
+            if (other.getParent() != null) {
+                compare = compareTo(other.getParent());
+                if (compare != 0) {
+                    return compare;
                 }
-            } else {
-                if (other.getParent() != null) {
-                    int comp = this.compareTo(other.getParent());
-                    if (comp != 0) {
-                        return comp;
-                    }
+            } else if (getParent() != null) {
+                compare = getParent().compareTo(other);
+                if (compare != 0) {
+                    return compare;
                 }
             }
-            return Integer.valueOf(mOrder).compareTo(other.getOrder());
+            compare = Objects.compareTo(getOrder(), other.getOrder());
         }
-        return 0;
+        return compare;
     }
 
     public int getContentCount() {
@@ -134,7 +143,7 @@ public class Page implements Serializable, Comparable {
     }
 
 
-    public String getModified() {
+    public long getModified() {
         return mModified;
     }
 
@@ -204,7 +213,7 @@ public class Page implements Serializable, Comparable {
         return 1 + getParent().getDepth();
     }
 
-    public static void recreateRelations(List<? extends Page> pages, List<AvailableLanguage> languages) {
+    public static void recreateRelations(List<? extends Page> pages, List<AvailableLanguage> languages, Language currentLanguage) {
         /* add page-page connection */
         Map<Integer, Page> pageIdMap = new HashMap<>();
         for (Page page : pages) {
@@ -212,12 +221,14 @@ public class Page implements Serializable, Comparable {
         }
         Map<Integer, List<AvailableLanguage>> shortNameLanguageMap = new HashMap<>();
         for (AvailableLanguage language : languages) {
-            if (!shortNameLanguageMap.containsKey(language.getPageId())) {
-                shortNameLanguageMap.put(language.getPageId(), new ArrayList<AvailableLanguage>());
+            if (!shortNameLanguageMap.containsKey(language.getOwnPageId())) {
+                shortNameLanguageMap.put(language.getOwnPageId(), new ArrayList<AvailableLanguage>());
             }
-            shortNameLanguageMap.get(language.getPageId()).add(language);
+            shortNameLanguageMap.get(language.getOwnPageId()).add(language);
         }
         for (Page page : pages) {
+            page.setLanguage(currentLanguage);
+            page.getAvailableLanguages().clear(); //to avoid having duplicates when retrieving data from the server
             if (shortNameLanguageMap.containsKey(page.getId())) {
                 page.getAvailableLanguages().addAll(shortNameLanguageMap.get(page.getId()));
             }
@@ -245,4 +256,15 @@ public class Page implements Serializable, Comparable {
     public String getThumbnail() {
         return mThumbnail;
     }
+
+    public static List<Page> filterParents(@NonNull List<Page> pages) {
+        List<Page> parentPages = new ArrayList<>();
+        for (Page page : pages) {
+            if (page.getParent() == null) {
+                parentPages.add(page);
+            }
+        }
+        return parentPages;
+    }
+
 }

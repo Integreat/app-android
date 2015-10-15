@@ -117,7 +117,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
                 }
             }, getActivity());
         } else {
-            mAdapter.add(locations);
+            mAdapter.setItems(locations);
         }
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);

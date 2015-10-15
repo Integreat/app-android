@@ -27,7 +27,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -98,7 +97,6 @@ public class OverviewActivity extends BaseActivity
     private Language mLanguage;
 
     private MenuItem columnsMenu;
-    private List<Page> mPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,17 +104,20 @@ public class OverviewActivity extends BaseActivity
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
         initNavigationDrawer();
-        mEventOverviewFragment = EventOverviewFragment.newInstance();
-        mPageOverviewFragment = PageOverviewFragment.newInstance();
         if (savedInstanceState == null) {
+            mPageOverviewFragment = PageOverviewFragment.newInstance();
+            mEventOverviewFragment = EventOverviewFragment.newInstance();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.events_container, mEventOverviewFragment)
+                    .replace(R.id.events_container, mEventOverviewFragment, "events")
                     .commit();
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.pages_container, mPageOverviewFragment)
+                    .replace(R.id.pages_container, mPageOverviewFragment, "pages")
                     .commit();
+        } else {
+            mEventOverviewFragment = (EventOverviewFragment) getSupportFragmentManager().findFragmentByTag("events");
+            mPageOverviewFragment = (PageOverviewFragment) getSupportFragmentManager().findFragmentByTag("pages");
         }
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +176,7 @@ public class OverviewActivity extends BaseActivity
 
         mRecyclerView.setEmptyView(mEmptyView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mNavigationAdapter = new NavigationAdapter(this);
+        mNavigationAdapter = new NavigationAdapter(this, mPrefUtilities.getCurrentColor(), this, mPrefUtilities.getSelectedPageId());
         mRecyclerView.setAdapter(mNavigationAdapter);
 
 
@@ -197,6 +198,11 @@ public class OverviewActivity extends BaseActivity
         navigationHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mPrefUtilities.setSelectedPage(-1);
+                if (mNavigationAdapter != null) {
+                    mNavigationAdapter.setSelectedIndex(-1);
+                    mNavigationAdapter.notifyDataSetChanged();
+                }
                 mPageOverviewFragment.onRefresh();
                 mEventOverviewFragment.onRefresh();
                 drawerLayout.closeDrawers();
@@ -234,7 +240,8 @@ public class OverviewActivity extends BaseActivity
         getMenuInflater().inflate(R.menu.overview, menu);
         columnsMenu = menu.findItem(R.id.menu_columns);
         updateMenu();
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -243,28 +250,12 @@ public class OverviewActivity extends BaseActivity
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterByText(newText);
+                mPageOverviewFragment.filterByText(newText);
                 return false;
             }
         });
         return super.onCreateOptionsMenu(menu);
     }
-
-    private void filterByText(String filterText) {
-        List<Page> pages = new ArrayList<>();
-        for (Page page : mPages) {
-            String relevantContent = page.getTitle();
-            if (page.getContent() != null) {
-                relevantContent += page.getContent();
-            }
-
-            if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
-                pages.add(page);
-            }
-        }
-        mPageOverviewFragment.setPages(pages);
-    }
-
 
     private void updateMenu() {
         boolean useMultiple = shouldUseMultipleColumns();
@@ -307,7 +298,6 @@ public class OverviewActivity extends BaseActivity
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                mPages = pages;
                 mNavigationAdapter.setPages(pages);
                 drawerLayout.closeDrawers();
             }
@@ -317,6 +307,11 @@ public class OverviewActivity extends BaseActivity
 
     @Override
     public void onNavigationClicked(Page item) {
+        mPrefUtilities.setSelectedPage(item.getId());
+        if (mNavigationAdapter != null) {
+            mNavigationAdapter.setSelectedIndex(item.getId());
+            mNavigationAdapter.notifyDataSetChanged();
+        }
         mPageOverviewFragment.changePage(item);
         drawerLayout.closeDrawers();
     }

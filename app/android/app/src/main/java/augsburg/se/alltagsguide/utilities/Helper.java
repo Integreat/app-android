@@ -11,14 +11,19 @@ import android.view.View;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import roboguice.util.Ln;
 
 public class Helper {
+
+    public static SimpleDateFormat FROM_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY);
+
     public static String quote(String s) {
         return "'" + s + "'";
     }

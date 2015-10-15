@@ -3,11 +3,18 @@ package augsburg.se.alltagsguide.utilities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
+import com.google.inject.Inject;
+
+import roboguice.RoboGuice;
 import roboguice.fragment.RoboFragment;
 
 
 public class BaseFragment extends RoboFragment {
+
+    @Inject
+    protected PrefUtilities mPrefUtilities;
 
     private OnBaseFragmentInteractionListener mListener;
 
@@ -18,6 +25,11 @@ public class BaseFragment extends RoboFragment {
         if (!(context instanceof AppCompatActivity)) {
             throw new IllegalStateException("Activity needs to be AppCompatActivity");
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -44,4 +56,6 @@ public class BaseFragment extends RoboFragment {
 
         void setSubTitle(String title);
     }
+
+
 }
