@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.Theme;
+import com.google.inject.Inject;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import roboguice.RoboGuice;
 
 public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.NavigationViewHolder> {
     private OnNavigationSelected mListener;
@@ -29,6 +32,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
     private int mColor;
     private Context mContext;
     private int mCurrentPageId;
+    @Inject
+    private Picasso mPicasso;
 
 
     public void setPages(List<Page> pages) {
@@ -47,6 +52,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
     }
 
     public NavigationAdapter(OnNavigationSelected listener, int color, Context context, int currentPageId) {
+        RoboGuice.injectMembers(context, this);
         mListener = listener;
         mColor = color;
         mContext = context;
@@ -55,17 +61,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
     @Override
     public NavigationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layout = ITEM;
-        switch (viewType) {
-            case HEADER:
-                layout = R.layout.navigation_header;
-                break;
-            case ITEM:
-                layout = R.layout.navigation_item;
-                break;
-        }
-        return new NavigationViewHolder(LayoutInflater.from(parent.getContext()).inflate(layout, parent, false));
-
+        return new NavigationViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.navigation_item, parent, false));
     }
 
     @Override
@@ -104,6 +100,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
         holder.itemView.setBackgroundColor(selected ? mColor : mContext.getResources().getColor(android.R.color.white));
         holder.counter.setTextColor(selected ? mContext.getResources().getColor(android.R.color.white) : mContext.getResources().getColor(android.R.color.primary_text_light));
         holder.title.setTextColor(selected ? mContext.getResources().getColor(android.R.color.white) : mContext.getResources().getColor(android.R.color.primary_text_light));
+        if (!Objects.isNullOrEmpty(item.getThumbnail())) {
+            mPicasso.load(item.getThumbnail()).into(holder.image);
+        } else {
+            holder.image.setImageDrawable(null);
+        }
     }
 
     public class NavigationViewHolder extends RecyclerView.ViewHolder {

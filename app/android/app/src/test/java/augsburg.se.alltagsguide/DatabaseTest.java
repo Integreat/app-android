@@ -2,7 +2,6 @@ package augsburg.se.alltagsguide;
 
 import android.app.Application;
 import android.content.Context;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;

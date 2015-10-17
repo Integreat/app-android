@@ -144,6 +144,10 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     public void onRefresh() {
         getLoaderManager().restartLoader(0, null, this);
     }
+    public void indexUpdated() {
+        setOrInitPageAdapter(restoreVisiblePages(mPages));
+    }
+
 
     @Override
     public Loader<List<Page>> onCreateLoader(int id, Bundle args) {
@@ -213,6 +217,8 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
             }
         }
     }
+
+
 
     public interface OnPageFragmentInteractionListener {
         void onOpenPage(Page page);

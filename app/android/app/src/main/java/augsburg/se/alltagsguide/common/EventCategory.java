@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
@@ -30,7 +31,14 @@ public class EventCategory implements Serializable {
     }
 
     public static EventCategory fromJson(@NonNull final JsonObject jsonCategory) {
-        int id = Helper.getIntOrDefault(jsonCategory.get("id"), -1);
+        if (jsonCategory.isJsonNull()) {
+            return null;
+        }
+        JsonElement idElement = jsonCategory.get("id");
+        if (idElement.isJsonNull()) {
+            return null;
+        }
+        int id = Helper.getIntOrDefault(idElement, -1);
         if (id == -1) {
             return null;
         }

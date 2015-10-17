@@ -91,4 +91,6 @@
     <string name="search_title">Search</string>
     <string name="preferences">Preferences</string>
     <string name="title_activity_event">EventActivity</string>
+    <string name="event_list_title">Events</string>
+    <string name="information">Information</string>
 </resources>

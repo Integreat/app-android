@@ -19,6 +19,7 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.network.EventPagesLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
+import augsburg.se.alltagsguide.utilities.MyLinearLayoutManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
@@ -73,7 +74,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
     }
 
     public void onRefresh() {
@@ -121,5 +122,4 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
         void onEventPagesLoaded(List<EventPage> pages);
     }
-
 }

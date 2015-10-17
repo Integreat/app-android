@@ -1,5 +1,6 @@
 package augsburg.se.alltagsguide.overview;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -23,10 +24,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -43,9 +46,12 @@ import augsburg.se.alltagsguide.start.WelcomeActivity;
 import augsburg.se.alltagsguide.utilities.BaseActivity;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
 import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
+import augsburg.se.alltagsguide.utilities.LanguageItemAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
+import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
+import roboguice.util.Ln;
 
 @ContentView(R.layout.activity_overview)
 public class OverviewActivity extends BaseActivity
@@ -83,11 +89,18 @@ public class OverviewActivity extends BaseActivity
     @InjectView(R.id.change_login)
     private View changeLogin;
 
-    @InjectView(R.id.language)
-    private ImageView languageFlagImageView;
-
     @InjectView(R.id.drawer)
     private DrawerLayout drawerLayout;
+
+    @InjectView(R.id.other_language_count)
+    protected TextView otherLanguageCountTextView;
+
+    @InjectView(R.id.current_language)
+    protected CircleImageView circleImageView;
+
+    @Inject
+    protected Picasso mPicasso;
+
 
     private EventPagesHandler eventPagesHandler = new EventPagesHandler(this);
     private PageOverviewFragment mPageOverviewFragment;
@@ -131,6 +144,7 @@ public class OverviewActivity extends BaseActivity
                 startActivity(new Intent(OverviewActivity.this, SettingsActivity.class));
             }
         });
+        loadLanguage(mLanguage);
     }
 
     @Override
@@ -138,21 +152,49 @@ public class OverviewActivity extends BaseActivity
         return false;
     }
 
+    @SuppressLint("SetTextI18n")
+    protected void setupLanguagesButton() {
+        final List<Language> languages = new ArrayList<>();
+        mPicasso.load(mLanguage.getIconPath())
+                .placeholder(R.drawable.ic_location_not_found_black)
+                .error(R.drawable.ic_location_not_found_black)
+                .fit()
+                .into(circleImageView);
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new MaterialDialog.Builder(OverviewActivity.this)
+                        .title(R.string.dialog_choose_language_title)
+                        .adapter(new LanguageItemAdapter(OverviewActivity.this, languages),
+                                new MaterialDialog.ListCallback() {
+                                    @Override
+                                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                        loadLanguage(languages.get(which));
+                                        mPageOverviewFragment.onRefresh();
+                                        mEventOverviewFragment.onRefresh();
+                                        dialog.cancel();
+                                    }
+                                })
+                        .show();
+            }
+        });
+        otherLanguageCountTextView.setText("+" + languages.size());
+    }
+
+    private void loadLanguage(Language language) {
+        mLanguage = language;
+        setupLanguagesButton();
+    }
+
+
     private void initNavigationDrawer() {
         locationNameTextView.setText(mLocation.getName());
         locationDescriptionTextView.setText(mLocation.getDescription());
 
-        if (mLanguage.getIconPath() != null) {
-            Picasso.with(this)
-                    .load(mLanguage.getIconPath())
-                    .placeholder(R.drawable.empty_locations_white)
-                    .error(R.drawable.ic_location_not_found_black)
-                    .into(languageFlagImageView);
-        }
         Picasso.with(this)
                 .load(mLocation.getCityImage())
-                .placeholder(R.drawable.ic_no_language_found_black)
-                .error(R.drawable.ic_no_language_found_black)
+                .placeholder(R.drawable.ic_location_not_found_black)
+                .error(R.drawable.ic_location_not_found_black)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -203,8 +245,7 @@ public class OverviewActivity extends BaseActivity
                     mNavigationAdapter.setSelectedIndex(-1);
                     mNavigationAdapter.notifyDataSetChanged();
                 }
-                mPageOverviewFragment.onRefresh();
-                mEventOverviewFragment.onRefresh();
+                mPageOverviewFragment.indexUpdated();
                 drawerLayout.closeDrawers();
             }
         });
@@ -312,7 +353,7 @@ public class OverviewActivity extends BaseActivity
             mNavigationAdapter.setSelectedIndex(item.getId());
             mNavigationAdapter.notifyDataSetChanged();
         }
-        mPageOverviewFragment.changePage(item);
+        mPageOverviewFragment.indexUpdated();
         drawerLayout.closeDrawers();
     }
 
@@ -333,6 +374,7 @@ public class OverviewActivity extends BaseActivity
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
+                        mPrefUtilities.setSelectedPage(-1);
                         OverviewActivity.super.onBackPressed();
                     }
 

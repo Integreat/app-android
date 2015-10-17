@@ -42,7 +42,6 @@ public class PageLoader extends BasicLoader<Page> {
      *
      * @param activity
      */
-    @Inject
     public PageLoader(Activity activity, @NonNull Location location, @NonNull Language language, int id) {
         super(activity);
         mLocation = location;

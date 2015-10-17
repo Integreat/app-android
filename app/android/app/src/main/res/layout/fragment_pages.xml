@@ -1,9 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="augsburg.se.alltagsguide.category.ContentFragment">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingTop="1dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"
+        android:text="@string/information"
+        android:textSize="?attr/font_small"
+        android:textStyle="bold" />
 
     <com.malinskiy.superrecyclerview.SuperRecyclerView
         android:id="@+id/recycler_view"
@@ -14,4 +25,4 @@
         app:recyclerPadding="2dp"
         app:scrollbarStyle="insideInset" />
 
-</RelativeLayout>
+</LinearLayout>

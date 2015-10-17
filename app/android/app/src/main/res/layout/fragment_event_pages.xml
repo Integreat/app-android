@@ -1,17 +1,26 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingTop="1dp">
 
-    tools:context="augsburg.se.alltagsguide.category.ContentFragment">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"
+        android:text="@string/event_list_title"
+        android:textSize="?attr/font_small"
+        android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:recyclerClipToPadding="false"
-        app:recyclerPadding="6dp"
         app:scrollbarStyle="insideInset" />
 
-</RelativeLayout>
+</LinearLayout>

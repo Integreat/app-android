@@ -6,11 +6,13 @@ import android.util.Log;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +44,9 @@ public class ServicesModule extends AbstractModule {
     }
 
     @Provides
-    OkHttpClient okHttpClient(Context context) {
-        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-        Cache cache = new Cache(context.getCacheDir(), cacheSize);
+    OkHttpClient okHttpClient(Context context, @Named("cacheDir") File cachedir) {
+        int cacheSize = 30 * 1024 * 1024; // 30 MiB
+        Cache cache = new Cache(cachedir, cacheSize);
         OkHttpClient client = new OkHttpClient();
         client.setCache(cache);
         return client;
@@ -65,9 +67,8 @@ public class ServicesModule extends AbstractModule {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setLogLevel(BuildConfig.DEBUG ?
-                        RestAdapter.LogLevel.FULL :
+                        RestAdapter.LogLevel.NONE :
                         RestAdapter.LogLevel.NONE)
-                        //.setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/wordpress_test/")
                 .setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/")
                 .setConverter(gsonConverter)
                 .build();

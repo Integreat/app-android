@@ -51,7 +51,6 @@ public class EventPagesLoader extends BasicLoader<List<EventPage>> {
      *
      * @param activity
      */
-    @Inject
     public EventPagesLoader(Activity activity, @NonNull Location location, @NonNull Language language) {
         super(activity);
         mLocation = location;

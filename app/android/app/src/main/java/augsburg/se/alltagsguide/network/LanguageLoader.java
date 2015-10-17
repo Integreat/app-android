@@ -34,7 +34,6 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
      *
      * @param activity
      */
-    @Inject
     public LanguageLoader(Activity activity, @NonNull Location location) {
         super(activity);
         mLocation = location;

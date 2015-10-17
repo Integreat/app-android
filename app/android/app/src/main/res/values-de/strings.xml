@@ -31,4 +31,6 @@
     <string name="dialog_choose_language_title">Wähle eine Sprache</string>
     <string name="search_title">Suche</string>
     <string name="preferences">Einstellungen</string>
+    <string name="event_list_title">Veranstaltungen</string>
+    <string name="information">Informationen</string>
 </resources>

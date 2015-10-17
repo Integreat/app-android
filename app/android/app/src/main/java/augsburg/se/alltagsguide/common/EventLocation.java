@@ -3,6 +3,7 @@ package augsburg.se.alltagsguide.common;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
@@ -81,7 +82,14 @@ public class EventLocation implements Serializable {
     }
 
     public static EventLocation fromJson(@NonNull JsonObject jsonPage) {
-        int id = Helper.getIntOrDefault(jsonPage.get("id"), -1);
+        if (jsonPage.isJsonNull()) {
+            return null;
+        }
+        JsonElement idElement = jsonPage.get("id");
+        if (idElement.isJsonNull()) {
+            return null;
+        }
+        int id = Helper.getIntOrDefault(idElement, -1);
         if (id == -1) {
             return null;
         }

@@ -22,7 +22,7 @@ public class PageSerializer implements JsonDeserializer<List<Page>> {
     @Override
     public List<Page> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         List<Page> rootPages = parsePages(json.getAsJsonArray());
-        printPages(rootPages);
+        //printPages(rootPages);
         return rootPages;
     }
 

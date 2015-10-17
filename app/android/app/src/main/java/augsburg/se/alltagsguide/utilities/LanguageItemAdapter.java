@@ -3,6 +3,7 @@ package augsburg.se.alltagsguide.utilities;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -25,11 +27,21 @@ import roboguice.RoboGuice;
 public class LanguageItemAdapter extends BaseAdapter implements View.OnClickListener {
 
     private final Context mContext;
-    private final List<AvailableLanguage> mItems;
+    private final List<Language> mItems;
     @Inject
     private Picasso mPicasso;
 
-    public LanguageItemAdapter(Context context, List<AvailableLanguage> items) {
+    public LanguageItemAdapter(@NonNull Context context, @NonNull List<AvailableLanguage> items, boolean nothing) {
+        mContext = context;
+        List<Language> languages = new ArrayList<>();
+        for (AvailableLanguage language : items) {
+            languages.add(language.getLoadedLanguage());
+        }
+        mItems = languages;
+        RoboGuice.injectMembers(context, this);
+    }
+
+    public LanguageItemAdapter(@NonNull Context context, @NonNull List<Language> items) {
         mContext = context;
         mItems = items;
         RoboGuice.injectMembers(context, this);
@@ -59,8 +71,7 @@ public class LanguageItemAdapter extends BaseAdapter implements View.OnClickList
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        AvailableLanguage availableLanguage = mItems.get(position);
-        Language language = availableLanguage.getLoadedLanguage();
+        Language language = mItems.get(position);
 
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.dialog_language_item, null);

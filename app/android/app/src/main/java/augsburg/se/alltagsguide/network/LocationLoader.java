@@ -31,7 +31,6 @@ public class LocationLoader extends BasicLoader<List<Location>> {
      *
      * @param activity
      */
-    @Inject
     public LocationLoader(Activity activity) {
         super(activity);
     }

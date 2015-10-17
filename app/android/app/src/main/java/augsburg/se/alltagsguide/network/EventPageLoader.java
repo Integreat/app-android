@@ -51,7 +51,6 @@ public class EventPageLoader extends BasicLoader<EventPage> {
      *
      * @param activity
      */
-    @Inject
     public EventPageLoader(Activity activity, @NonNull Location location, @NonNull Language language, int id) {
         super(activity);
         mLocation = location;
@@ -68,6 +67,7 @@ public class EventPageLoader extends BasicLoader<EventPage> {
                 dbCache.requestAndStore(resource);
                 translatedPage = dbCache.load(resource, mId);
                 if (translatedPage == null) {
+                    Ln.e("Translated page is null even though this should not happen");
                     return null;
                 }
             }

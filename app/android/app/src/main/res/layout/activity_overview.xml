@@ -22,26 +22,85 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="?attr/actionBarSize"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textSize="?attr/font_medium"
-                    android:textStyle="bold"
-                    tools:title="Title" />
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/toolbar_subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textSize="?attr/font_small"
-                    android:textStyle="bold"
-                    tools:title="Subtitle" />
+                    <TextView
+                        android:id="@+id/toolbar_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="?attr/font_medium"
+                        android:textStyle="bold"
+                        tools:title="Title" />
+
+                    <TextView
+                        android:id="@+id/toolbar_subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="?attr/font_small"
+                        android:textStyle="bold"
+                        tools:title="Subtitle" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="2dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/current_language"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:src="@drawable/german_flag"
+                        app:civ_border_color="#fff"
+                        app:civ_border_width="1dp" />
+
+                    <FrameLayout
+                        android:id="@+id/others"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/other_languages"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:src="@drawable/circle_background"
+                            app:civ_border_color="#fff"
+                            app:civ_border_width="1dp" />
+
+                        <TextView
+                            android:id="@+id/other_language_count"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:lines="1"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="+2" />
+                    </FrameLayout>
+                </RelativeLayout>
+
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
@@ -52,17 +111,18 @@
             android:orientation="vertical">
 
             <FrameLayout
-                android:id="@+id/events_container"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:visibility="gone" />
-
-            <FrameLayout
                 android:id="@+id/pages_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4" />
+                android:layout_weight="1" />
+
+            <FrameLayout
+                android:id="@+id/events_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -92,26 +152,14 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:background="#4c000000">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/language"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_margin="10dp"
-                        app:civ_border_color="#64ffffff"
-                        app:civ_border_width="1dp" />
+                    android:background="#4c000000"
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/description"
-                        android:layout_toEndOf="@+id/language"
-                        android:layout_toRightOf="@+id/language"
                         android:gravity="start"
                         android:paddingBottom="4dp"
                         android:textColor="#FFF"
@@ -124,9 +172,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="8dp"
-                        android:layout_toEndOf="@+id/language"
-                        android:layout_toRightOf="@+id/language"
                         android:gravity="start"
                         android:textColor="#fff"
                         android:textSize="?attr/font_small"
@@ -177,21 +222,25 @@
 
                 <TextView
                     android:id="@+id/settings"
+                    android:textColor="@android:color/primary_text_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@android:drawable/ic_menu_manage"
                     android:drawablePadding="20dp"
                     android:drawableStart="@android:drawable/ic_menu_manage"
+                    android:gravity="center_vertical"
                     android:text="@string/action_settings"
                     android:textSize="?attr/font_small" />
 
                 <TextView
                     android:id="@+id/change_login"
+                    android:textColor="@android:color/primary_text_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@android:drawable/ic_menu_mapmode"
                     android:drawablePadding="20dp"
                     android:drawableStart="@android:drawable/ic_menu_mapmode"
+                    android:gravity="center_vertical"
                     android:text="@string/change_language_location"
                     android:textSize="?attr/font_small" />
             </LinearLayout>
