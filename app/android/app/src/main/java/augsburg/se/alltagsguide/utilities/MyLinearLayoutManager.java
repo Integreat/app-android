@@ -6,6 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+/* LinearLayoutManager which takes max width and max height into account.
+ * This allows to use wrap_content in RecyclerViews
+ */
 public class MyLinearLayoutManager extends LinearLayoutManager {
 
     public MyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {

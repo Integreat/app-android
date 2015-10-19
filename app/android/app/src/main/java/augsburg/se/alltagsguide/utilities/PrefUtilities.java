@@ -8,12 +8,14 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.inject.Singleton;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.common.UpdateTime;
+import roboguice.util.Ln;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.GINGERBREAD;
@@ -30,6 +32,16 @@ public class PrefUtilities {
     private static final String CURRENT_COLOR = "current_color";
     private static final String FONT_STYLE = "font_style";
     private static final String CURRENT_PAGE = "current_page";
+
+    /**
+     * The Constant PROPERTY_REGISTERED_TS.
+     */
+    private static final String PROPERTY_REGISTERED_TS = "registered_ts";
+
+    /**
+     * The Constant PROPERTY_REG_ID.
+     */
+    private static final String PROPERTY_REG_ID = "reg_id";
 
     private final SharedPreferences preferences;
 
@@ -133,4 +145,48 @@ public class PrefUtilities {
             return FontStyle.Medium;
         }
     }
+
+    private static String makePushKey(Location location) {
+        return "_push" + location.getId() + PROPERTY_REGISTERED_TS;
+    }
+
+    /**
+     * Checks if is registered on server.
+     *
+     * @return true, if is registered on server
+     */
+    public boolean isRegisteredOnServer(Location location) {
+        // Find registration threshold
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        long yesterdayTS = cal.getTimeInMillis();
+        long regTS = preferences.getLong(makePushKey(location), 0);
+        if (regTS > yesterdayTS) {
+            Ln.v("GCM registration current. regTS=" + regTS + " yesterdayTS=" + yesterdayTS);
+            return true;
+        } else {
+            Ln.v("GCM registration expired. regTS=" + regTS + " yesterdayTS=" + yesterdayTS);
+            return false;
+        }
+    }
+
+    /**
+     * Sets whether the device was successfully registered in the server side.
+     *
+     * @param flag  True if registration was successful, false otherwise
+     * @param gcmId True if registration was successful, false otherwise
+     */
+    public void setRegisteredOnServer(Location location, boolean flag, String gcmId) {
+        Ln.d("Setting registered on server status as: " + flag);
+        SharedPreferences.Editor editor = preferences.edit();
+        if (flag) {
+            editor.putLong(makePushKey(location), new Date().getTime());
+            editor.putString(PROPERTY_REG_ID, gcmId);
+        } else {
+            editor.remove(PROPERTY_REG_ID);
+            editor.remove(makePushKey(location));
+        }
+        save(editor);
+    }
+
 }

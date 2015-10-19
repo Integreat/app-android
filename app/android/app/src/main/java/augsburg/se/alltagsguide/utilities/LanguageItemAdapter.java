@@ -28,6 +28,7 @@ public class LanguageItemAdapter extends BaseAdapter implements View.OnClickList
 
     private final Context mContext;
     private final List<Language> mItems;
+
     @Inject
     private Picasso mPicasso;
 

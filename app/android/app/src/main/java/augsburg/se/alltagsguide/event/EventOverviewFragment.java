@@ -117,6 +117,10 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         }
     }
 
+    public void filterByText(String newText) {
+
+    }
+
     public interface OnEventPageFragmentInteractionListener {
         void onOpenEventPage(EventPage page);
 

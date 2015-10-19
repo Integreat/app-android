@@ -85,4 +85,5 @@ public class Language implements Serializable, Comparable {
         String path = cursor.getString(cursor.getColumnIndex(CacheHelper.LANGUAGE_PATH));
         return new Language(id, shortName, name, path);
     }
+
 }

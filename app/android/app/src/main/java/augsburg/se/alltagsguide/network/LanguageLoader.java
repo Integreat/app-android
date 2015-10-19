@@ -12,6 +12,7 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
+import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.LanguageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;

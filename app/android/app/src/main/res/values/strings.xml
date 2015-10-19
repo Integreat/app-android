@@ -93,4 +93,6 @@
     <string name="title_activity_event">EventActivity</string>
     <string name="event_list_title">Events</string>
     <string name="information">Information</string>
+    <string name="dialog_title_loading_language">Loading</string>
+    <string name="dialog_content_loading_language">Please wait. Loading language.</string>
 </resources>

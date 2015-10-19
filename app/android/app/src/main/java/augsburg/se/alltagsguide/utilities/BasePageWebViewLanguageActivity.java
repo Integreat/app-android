@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
@@ -34,6 +35,7 @@ import roboguice.util.Ln;
  */
 public abstract class BasePageWebViewLanguageActivity<T extends Page> extends BaseActivity implements LoaderManager.LoaderCallbacks<T> {
     protected static final String ARG_LANGUAGE = "language";
+    protected static final String PAGE_STATE = "page";
     public static final String ARG_INFO = "info";
     protected T mPage;
 
@@ -53,8 +55,28 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initWebView();
-        setPage((T) getIntent().getSerializableExtra(ARG_INFO));
+        setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
     }
+
+    @SuppressWarnings("unchecked")
+    private void setPageFromSerializable(Serializable serializable) {
+        try {
+            if (serializable != null) {
+                setPage((T) serializable);
+            } else {
+                throw new IllegalStateException("Serializable Page was null");
+            }
+        } catch (ClassCastException e) {
+            Ln.e(e);
+            throw new IllegalStateException("ARG_INFO has to be of type (? extends Page)");
+        }
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        Serializable savedInstance = savedInstanceState.getSerializable(PAGE_STATE);
+        setPageFromSerializable(savedInstance);
+    }
+
 
     @SuppressLint("SetTextI18n")
     protected void setupLanguagesButton() {
@@ -181,6 +203,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_LANGUAGE, language);
         getSupportLoaderManager().restartLoader(0, bundle, this);
+        startLoading();
     }
 
     @Override
@@ -188,9 +211,35 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         if (data != null) {
             setPage(data);
         }
+        stopLoading();
     }
 
     @Override
     public void onLoaderReset(Loader<T> loader) {
     }
+
+    private MaterialDialog mLoadingDialog;
+
+    private void startLoading() {
+        stopLoading();
+        mLoadingDialog = new MaterialDialog.Builder(BasePageWebViewLanguageActivity.this)
+                .title(R.string.dialog_title_loading_language)
+                .content(R.string.dialog_content_loading_language)
+                .progress(true, 0)
+                .show();
+    }
+
+    private void stopLoading() {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.cancel();
+        }
+        mLoadingDialog = null;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(PAGE_STATE, mPage);
+        super.onSaveInstanceState(outState);
+    }
+
 }

@@ -33,4 +33,6 @@
     <string name="preferences">Einstellungen</string>
     <string name="event_list_title">Veranstaltungen</string>
     <string name="information">Informationen</string>
+    <string name="dialog_title_loading_language">Laden…</string>
+    <string name="dialog_content_loading_language">Der Inhalt wird geladen.</string>
 </resources>

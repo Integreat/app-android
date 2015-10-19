@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -136,14 +135,11 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         mListener = null;
     }
 
-    public void changePage(@NonNull Page item) {
-        setOrInitPageAdapter(item.getSubPagesRecursively());
-    }
-
     @Override
     public void onRefresh() {
         getLoaderManager().restartLoader(0, null, this);
     }
+
     public void indexUpdated() {
         setOrInitPageAdapter(restoreVisiblePages(mPages));
     }
@@ -217,7 +213,6 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
             }
         }
     }
-
 
 
     public interface OnPageFragmentInteractionListener {

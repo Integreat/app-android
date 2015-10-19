@@ -10,7 +10,7 @@ public class Objects {
 
     public static boolean isNullOrEmpty(CharSequence s) {
         return Objects.equals(s, null) || Objects.equals("", s) ||
-                Objects.equals(s.toString().replaceAll("\\<.*?\\>", ""), "");
+                Objects.equals(s.toString().replaceAll("<.*?>", ""), "");
     }
 
     public static int compareTo(int a, int b) {

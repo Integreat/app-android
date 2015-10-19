@@ -71,6 +71,16 @@ public class NetworkServiceMock implements NetworkService {
         return sendDelayed(languages);
     }
 
+    @Override
+    public void subscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_register_id") String regId, Callback<String> callback) {
+        sendDelayed(callback, "Yes", TIME_TO_SLEEP);
+    }
+
+    @Override
+    public void unsubscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_unregister_id") String regId, Callback<String> callback) {
+        sendDelayed(callback, "Yes", TIME_TO_SLEEP);
+    }
+
     /**
      * Sends the response to the success-listener.
      *

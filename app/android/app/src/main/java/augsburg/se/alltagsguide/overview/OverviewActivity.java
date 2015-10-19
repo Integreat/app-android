@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,7 +22,6 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -40,6 +41,7 @@ import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.event.EventActivity;
 import augsburg.se.alltagsguide.event.EventOverviewFragment;
 import augsburg.se.alltagsguide.navigation.NavigationAdapter;
+import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.settings.SettingsActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
@@ -51,11 +53,15 @@ import augsburg.se.alltagsguide.utilities.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
-import roboguice.util.Ln;
 
 @ContentView(R.layout.activity_overview)
 public class OverviewActivity extends BaseActivity
-        implements PageOverviewFragment.OnPageFragmentInteractionListener, EventOverviewFragment.OnEventPageFragmentInteractionListener, BaseFragment.OnBaseFragmentInteractionListener, NavigationAdapter.OnNavigationSelected {
+        implements
+        LoaderManager.LoaderCallbacks<List<Language>>,
+        PageOverviewFragment.OnPageFragmentInteractionListener,
+        EventOverviewFragment.OnEventPageFragmentInteractionListener,
+        BaseFragment.OnBaseFragmentInteractionListener,
+        NavigationAdapter.OnNavigationSelected {
 
     private NavigationAdapter mNavigationAdapter;
 
@@ -109,6 +115,7 @@ public class OverviewActivity extends BaseActivity
     private Location mLocation;
     private Language mLanguage;
 
+    private List<Language> mOtherLanguages = new ArrayList<>();
     private MenuItem columnsMenu;
 
     @Override
@@ -144,6 +151,11 @@ public class OverviewActivity extends BaseActivity
                 startActivity(new Intent(OverviewActivity.this, SettingsActivity.class));
             }
         });
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
         loadLanguage(mLanguage);
     }
 
@@ -153,8 +165,9 @@ public class OverviewActivity extends BaseActivity
     }
 
     @SuppressLint("SetTextI18n")
-    protected void setupLanguagesButton() {
-        final List<Language> languages = new ArrayList<>();
+    protected void setupLanguagesButton(List<Language> data) {
+        data.remove(mLanguage);
+        mOtherLanguages = data;
         mPicasso.load(mLanguage.getIconPath())
                 .placeholder(R.drawable.ic_location_not_found_black)
                 .error(R.drawable.ic_location_not_found_black)
@@ -165,25 +178,33 @@ public class OverviewActivity extends BaseActivity
             public void onClick(View view) {
                 new MaterialDialog.Builder(OverviewActivity.this)
                         .title(R.string.dialog_choose_language_title)
-                        .adapter(new LanguageItemAdapter(OverviewActivity.this, languages),
+                        .adapter(new LanguageItemAdapter(OverviewActivity.this, mOtherLanguages),
                                 new MaterialDialog.ListCallback() {
                                     @Override
                                     public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                        loadLanguage(languages.get(which));
-                                        mPageOverviewFragment.onRefresh();
-                                        mEventOverviewFragment.onRefresh();
+                                        loadLanguage(mOtherLanguages.get(which));
                                         dialog.cancel();
                                     }
                                 })
                         .show();
             }
         });
-        otherLanguageCountTextView.setText("+" + languages.size());
+        updateLanguageCount();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateLanguageCount() {
+        otherLanguageCountTextView.setText("+" + mOtherLanguages.size());
     }
 
     private void loadLanguage(Language language) {
         mLanguage = language;
-        setupLanguagesButton();
+        mPrefUtilities.setLanguage(language);
+
+        startLoading();
+        mPageOverviewFragment.onRefresh();
+        mEventOverviewFragment.onRefresh();
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
 
@@ -292,6 +313,7 @@ public class OverviewActivity extends BaseActivity
             @Override
             public boolean onQueryTextChange(String newText) {
                 mPageOverviewFragment.filterByText(newText);
+                mEventOverviewFragment.filterByText(newText);
                 return false;
             }
         });
@@ -341,6 +363,7 @@ public class OverviewActivity extends BaseActivity
             public void run() {
                 mNavigationAdapter.setPages(pages);
                 drawerLayout.closeDrawers();
+                stopLoading();
             }
         });
     }
@@ -432,6 +455,20 @@ public class OverviewActivity extends BaseActivity
         eventPagesHandler.sendEmptyMessage(messageCode);
     }
 
+    @Override
+    public Loader<List<Language>> onCreateLoader(int id, Bundle args) {
+        return new LanguageLoader(this, mLocation);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Language>> loader, List<Language> data) {
+        setupLanguagesButton(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Language>> loader) {
+    }
+
     static class EventPagesHandler extends Handler {
         private final WeakReference<OverviewActivity> mActivity;
 
@@ -459,5 +496,24 @@ public class OverviewActivity extends BaseActivity
 
         }
     }
+
+    private MaterialDialog mLoadingDialog;
+
+    private void startLoading() {
+        stopLoading();
+        mLoadingDialog = new MaterialDialog.Builder(OverviewActivity.this)
+                .title(R.string.dialog_title_loading_language)
+                .content(R.string.dialog_content_loading_language)
+                .progress(true, 0)
+                .show();
+    }
+
+    private void stopLoading() {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.cancel();
+        }
+        mLoadingDialog = null;
+    }
+
 
 }

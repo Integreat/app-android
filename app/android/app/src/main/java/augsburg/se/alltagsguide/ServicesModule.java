@@ -1,7 +1,6 @@
 package augsburg.se.alltagsguide;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -13,7 +12,6 @@ import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +24,7 @@ import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.network.NetworkServiceMock;
 import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.OkClient;
@@ -118,6 +117,16 @@ public class ServicesModule extends AbstractModule {
                     Ln.e(e);
                     return null;
                 }
+            }
+
+            @Override
+            public void subscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_register_id") String regId, Callback<String> callback) {
+                service.subscribePush(location, regId, callback);
+            }
+
+            @Override
+            public void unsubscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_unregister_id") String regId, Callback<String> callback) {
+                service.unsubscribePush(location, regId, callback);
             }
         };
     }

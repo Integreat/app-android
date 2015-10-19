@@ -13,14 +13,6 @@ import roboguice.util.Ln;
 
 @ContentView(R.layout.activity_page)
 public class PageActivity extends BasePageWebViewLanguageActivity<Page> {
-    public static final String ARG_INFO = "info";
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initWebView();
-        setPage((Page) getIntent().getSerializableExtra(ARG_INFO));
-    }
 
     protected void setMorePageDetails(Page page) {
     }
