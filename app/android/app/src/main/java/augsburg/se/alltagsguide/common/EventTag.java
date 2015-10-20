@@ -53,6 +53,11 @@ public class EventTag implements Serializable {
         return tag;
     }
 
+    @Override
+    public String toString() {
+        return mName;
+    }
+
     public int getEventId() {
         return mEventId;
     }

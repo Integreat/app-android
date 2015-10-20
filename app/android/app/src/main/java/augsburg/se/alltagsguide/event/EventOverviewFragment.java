@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import com.google.inject.Inject;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -20,6 +22,7 @@ import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.network.EventPagesLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
 import augsburg.se.alltagsguide.utilities.MyLinearLayoutManager;
+import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
@@ -38,6 +41,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
     private OnEventPageFragmentInteractionListener mListener;
 
+    private List<EventPage> mEventPages;
+
     //TODO categories, tags
 
     @Override
@@ -47,14 +52,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<List<EventPage>> loader, List<EventPage> eventPages) {
-        if (mAdapter == null) {
-            mAdapter = new EventPageAdapter(eventPages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
-        } else {
-            mAdapter.setItems(eventPages);
-        }
-        if (mRecyclerView.getAdapter() == null) {
-            mRecyclerView.setAdapter(mAdapter);
-        }
+        mEventPages = eventPages;
+        setOrInitPageAdapter(eventPages);
         mListener.onEventPagesLoaded(eventPages);
     }
 
@@ -111,14 +110,32 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         mListener = null;
     }
 
-    public void changeEventPages(List<EventPage> items) {
-        if (mAdapter != null) {
-            mAdapter.setItems(items);
+    public void filterByText(String filterText) {
+        if (mEventPages != null) { //TODO save attributes at orientation changes
+            if (Objects.isNullOrEmpty(filterText)) {
+                setOrInitPageAdapter(mEventPages);
+            } else {
+                List<EventPage> pages = new ArrayList<>();
+                for (EventPage page : mEventPages) {
+                    String relevantContent = page.getSearchableString();
+                    if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
+                        pages.add(page);
+                    }
+                }
+                setOrInitPageAdapter(pages);
+            }
         }
     }
 
-    public void filterByText(String newText) {
-
+    private void setOrInitPageAdapter(List<EventPage> eventPages) {
+        if (mAdapter == null) {
+            mAdapter = new EventPageAdapter(eventPages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
+        } else {
+            mAdapter.setItems(eventPages);
+        }
+        if (mRecyclerView.getAdapter() == null) {
+            mRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     public interface OnEventPageFragmentInteractionListener {

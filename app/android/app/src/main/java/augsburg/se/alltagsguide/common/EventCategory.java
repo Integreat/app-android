@@ -59,6 +59,11 @@ public class EventCategory implements Serializable {
         return categories;
     }
 
+    @Override
+    public String toString() {
+        return mName;
+    }
+
     public int getId() {
         return mId;
     }

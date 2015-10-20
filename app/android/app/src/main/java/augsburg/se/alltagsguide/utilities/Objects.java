@@ -1,5 +1,11 @@
 package augsburg.se.alltagsguide.utilities;
 
+import android.support.annotation.NonNull;
+
+import java.util.List;
+
+import augsburg.se.alltagsguide.common.EventCategory;
+
 /**
  * Created by Daniel-L on 16.08.2015.
  */
@@ -27,5 +33,13 @@ public class Objects {
             return "";
         }
         return object.toString();
+    }
+
+    public static <T> String join(@NonNull List<T> objects) {
+        StringBuilder builder = new StringBuilder();
+        for (T o : objects) {
+            builder.append(o.toString()).append(" ");
+        }
+        return builder.toString();
     }
 }

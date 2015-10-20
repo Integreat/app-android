@@ -11,16 +11,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import augsburg.se.alltagsguide.utilities.Helper;
+import augsburg.se.alltagsguide.utilities.Newer;
 import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.util.Ln;
 
 /**
  * Created by Daniel-L on 20.09.2015.
  */
-public class Page implements Serializable, Comparable {
+public class Page implements Serializable, Newer {
     private final int mId;
     private final String mTitle;
     private final String mType;
@@ -267,4 +267,16 @@ public class Page implements Serializable, Comparable {
         return parentPages;
     }
 
+    public String getSearchableString() {
+        String relevantContent = getTitle();
+        if (getContent() != null) {
+            relevantContent += getContent();
+        }
+        return relevantContent;
+    }
+
+    @Override
+    public long getTimestamp() {
+        return mModified;
+    }
 }

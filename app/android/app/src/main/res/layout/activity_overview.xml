@@ -143,8 +143,13 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
-                android:fitsSystemWindows="true"
-                android:paddingTop="24dp">
+                android:fitsSystemWindows="true">
+
+                <ImageView
+                    android:id="@+id/header_image_view"
+                    android:scaleType="centerCrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -222,7 +227,6 @@
 
                 <TextView
                     android:id="@+id/settings"
-                    android:textColor="@android:color/primary_text_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@android:drawable/ic_menu_manage"
@@ -230,11 +234,11 @@
                     android:drawableStart="@android:drawable/ic_menu_manage"
                     android:gravity="center_vertical"
                     android:text="@string/action_settings"
+                    android:textColor="@android:color/primary_text_light"
                     android:textSize="?attr/font_small" />
 
                 <TextView
                     android:id="@+id/change_login"
-                    android:textColor="@android:color/primary_text_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@android:drawable/ic_menu_mapmode"
@@ -242,6 +246,7 @@
                     android:drawableStart="@android:drawable/ic_menu_mapmode"
                     android:gravity="center_vertical"
                     android:text="@string/change_language_location"
+                    android:textColor="@android:color/primary_text_light"
                     android:textSize="?attr/font_small" />
             </LinearLayout>
 

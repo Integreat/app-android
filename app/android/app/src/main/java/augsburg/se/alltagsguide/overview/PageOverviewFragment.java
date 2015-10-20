@@ -177,7 +177,6 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     }
 
     private void setOrInitPageAdapter(List<Page> pages) {
-        Collections.sort(pages);
         if (mAdapter == null) {
             mAdapter = new PageAdapter(pages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
         } else {

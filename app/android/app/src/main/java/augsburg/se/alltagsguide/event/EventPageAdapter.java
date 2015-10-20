@@ -118,6 +118,9 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
             contentHolder.location.setText(location);
             contentHolder.location.setTextColor(mColor);
         }
+        if (Objects.isNullOrEmpty(contentHolder.location.getText())) {
+            contentHolder.location.setText("/");
+        }
     }
 
 

@@ -4,9 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,12 +19,12 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -53,6 +50,7 @@ import augsburg.se.alltagsguide.utilities.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
+import roboguice.util.Ln;
 
 @ContentView(R.layout.activity_overview)
 public class OverviewActivity extends BaseActivity
@@ -79,6 +77,9 @@ public class OverviewActivity extends BaseActivity
 
     @InjectView(R.id.navigation)
     private NavigationView navigationView;
+
+    @InjectView(R.id.header_image_view)
+    private ImageView navigationHeaderImageView;
 
     @InjectView(R.id.header)
     private View navigationHeaderView;
@@ -212,30 +213,16 @@ public class OverviewActivity extends BaseActivity
         locationNameTextView.setText(mLocation.getName());
         locationDescriptionTextView.setText(mLocation.getDescription());
 
-        Picasso.with(this)
-                .load(mLocation.getCityImage())
-                .placeholder(R.drawable.ic_location_not_found_black)
-                .error(R.drawable.ic_location_not_found_black)
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                            navigationHeaderView.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
-                        } else {
-                            navigationHeaderView.setBackground(new BitmapDrawable(getResources(), bitmap));
-                        }
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                        navigationHeaderView.setBackgroundResource(R.drawable.ic_location_not_found_black);
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        navigationHeaderView.setBackgroundResource(R.drawable.ic_location_not_found_black);
-                    }
-                });
+        String iconPath = mLocation.getCityImage();
+        Ln.d("Icon path for city image is: " + iconPath);
+        if (!Objects.isNullOrEmpty(mLocation.getCityImage())) {
+            mPicasso.load(mLocation.getCityImage())
+                    .error(R.drawable.brandenburger_tor)
+                    .placeholder(R.drawable.brandenburger_tor)
+                    .into(navigationHeaderImageView);
+        } else {
+            Ln.e("ImagePath should never be null!");
+        }
 
         mRecyclerView.setEmptyView(mEmptyView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

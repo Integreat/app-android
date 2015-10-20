@@ -1,8 +1,11 @@
 package augsburg.se.alltagsguide.event;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -10,15 +13,36 @@ import java.util.Locale;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
+import augsburg.se.alltagsguide.common.EventCategory;
 import augsburg.se.alltagsguide.common.EventPage;
+import augsburg.se.alltagsguide.common.EventTag;
 import augsburg.se.alltagsguide.network.EventPageLoader;
 import augsburg.se.alltagsguide.utilities.BasePageWebViewLanguageActivity;
+import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
 
 @ContentView(R.layout.activity_event)
 public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
+
+    @InjectView(R.id.tags_layout)
+    private LinearLayout tagsLayout;
+
+    @InjectView(R.id.categories_base_layout)
+    private LinearLayout categoriesBaseLayout;
+
+    @InjectView(R.id.categories_layout)
+    private LinearLayout categoriesLayout;
+
+    @InjectView(R.id.author)
+    private View authorLayout;
+
+    @InjectView(R.id.time_from_layout)
+    private View timeFromLayout;
+
+    @InjectView(R.id.time_to_layout)
+    private View timeToLayout;
 
     @InjectView(R.id.to_date)
     private TextView toDateTextView;
@@ -37,16 +61,45 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
 
     @Override
     protected void setMorePageDetails(EventPage page) {
+        int color = mPrefUtilities.getCurrentColor();
         if (mPage.getEvent().isAllDay()) {
             fromDateTextView.setText(allDayDateFormat.format(mPage.getEvent().getStartTime()));
-            toDateTextView.setVisibility(View.GONE);
+            timeToLayout.setVisibility(View.GONE);
         } else {
             fromDateTextView.setText(dateFormatFrom.format(mPage.getEvent().getStartTime()));
             toDateTextView.setText(dateFormatFrom.format(mPage.getEvent().getEndTime()));
         }
 
         if (mPage.getAuthor() != null) {
-            authorTextView.setText(mPage.getAuthor().toText());
+            String authorText = mPage.getAuthor().toText();
+            if (!Objects.isNullOrEmpty(authorText)) {
+                authorTextView.setText(authorText);
+            } else {
+                authorLayout.setVisibility(View.GONE);
+            }
+        } else {
+            authorLayout.setVisibility(View.GONE);
+        }
+
+        if (mPage.getCategories() != null && !mPage.getCategories().isEmpty()) {
+            for (EventCategory category : mPage.getCategories()) {
+                @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.category_item, null, false);
+                view.setText(category.getName());
+                categoriesLayout.addView(view);
+            }
+        } else {
+            categoriesBaseLayout.setVisibility(View.GONE);
+        }
+
+        if (mPage.getTags() != null && !mPage.getTags().isEmpty()) {
+            for (EventTag tag : mPage.getTags()) {
+                @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.tag_item, null, false);
+                view.setText(tag.getName());
+                view.setBackgroundColor(color);
+                tagsLayout.addView(view);
+            }
+        } else {
+            tagsLayout.setVisibility(View.GONE);
         }
 
         if (mPage.getLocation() != null) {

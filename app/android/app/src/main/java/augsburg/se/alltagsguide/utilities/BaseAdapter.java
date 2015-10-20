@@ -3,11 +3,10 @@ package augsburg.se.alltagsguide.utilities;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
-public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item extends Comparable> extends RecyclerView.Adapter<VH> {
+public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item extends Newer> extends RecyclerView.Adapter<VH> {
 
     private List<Item> mItems;
 
@@ -30,7 +29,16 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
     private void applyAndAnimateAdditions(List<Item> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
             final Item model = newModels.get(i);
-            if (!mItems.contains(model)) {
+            int indexOf = mItems.indexOf(model);
+            if (indexOf != -1) {
+                Item other = mItems.get(indexOf);
+                if (model.getTimestamp() > other.getTimestamp()) {
+                    /* Update might have changed the model, so put new object and notify adapter about the new item*/
+                    mItems.set(indexOf, model);
+                    notifyItemChanged(indexOf);
+                }
+            } else {
+                // item not in list -> add here
                 addItem(i, model);
             }
         }
@@ -72,58 +80,10 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         return mItems.get(index);
     }
 
-    private int indexOf(Item item) {
-        return mItems.indexOf(item);
-    }
-
-    public List<Item> getItems() {
-        return mItems;
-    }
-
     public void setItems(List<Item> items) {
         applyAndAnimateRemovals(items);
         applyAndAnimateAdditions(items);
         applyAndAnimateMovedItems(items);
     }
 
-    public void remove(Item removingItem) {
-        int index = indexOf(removingItem);
-        if (index >= 0) {
-            mItems.remove(removingItem);
-            notifyItemRemoved(index);
-        }
-    }
-
-    public void removeAll() {
-        int size = mItems.size();
-        mItems.clear();
-        notifyItemRangeRemoved(0, size);
-    }
-
-    public void add(List<Item> newItems) {
-        List<Item> addedItems = new ArrayList<>();
-        for (Item item : newItems) {
-            if (!mItems.contains(item)) {
-                addedItems.add(item);
-                mItems.add(item);
-            }
-        }
-        Collections.sort(mItems);
-        for (Item addedItem : addedItems) {
-            int index = indexOf(addedItem);
-            notifyItemInserted(index);
-        }
-    }
-
-    public void add(Item newItem) {
-        if (!mItems.contains(newItem)) {
-            mItems.add(newItem);
-            Collections.sort(mItems);
-            int index = indexOf(newItem);
-            notifyItemInserted(index);
-        } else {
-            int index = indexOf(newItem);
-            notifyItemChanged(index);
-        }
-    }
 }

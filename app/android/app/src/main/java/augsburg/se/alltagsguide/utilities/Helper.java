@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.utilities;
 
 import android.annotation.TargetApi;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
@@ -101,6 +102,13 @@ public class Helper {
         return drawable;
     }
 
+    public static void setImageDrawable(View view, Drawable drawable) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(drawable);
+        } else {
+            view.setBackground(drawable);
+        }
+    }
 
     public static void setPressedColorRippleDrawable(int normalColor, int pressedColor, View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

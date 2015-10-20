@@ -96,9 +96,9 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:lines="1"
-                            tools:text="+2"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:text="+2" />
                     </FrameLayout>
                 </RelativeLayout>
 
@@ -121,6 +121,7 @@
                 android:paddingStart="4dp">
 
                 <LinearLayout
+                    android:id="@+id/author_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -146,6 +147,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/time_from_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -172,6 +174,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/time_to_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -198,6 +201,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/location_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -221,6 +225,42 @@
                         tools:text="Augsburg, Karolinenstraße 4"
                         tools:textColor="@color/myAccentColor" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/categories_base_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_view" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:id="@+id/categories_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/tags_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

@@ -3,19 +3,20 @@ package augsburg.se.alltagsguide.common;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import augsburg.se.alltagsguide.utilities.Newer;
+import augsburg.se.alltagsguide.utilities.Objects;
+
 /**
  * Created by Daniel-L on 20.09.2015.
  */
-public class EventPage extends Page implements Serializable {
+public class EventPage extends Page implements Newer {
 
     private Event mEvent;
     private EventLocation mLocation;
@@ -95,5 +96,22 @@ public class EventPage extends Page implements Serializable {
                 page.getTags().addAll(eventIdTagMap.get(eventId));
             }
         }
+    }
+
+    @Override
+    public String getSearchableString() {
+        String searchableString = super.getSearchableString();
+        if (mCategories != null) {
+            searchableString += " " + Objects.join(mCategories);
+        }
+        if (mTags != null) {
+            searchableString += " " + Objects.join(mTags);
+        }
+        return searchableString;
+    }
+
+    @Override
+    public long getTimestamp() {
+        return super.getTimestamp();
     }
 }

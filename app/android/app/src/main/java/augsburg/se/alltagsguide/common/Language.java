@@ -8,11 +8,12 @@ import com.google.gson.JsonObject;
 import java.io.Serializable;
 
 import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.utilities.Newer;
 
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class Language implements Serializable, Comparable {
+public class Language implements Serializable, Newer {
 
     private int mId;
     private String mShortName;
@@ -86,4 +87,8 @@ public class Language implements Serializable, Comparable {
         return new Language(id, shortName, name, path);
     }
 
+    @Override
+    public long getTimestamp() {
+        return -1;
+    }
 }

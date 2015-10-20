@@ -7,9 +7,10 @@ import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 
+import augsburg.se.alltagsguide.utilities.Newer;
 import augsburg.se.alltagsguide.utilities.Objects;
 
-public class Location implements Serializable, Comparable {
+public class Location implements Serializable, Newer {
     private int mId;
     private String mName;
     private String mIcon;
@@ -75,7 +76,7 @@ public class Location implements Serializable, Comparable {
         if (Objects.equals("deutschland", name)) {
             return "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/300px-Brandenburger_Tor_abends.jpg";
         }
-        return "";
+        return "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/300px-Brandenburger_Tor_abends.jpg";
     }
 
     public float getLatitude() {
@@ -121,5 +122,10 @@ public class Location implements Serializable, Comparable {
     @Override
     public boolean equals(@NonNull Object another) {
         return another instanceof Location && mId == ((Location) another).getId();
+    }
+
+    @Override
+    public long getTimestamp() {
+        return -1;
     }
 }
