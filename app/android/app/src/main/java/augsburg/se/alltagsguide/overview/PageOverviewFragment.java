@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -96,13 +95,23 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(getString(R.string.welcome_to_x, mPrefUtilities.getLocation().getName()));
+        setDefaultTitle();
         //setSubTitle("This is the subtitle");
         mLayoutManager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
         mRecyclerView.setRefreshListener(this);
         addListener();
+    }
+
+    private void setDefaultTitle() {
+        setTitle(getString(R.string.refguide, mPrefUtilities.getLocation().getName()));
+        setSubTitle("");
+    }
+
+    private void setCategoryTitle(Page page) {
+        setTitle("");
+        setSubTitle(page.getTitle());
     }
 
     @Override
@@ -169,10 +178,12 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
             List<Page> hierarchyPages = Page.filterParents(pages);
             for (Page page : hierarchyPages) {
                 if (Objects.equals(selectedPageId, page.getId())) {
+                    setCategoryTitle(page);
                     return page.getSubPagesRecursively();
                 }
             }
         }
+        setDefaultTitle();
         return pages;
     }
 

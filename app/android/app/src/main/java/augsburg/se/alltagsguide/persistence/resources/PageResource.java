@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -22,6 +23,7 @@ import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.utilities.Helper;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 /**
  * Created by Daniel-L on 07.09.2015.
@@ -37,26 +39,29 @@ public class PageResource implements PersistableNetworkResource<Page> {
         PageResource under(Language lang, Location loc);
     }
 
-    private final Language mLanguage;
-    private final Location mLocation;
-    private NetworkService mNetwork;
-    private DatabaseCache mCache;
-    private AvailableLanguageResource mAvailableLanguageResource;
+    @NonNull private final Language mLanguage;
+    @NonNull private final Location mLocation;
+    @NonNull private NetworkService mNetwork;
+    @NonNull private DatabaseCache mCache;
+    @NonNull private AvailableLanguageResource mAvailableLanguageResource;
+    @NonNull private PrefUtilities mPreferences;
 
     @Inject
-    public PageResource(@Assisted Language language,
-                        @Assisted Location location,
-                        NetworkService network,
-                        DatabaseCache cache) {
+    public PageResource(@NonNull @Assisted Language language,
+                        @NonNull @Assisted Location location,
+                        @NonNull NetworkService network,
+                        @NonNull DatabaseCache cache, @NonNull PrefUtilities preferences) {
         mLanguage = language;
         mLocation = location;
         mNetwork = network;
         mCache = cache;
+        mPreferences = preferences;
         mAvailableLanguageResource = new AvailableLanguageResource(mLanguage, mLocation);
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
         return getCursorQueryBuilder(getTables()).query(readableDatabase, null, null, null, null, null, null);
     }
 
@@ -70,20 +75,24 @@ public class PageResource implements PersistableNetworkResource<Page> {
         return builder;
     }
 
+
+    @NonNull
     private String getTables() {
         return CacheHelper.TABLE_PAGE
                 + " join " + CacheHelper.TABLE_AUTHOR + " ON " + CacheHelper.PAGE_AUTHOR + " = " + CacheHelper.AUTHOR_USERNAME;
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int id) {
         SQLiteQueryBuilder builder = getCursorQueryBuilder(getTables());
         builder.appendWhere(" AND " + CacheHelper.PAGE_ID + "=" + String.valueOf(id));
         return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
+    @NonNull
     @Override
-    public Page loadFrom(Cursor cursor, SQLiteDatabase db) {
+    public Page loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
         int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ID));
         String title = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TITLE));
         String type = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TYPE));
@@ -100,7 +109,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
     }
 
     @Override
-    public void store(SQLiteDatabase db, List<? extends Page> mPages) {
+    public void store(@NonNull SQLiteDatabase db, @NonNull List<? extends Page> mPages) {
         if (mPages.isEmpty()) {
             return;
         }
@@ -165,6 +174,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
         return time;
     }
 
+    @NonNull
     @Override
     public List<Page> request() {
         UpdateTime time = new UpdateTime(getLastModificationDate());
@@ -173,6 +183,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
 
     @Override
     public boolean shouldUpdate() {
+        //mPreferences
         return true;
     }
 }

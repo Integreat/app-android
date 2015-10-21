@@ -30,6 +30,6 @@
         android:layout_above="@+id/navigation"
         app:layout_empty="@layout/languages_empty_view"
         app:recyclerClipToPadding="false"
-        app:recyclerPadding="10dp"
+        app:recyclerPadding="5dp"
         app:scrollbarStyle="outsideOverlay" />
 </RelativeLayout>

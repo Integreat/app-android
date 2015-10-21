@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -14,6 +16,7 @@ import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 /**
  * Created by Daniel-L on 07.09.2015.
@@ -27,17 +30,20 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
         LanguageResource under(Location location);
     }
 
-    private final Location mLocation;
-    private NetworkService mNetwork;
+    @NonNull private final Location mLocation;
+    @NonNull private NetworkService mNetwork;
+    @NonNull private PrefUtilities mPreferences;
 
     @AssistedInject
-    public LanguageResource(@Assisted Location location, NetworkService network) {
+    public LanguageResource(@NonNull @Assisted Location location, @NonNull NetworkService network, @NonNull PrefUtilities preferences) {
         mLocation = location;
         mNetwork = network;
+        mPreferences = preferences;
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_LANGUAGE);
         return builder.query(readableDatabase, new String[]{},
@@ -46,8 +52,9 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
                 null);
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int id) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_PAGE);
         return builder.query(readableDatabase, new String[]{},
@@ -56,16 +63,17 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
                 null);
     }
 
+    @Nullable
     @Override
-    public Language loadFrom(Cursor cursor, SQLiteDatabase db) {
+    public Language loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
         Language language = Language.fromCursor(cursor);
         language.setLocation(mLocation);
         return language;
     }
 
     @Override
-    public void store(SQLiteDatabase db, List<? extends Language> languages) {
-        if (languages == null || languages.isEmpty()) {
+    public void store(@NonNull SQLiteDatabase db, @NonNull List<? extends Language> languages) {
+        if (languages.isEmpty()) {
             return;
         }
 
@@ -82,6 +90,7 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
         }
     }
 
+    @NonNull
     @Override
     public List<Language> request() {
         return mNetwork.getAvailableLanguages(mLocation);
@@ -90,6 +99,7 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
 
     @Override
     public boolean shouldUpdate() {
+        //mPreferences
         return false;
     }
 }

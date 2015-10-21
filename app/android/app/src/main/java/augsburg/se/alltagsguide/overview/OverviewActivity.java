@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
@@ -60,6 +62,9 @@ public class OverviewActivity extends BaseActivity
         EventOverviewFragment.OnEventPageFragmentInteractionListener,
         BaseFragment.OnBaseFragmentInteractionListener,
         NavigationAdapter.OnNavigationSelected {
+
+    // delay to launch nav drawer item, to allow close animation to play
+    private static final long NAVDRAWER_LAUNCH_DELAY = 300;
 
     private NavigationAdapter mNavigationAdapter;
 
@@ -119,11 +124,14 @@ public class OverviewActivity extends BaseActivity
     private List<Language> mOtherLanguages = new ArrayList<>();
     private MenuItem columnsMenu;
 
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
+        mHandler = new Handler();
         initNavigationDrawer();
         if (savedInstanceState == null) {
             mPageOverviewFragment = PageOverviewFragment.newInstance();
@@ -357,14 +365,23 @@ public class OverviewActivity extends BaseActivity
 
 
     @Override
-    public void onNavigationClicked(Page item) {
+    public void onNavigationClicked(final Page item) {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                goToNavDrawerItem(item);
+            }
+        }, NAVDRAWER_LAUNCH_DELAY);
+        drawerLayout.closeDrawers();
+    }
+
+    private void goToNavDrawerItem(Page item) {
         mPrefUtilities.setSelectedPage(item.getId());
         if (mNavigationAdapter != null) {
             mNavigationAdapter.setSelectedIndex(item.getId());
             mNavigationAdapter.notifyDataSetChanged();
         }
         mPageOverviewFragment.indexUpdated();
-        drawerLayout.closeDrawers();
     }
 
     @Override
@@ -381,15 +398,12 @@ public class OverviewActivity extends BaseActivity
                 .content(R.string.dialog_sure_exit)
                 .negativeText(R.string.dialog_answer_no)
                 .positiveText(R.string.dialog_answer_yes)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
                         mPrefUtilities.setSelectedPage(-1);
+                        materialDialog.hide();
                         OverviewActivity.super.onBackPressed();
-                    }
-
-                    @Override
-                    public void onNegative(MaterialDialog dialog) {
                     }
                 }).show();
     }

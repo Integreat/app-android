@@ -12,9 +12,9 @@ import augsburg.se.alltagsguide.utilities.Objects;
 
 public class Location implements Serializable, Newer {
     private int mId;
-    private String mName;
+    @NonNull private String mName;
     private String mIcon;
-    private String mPath;
+    @NonNull private String mPath;
     private String mDescription;
     private boolean mGlobal;
     private int mColor;
@@ -49,6 +49,7 @@ public class Location implements Serializable, Newer {
         return mPath.substring(1, mPath.length() - 1);
     }
 
+    @NonNull
     public static Location fromJson(JsonObject jsonPage) {
         int id = jsonPage.get("id").getAsInt();
         String name = jsonPage.get("name").getAsString();
@@ -63,6 +64,7 @@ public class Location implements Serializable, Newer {
         return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
     }
 
+    @NonNull
     private static String loadCityImage(String name) {
         if (Objects.equals("muenchen", name) || Objects.equals("münchen", name)) {
             return "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/M%C3%BCnchen_Panorama.JPG/300px-M%C3%BCnchen_Panorama.JPG";
@@ -95,6 +97,7 @@ public class Location implements Serializable, Newer {
         return mColor;
     }
 
+    @NonNull
     public String getPath() {
         return mPath;
     }
@@ -107,6 +110,7 @@ public class Location implements Serializable, Newer {
         return mIcon;
     }
 
+    @NonNull
     public String getName() {
         return mName;
     }

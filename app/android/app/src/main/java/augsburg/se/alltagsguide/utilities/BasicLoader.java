@@ -2,6 +2,8 @@ package augsburg.se.alltagsguide.utilities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 
@@ -31,12 +33,13 @@ public abstract class BasicLoader<D> extends AsyncLoader<D> {
      *
      * @param context
      */
-    public BasicLoader(final Context context) {
+    public BasicLoader(@NonNull final Context context) {
         super(context);
         RoboGuice.injectMembers(context, this);
     }
 
     @Override
+    @Nullable
     public final D loadInBackground() {
         contextScope.enter(getContext());
         try {
@@ -51,5 +54,6 @@ public abstract class BasicLoader<D> extends AsyncLoader<D> {
      *
      * @return data
      */
+    @Nullable
     public abstract D load();
 }

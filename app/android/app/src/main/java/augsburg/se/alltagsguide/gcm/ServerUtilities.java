@@ -17,6 +17,7 @@ package augsburg.se.alltagsguide.gcm;
  */
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.android.gcm.GCMRegistrar;
@@ -42,17 +43,17 @@ public final class ServerUtilities {
     /**
      * The m context.
      */
-    private final Context mContext;
+    @NonNull private final Context mContext;
 
     /**
      * The m network communication.
      */
-    private final NetworkService mNetworkCommunication;
+    @NonNull private final NetworkService mNetworkCommunication;
 
     /**
      * The m pref utilities.
      */
-    private final PrefUtilities mPrefUtilities;
+    @NonNull private final PrefUtilities mPrefUtilities;
 
     /**
      * Instantiates a new push utilities.
@@ -62,7 +63,7 @@ public final class ServerUtilities {
      * @param prefUtilities        the pref utilities
      */
     @Inject
-    public ServerUtilities(Context context, NetworkService networkCommunication, PrefUtilities prefUtilities) {
+    public ServerUtilities(@NonNull Context context, @NonNull NetworkService networkCommunication, @NonNull PrefUtilities prefUtilities) {
         mContext = context;
         mNetworkCommunication = networkCommunication;
         mPrefUtilities = prefUtilities;

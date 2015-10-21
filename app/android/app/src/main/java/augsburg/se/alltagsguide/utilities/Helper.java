@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.google.gson.JsonElement;
@@ -25,11 +26,12 @@ public class Helper {
 
     public static SimpleDateFormat FROM_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY);
 
+    @NonNull
     public static String quote(String s) {
         return "'" + s + "'";
     }
 
-    public static float getFloatOrDefault(JsonElement elem, float defaultValue) {
+    public static float getFloatOrDefault(@NonNull JsonElement elem, float defaultValue) {
         try {
             return elem.getAsFloat();
         } catch (Exception e) {
@@ -38,7 +40,7 @@ public class Helper {
         }
     }
 
-    public static boolean sameDate(Date date1, Date date2) {
+    public static boolean sameDate(@NonNull Date date1, @NonNull Date date2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTime(date1);
@@ -47,6 +49,7 @@ public class Helper {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 
+    @NonNull
     public static String getStringOrDefault(JsonElement elem, String defaultValue) {
         try {
             return elem.getAsString();
@@ -69,7 +72,8 @@ public class Helper {
         return (a == null) ? (b == null) : a.equals(b);
     }
 
-    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
+    @NonNull
+    public static <T> List<T> intersection(@NonNull List<T> list1, @NonNull List<T> list2) {
         List<T> list = new ArrayList<>();
         for (T t : list1) {
             if (list2.contains(t)) {
@@ -79,6 +83,7 @@ public class Helper {
         return list;
     }
 
+    @NonNull
     public static <T> List<T> nonIntersection(List<T> list1, List<T> list2) {
         if (list1 == null) {
             list1 = new ArrayList<>();
@@ -96,13 +101,14 @@ public class Helper {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @NonNull
     private static Drawable getPressedColorRippleDrawable(int normalColor, int pressedColor) {
         Drawable drawable = new RippleDrawable(getPressedColorSelector(normalColor, pressedColor), getColorDrawableFromColor(normalColor), null);
         drawable.setAlpha(70);
         return drawable;
     }
 
-    public static void setImageDrawable(View view, Drawable drawable) {
+    public static void setImageDrawable(@NonNull View view, Drawable drawable) {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
             view.setBackgroundDrawable(drawable);
         } else {
@@ -110,7 +116,7 @@ public class Helper {
         }
     }
 
-    public static void setPressedColorRippleDrawable(int normalColor, int pressedColor, View view) {
+    public static void setPressedColorRippleDrawable(int normalColor, int pressedColor, @NonNull View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             view.setBackground(getPressedColorRippleDrawable(normalColor, pressedColor));
         } else {
@@ -118,6 +124,8 @@ public class Helper {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @NonNull
     private static ColorStateList getPressedColorSelector(int normalColor, int pressedColor) {
         return new ColorStateList(
                 new int[][]
@@ -137,6 +145,7 @@ public class Helper {
         );
     }
 
+    @NonNull
     private static ColorDrawable getColorDrawableFromColor(int color) {
         return new ColorDrawable(color);
     }
@@ -147,7 +156,8 @@ public class Helper {
      * @param tokens an array objects to be joined. Strings will be formed from
      *               the objects by calling object.toString().
      */
-    public static <T> String join(CharSequence delimiter, Iterable<T> tokens) {
+    @NonNull
+    public static <T> String join(@NonNull CharSequence delimiter, @NonNull Iterable<T> tokens) {
         StringBuilder sb = new StringBuilder();
         boolean firstTime = true;
         for (T token : tokens) {

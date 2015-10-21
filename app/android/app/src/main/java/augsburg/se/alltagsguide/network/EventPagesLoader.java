@@ -31,8 +31,8 @@ public class EventPagesLoader extends BasicLoader<List<EventPage>> {
 
     @Inject
     private DatabaseCache dbCache;
-    private Location mLocation;
-    private Language mLanguage;
+    @NonNull private Location mLocation;
+    @NonNull private Language mLanguage;
 
     @Inject
     private EventPageResource.Factory pagesFactory;

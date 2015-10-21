@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -74,13 +75,15 @@ public class ServicesModule extends AbstractModule {
         final NetworkService service = restAdapter.create(NetworkService.class);
         final NetworkService mock = new NetworkServiceMock(context);
         return new NetworkService() {
+            @NonNull
             @Override
             public Boolean isServerAlive() {
                 return mock.isServerAlive();
             }
 
+            @NonNull
             @Override
-            public List<Page> getPages(@Path("language") Language language, @Path("location") Location location, @Query("since") UpdateTime updateTime) {
+            public List<Page> getPages(@NonNull @Path("language") Language language, @NonNull @Path("location") Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getPages(language, location, updateTime);
                 } catch (RetrofitError e) {
@@ -89,8 +92,9 @@ public class ServicesModule extends AbstractModule {
                 }
             }
 
+            @NonNull
             @Override
-            public List<EventPage> getEventPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime updateTime) {
+            public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getEventPages(language, location, updateTime);
                 } catch (RetrofitError e) {
@@ -99,6 +103,7 @@ public class ServicesModule extends AbstractModule {
                 }
             }
 
+            @NonNull
             @Override
             public List<Location> getAvailableLocations() {
                 try {
@@ -109,8 +114,9 @@ public class ServicesModule extends AbstractModule {
                 }
             }
 
+            @NonNull
             @Override
-            public List<Language> getAvailableLanguages(Location location) {
+            public List<Language> getAvailableLanguages(@NonNull Location location) {
                 try {
                     return service.getAvailableLanguages(location);
                 } catch (RetrofitError e) {
@@ -120,12 +126,12 @@ public class ServicesModule extends AbstractModule {
             }
 
             @Override
-            public void subscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_register_id") String regId, Callback<String> callback) {
+            public void subscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
                 service.subscribePush(location, regId, callback);
             }
 
             @Override
-            public void unsubscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_unregister_id") String regId, Callback<String> callback) {
+            public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
                 service.unsubscribePush(location, regId, callback);
             }
         };

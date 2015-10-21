@@ -28,6 +28,7 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
     @Inject
     private DatabaseCache db;
 
+    @NonNull
     private Location mLocation;
 
     /**
@@ -44,11 +45,7 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
     @Override
     public List<Language> load() {
         try {
-            List<Language> items = db.loadOrRequest(languageFactory.under(mLocation));
-            if (items == null) {
-                items = new ArrayList<>();
-            }
-            return items;
+            return db.loadOrRequest(languageFactory.under(mLocation));
         } catch (IOException e) {
             Ln.e(e);
             return Collections.emptyList();

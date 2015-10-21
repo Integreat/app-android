@@ -35,6 +35,7 @@ public class Objects {
         return object.toString();
     }
 
+    @NonNull
     public static <T> String join(@NonNull List<T> objects) {
         StringBuilder builder = new StringBuilder();
         for (T o : objects) {

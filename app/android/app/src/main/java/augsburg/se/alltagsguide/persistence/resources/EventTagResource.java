@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -20,8 +22,8 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
  * Created by Daniel-L on 07.09.2015.
  */
 public class EventTagResource implements PersistableResource<EventTag> {
-    private Language mLanguage;
-    private Location mLocation;
+    @NonNull private Language mLanguage;
+    @NonNull private Location mLocation;
 
     /**
      * Creation factory
@@ -31,14 +33,15 @@ public class EventTagResource implements PersistableResource<EventTag> {
     }
 
     @Inject
-    public EventTagResource(@Assisted Language language,
-                            @Assisted Location location) {
+    public EventTagResource(@NonNull @Assisted Language language,
+                            @NonNull @Assisted Location location) {
         mLanguage = language;
         mLocation = location;
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_EVENT_TAG);
         return builder.query(readableDatabase, new String[]{},
@@ -47,8 +50,9 @@ public class EventTagResource implements PersistableResource<EventTag> {
                 null);
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int id) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_EVENT_TAG);
         return builder.query(readableDatabase, new String[]{},
@@ -57,17 +61,18 @@ public class EventTagResource implements PersistableResource<EventTag> {
                 null);
     }
 
+    @Nullable
     @Override
-    public EventTag loadFrom(Cursor cursor, SQLiteDatabase db) {
+    public EventTag loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
         return EventTag.loadFrom(cursor);
     }
 
     @Override
-    public void store(SQLiteDatabase writableDatabase, List<? extends EventTag> tags) {
+    public void store(@NonNull SQLiteDatabase writableDatabase, @NonNull List<? extends EventTag> tags) {
         throw new IllegalStateException("Should not be called");
     }
 
-    public void store(SQLiteDatabase writableDatabase, EventPage page) {
+    public void store(@NonNull SQLiteDatabase writableDatabase, @NonNull EventPage page) {
         List<EventTag> tags = page.getTags();
         ContentValues tagValues = new ContentValues(1);
         ContentValues eventTagValues = new ContentValues(5);

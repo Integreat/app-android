@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.overview;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -23,15 +24,17 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
 
     private PageOverviewFragment.OnPageFragmentInteractionListener mListener;
     private int mColor;
-    private Context mContext;
+    @NonNull private Context mContext;
     private static final int ENTRY = 7;
     private static final int TITLE = 42;
+    @NonNull private SimpleDateFormat dateFormatTo;
 
-    public PageAdapter(List<Page> pages, PageOverviewFragment.OnPageFragmentInteractionListener listener, int primaryColor, Context context) {
+    public PageAdapter(@NonNull List<Page> pages, PageOverviewFragment.OnPageFragmentInteractionListener listener, int primaryColor, @NonNull Context context) {
         super(pages);
         mListener = listener;
         mColor = primaryColor;
         mContext = context;
+        dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
     }
 
     @Override
-    public void setItems(List<Page> pages) {
+    public void setItems(@NonNull List<Page> pages) {
         Collections.sort(pages);
         super.setItems(pages);
     }
@@ -75,7 +78,6 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         titleHolder.title.setText(page.getTitle());
     }
 
-    SimpleDateFormat dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
 
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final Page page) {
         contentHolder.title.setText(page.getTitle());

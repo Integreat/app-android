@@ -1,5 +1,8 @@
 package augsburg.se.alltagsguide.serialization;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -20,13 +23,11 @@ import augsburg.se.alltagsguide.common.Page;
 public class PageSerializer implements JsonDeserializer<List<Page>> {
 
     @Override
-    public List<Page> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        List<Page> rootPages = parsePages(json.getAsJsonArray());
-        //printPages(rootPages);
-        return rootPages;
+    public List<Page> deserialize(@NonNull JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return parsePages(json.getAsJsonArray());
     }
 
-    private List<Page> parsePages(final JsonArray jsonPages) {
+    private List<Page> parsePages(@NonNull final JsonArray jsonPages) {
         List<Page> rootPages = getPagesByParentId(null, 0, jsonPages);
         Stack<Page> pagesLeft = new Stack<>();
         pagesLeft.addAll(rootPages);
@@ -41,7 +42,8 @@ public class PageSerializer implements JsonDeserializer<List<Page>> {
         return rootPages;
     }
 
-    private List<Page> getPagesByParentId(final Page parent, final int parentId, final JsonArray jsonPages) {
+    @NonNull
+    private List<Page> getPagesByParentId(@Nullable final Page parent, final int parentId, @NonNull final JsonArray jsonPages) {
         final List<Page> result = new ArrayList<>();
         for (int i = 0; i < jsonPages.size(); i++) {
             JsonObject jsonPage = jsonPages.get(i).getAsJsonObject();
@@ -63,11 +65,11 @@ public class PageSerializer implements JsonDeserializer<List<Page>> {
         System.out.printf("%" + hierarchyLevel * INDENTS_PER_LEVEL + "s", "");
     }
 
-    private void printPages(final List<Page> rootPages) {
+    private void printPages(@NonNull final List<Page> rootPages) {
         printPages(rootPages, 0);
     }
 
-    private void printPages(final List<Page> pages, final int hierarchyLevel) {
+    private void printPages(@NonNull final List<Page> pages, final int hierarchyLevel) {
         for (Page page : pages) {
             printIndent(hierarchyLevel);
             printPage(page);
@@ -75,7 +77,7 @@ public class PageSerializer implements JsonDeserializer<List<Page>> {
         }
     }
 
-    private void printPage(final Page page) {
+    private void printPage(@NonNull final Page page) {
         System.out.println(page.getId() + " | " + page.getTitle());
     }
 }

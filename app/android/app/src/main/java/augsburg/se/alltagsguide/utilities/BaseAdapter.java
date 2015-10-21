@@ -1,5 +1,6 @@
 package augsburg.se.alltagsguide.utilities;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -8,16 +9,16 @@ import java.util.List;
 
 public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item extends Newer> extends RecyclerView.Adapter<VH> {
 
-    private List<Item> mItems;
+    @NonNull private List<Item> mItems;
 
-    protected BaseAdapter(List<Item> items) {
+    protected BaseAdapter(@NonNull List<Item> items) {
         super();
         mItems = new ArrayList<>();
         setItems(items);
     }
 
 
-    private void applyAndAnimateRemovals(List<Item> newModels) {
+    private void applyAndAnimateRemovals(@NonNull List<Item> newModels) {
         for (int i = mItems.size() - 1; i >= 0; i--) {
             final Item model = mItems.get(i);
             if (!newModels.contains(model)) {
@@ -26,7 +27,7 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         }
     }
 
-    private void applyAndAnimateAdditions(List<Item> newModels) {
+    private void applyAndAnimateAdditions(@NonNull List<Item> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
             final Item model = newModels.get(i);
             int indexOf = mItems.indexOf(model);
@@ -44,7 +45,7 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         }
     }
 
-    private void applyAndAnimateMovedItems(List<Item> newModels) {
+    private void applyAndAnimateMovedItems(@NonNull List<Item> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
             final Item model = newModels.get(toPosition);
             final int fromPosition = mItems.indexOf(model);
@@ -54,6 +55,7 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         }
     }
 
+    @NonNull
     public Item removeItem(int position) {
         final Item model = mItems.remove(position);
         notifyItemRemoved(position);
@@ -76,11 +78,12 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         return mItems.size();
     }
 
+    @NonNull
     public Item get(int index) {
         return mItems.get(index);
     }
 
-    public void setItems(List<Item> items) {
+    public void setItems(@NonNull List<Item> items) {
         applyAndAnimateRemovals(items);
         applyAndAnimateAdditions(items);
         applyAndAnimateMovedItems(items);

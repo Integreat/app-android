@@ -1,5 +1,7 @@
 package augsburg.se.alltagsguide.persistence.resources;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -17,6 +19,7 @@ public interface PersistableNetworkResource<E> extends PersistableResource<E> {
      * @return list of items
      * @throws IOException
      */
+    @NonNull
     List<E> request() throws IOException;
 
     /**

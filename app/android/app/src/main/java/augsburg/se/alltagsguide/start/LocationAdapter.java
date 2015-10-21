@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +12,11 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.RoboGuice;
 
 /**
@@ -25,8 +24,8 @@ import roboguice.RoboGuice;
  */
 public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHolder, Location> {
 
-    private LocationClickListener mListener;
-    private Context mContext;
+    @NonNull private LocationClickListener mListener;
+    @NonNull private Context mContext;
     @Inject
     private Picasso mPicasso;
 
@@ -34,7 +33,7 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
         void onLocationClick(Location location);
     }
 
-    public LocationAdapter(List<Location> locations, LocationClickListener listener, Context context) {
+    public LocationAdapter(@NonNull List<Location> locations, @NonNull LocationClickListener listener, @NonNull Context context) {
         super(locations);
         mListener = listener;
         mContext = context;

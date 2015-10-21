@@ -7,12 +7,10 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ocpsoft.pretty.time.PrettyTime;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -21,26 +19,24 @@ import java.util.Locale;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.EventPage;
-import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.overview.PageOverviewFragment;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
-import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Objects;
-import roboguice.util.Ln;
 
 public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentViewHolder, EventPage> {
 
-    private EventOverviewFragment.OnEventPageFragmentInteractionListener mListener;
+    @NonNull private EventOverviewFragment.OnEventPageFragmentInteractionListener mListener;
     private int mColor;
-    private Context mContext;
+    @NonNull private Context mContext;
     private static final int WITHOUT_IMAGE = 7;
     private static final int WITH_IMAGE = 42;
+    @NonNull SimpleDateFormat dateFormatTo;
 
-    public EventPageAdapter(List<EventPage> pages, EventOverviewFragment.OnEventPageFragmentInteractionListener listener, int primaryColor, Context context) {
+    public EventPageAdapter(@NonNull List<EventPage> pages, @NonNull EventOverviewFragment.OnEventPageFragmentInteractionListener listener, int primaryColor, @NonNull Context context) {
         super(pages);
         mListener = listener;
         mColor = primaryColor;
         mContext = context;
+        dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
     }
 
     @Override
@@ -52,8 +48,6 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
 
     @Override
     public int getItemViewType(int position) {
-        final EventPage page = get(position);
-        //TODO WITH_IMAGE?!
         return WITHOUT_IMAGE;
     }
 
@@ -83,7 +77,6 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
         titleHolder.title.setText(page.getTitle());
     }
 
-    SimpleDateFormat dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
 
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final EventPage page) {
         contentHolder.title.setText(page.getTitle());

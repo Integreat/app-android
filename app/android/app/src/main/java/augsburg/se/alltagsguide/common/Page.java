@@ -22,7 +22,7 @@ import roboguice.util.Ln;
  */
 public class Page implements Serializable, Newer {
     private final int mId;
-    private final String mTitle;
+    @NonNull private final String mTitle;
     private final String mType;
     private final String mStatus;
     private final int mParentId;
@@ -34,13 +34,13 @@ public class Page implements Serializable, Newer {
     private Author mAuthor;
 
     private Page mParent;
-    final List<Page> mSubPages;
+    @NonNull final List<Page> mSubPages;
     private List<Page> mAvailablePages;
 
     private List<AvailableLanguage> mAvailableLanguages;
     private Language mLanguage;
 
-    public Page(int id, String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, List<AvailableLanguage> availableLanguages) {
+    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, List<AvailableLanguage> availableLanguages) {
         mId = id;
         mTitle = title;
         mType = type;
@@ -74,6 +74,7 @@ public class Page implements Serializable, Newer {
         mLanguage = language;
     }
 
+    @NonNull
     public static Page fromJson(@NonNull final JsonObject jsonPage) {
         int id = jsonPage.get("id").getAsInt();
         String title = jsonPage.get("title").getAsString();
@@ -111,20 +112,17 @@ public class Page implements Serializable, Newer {
         if (o instanceof Page) {
             Page other = (Page) o;
             if (other.getParent() != null) {
-                compare = compareTo(other.getParent());
-                if (compare != 0) {
-                    return compare;
-                }
+                compare = this.compareTo(other.getParent());
             } else if (getParent() != null) {
                 compare = getParent().compareTo(other);
-                if (compare != 0) {
-                    return compare;
-                }
             }
-            compare = Objects.compareTo(getOrder(), other.getOrder());
+            if (compare == 0) {
+                compare = Objects.compareTo(getOrder(), other.getOrder());
+            }
         }
         return compare;
     }
+
 
     public int getContentCount() {
         int count = hasContent() ? 1 : 0;
@@ -155,6 +153,7 @@ public class Page implements Serializable, Newer {
         return mStatus;
     }
 
+    @NonNull
     public String getTitle() {
         return mTitle;
     }
@@ -171,32 +170,31 @@ public class Page implements Serializable, Newer {
         return mDescription;
     }
 
+    @NonNull
     public List<Page> getSubPages() {
         return mSubPages;
     }
 
+    @NonNull
     public List<Page> getSubPagesRecursively(int depth) {
         List<Page> recPages = new ArrayList<>();
         recPages.add(this);
         if (depth > 0) {
-            if (getSubPages() != null) {
-                for (Page page : mSubPages) {
-                    recPages.addAll(page.getSubPagesRecursively(depth - 1));
-                }
+            for (Page page : mSubPages) {
+                recPages.addAll(page.getSubPagesRecursively(depth - 1));
             }
         }
         return recPages;
     }
 
+    @NonNull
     public List<Page> getSubPagesRecursively() {
         List<Page> recPages = new ArrayList<>();
         if (hasContent()) {
             recPages.add(this);
         }
-        if (getSubPages() != null) {
-            for (Page page : mSubPages) {
-                recPages.addAll(page.getSubPagesRecursively());
-            }
+        for (Page page : mSubPages) {
+            recPages.addAll(page.getSubPagesRecursively());
         }
         return recPages;
     }
@@ -213,7 +211,7 @@ public class Page implements Serializable, Newer {
         return 1 + getParent().getDepth();
     }
 
-    public static void recreateRelations(List<? extends Page> pages, List<AvailableLanguage> languages, Language currentLanguage) {
+    public static void recreateRelations(@NonNull List<? extends Page> pages, @NonNull List<AvailableLanguage> languages, @NonNull Language currentLanguage) {
         /* add page-page connection */
         Map<Integer, Page> pageIdMap = new HashMap<>();
         for (Page page : pages) {
@@ -257,6 +255,7 @@ public class Page implements Serializable, Newer {
         return mThumbnail;
     }
 
+    @NonNull
     public static List<Page> filterParents(@NonNull List<Page> pages) {
         List<Page> parentPages = new ArrayList<>();
         for (Page page : pages) {
@@ -267,6 +266,7 @@ public class Page implements Serializable, Newer {
         return parentPages;
     }
 
+    @NonNull
     public String getSearchableString() {
         String relevantContent = getTitle();
         if (getContent() != null) {

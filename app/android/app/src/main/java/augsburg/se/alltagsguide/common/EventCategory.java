@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.common;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -19,7 +20,7 @@ import augsburg.se.alltagsguide.utilities.Helper;
  */
 public class EventCategory implements Serializable {
     private int mId;
-    private String mName;
+    @NonNull private String mName;
     private int mParent;
     private int mEventId;
     private int mPageId;
@@ -30,6 +31,7 @@ public class EventCategory implements Serializable {
         mParent = parent;
     }
 
+    @Nullable
     public static EventCategory fromJson(@NonNull final JsonObject jsonCategory) {
         if (jsonCategory.isJsonNull()) {
             return null;
@@ -47,7 +49,8 @@ public class EventCategory implements Serializable {
         return new EventCategory(id, name, parent);
     }
 
-    public static List<EventCategory> fromJson(JsonArray array) {
+    @NonNull
+    public static List<EventCategory> fromJson(@NonNull JsonArray array) {
         List<EventCategory> categories = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             JsonObject obj = array.get(i).getAsJsonObject();
@@ -72,11 +75,13 @@ public class EventCategory implements Serializable {
         return mParent;
     }
 
+    @NonNull
     public String getName() {
         return mName;
     }
 
-    public static EventCategory loadFrom(Cursor cursor) {
+    @NonNull
+    public static EventCategory loadFrom(@NonNull Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.CATEGORY_ID));
         String name = cursor.getString(cursor.getColumnIndex(CacheHelper.CATEGORY_NAME));
         int parent = cursor.getInt(cursor.getColumnIndex(CacheHelper.CATEGORY_PARENT));

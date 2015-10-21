@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.utilities;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 
 import roboguice.RoboGuice;
@@ -23,7 +24,7 @@ public abstract class AsyncLoader<D> extends AsyncTaskLoader<D> {
      *
      * @param context
      */
-    public AsyncLoader(final Context context) {
+    public AsyncLoader(@NonNull final Context context) {
         super(context);
         RoboGuice.injectMembers(context, this);
     }

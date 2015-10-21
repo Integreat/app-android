@@ -1,6 +1,8 @@
 package augsburg.se.alltagsguide.utilities;
 
 
+import android.support.annotation.NonNull;
+
 import augsburg.se.alltagsguide.R;
 
 public enum FontStyle {
@@ -11,17 +13,18 @@ public enum FontStyle {
     XLarge(R.style.FontStyle_XLarge, "XLarge");
 
     private int resId;
-    private String title;
+    @NonNull private String title;
 
     public int getResId() {
         return resId;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    FontStyle(int resId, String title) {
+    FontStyle(int resId, @NonNull String title) {
         this.resId = resId;
         this.title = title;
     }

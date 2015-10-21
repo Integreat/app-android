@@ -26,8 +26,8 @@ public class PagesLoader extends BasicLoader<List<Page>> {
 
     @Inject
     private DatabaseCache dbCache;
-    private Location mLocation;
-    private Language mLanguage;
+    @NonNull private Location mLocation;
+    @NonNull private Language mLanguage;
 
     @Inject
     private PageResource.Factory pagesFactory;
@@ -47,6 +47,7 @@ public class PagesLoader extends BasicLoader<List<Page>> {
         mLanguage = language;
     }
 
+    @NonNull
     @Override
     public List<Page> load() {
         try {

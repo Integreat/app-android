@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.common;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,12 +19,12 @@ import augsburg.se.alltagsguide.utilities.Objects;
  */
 public class EventPage extends Page implements Newer {
 
-    private Event mEvent;
-    private EventLocation mLocation;
-    private List<EventTag> mTags;
-    private List<EventCategory> mCategories;
+    @NonNull private Event mEvent;
+    @Nullable private EventLocation mLocation;
+    @NonNull private List<EventTag> mTags;
+    @NonNull private List<EventCategory> mCategories;
 
-    public EventPage(@NonNull Page page, @NonNull Event event, EventLocation location, @NonNull List<EventTag> tags, @NonNull List<EventCategory> categories) {
+    public EventPage(@NonNull Page page, @NonNull Event event, @Nullable EventLocation location, @NonNull List<EventTag> tags, @NonNull List<EventCategory> categories) {
         super(page.getId(), page.getTitle(), page.getType(), page.getStatus(), page.getModified(), page.getTitle(),
                 page.getDescription(), page.getParentId(), page.getOrder(), page.getThumbnail(), page.getAuthor(), page.getAvailableLanguages());
         mEvent = event;
@@ -53,23 +54,27 @@ public class EventPage extends Page implements Newer {
         return Long.valueOf(getEvent().getStartTime()).compareTo(other.getEvent().getStartTime());
     }
 
+    @NonNull
     public Event getEvent() {
         return mEvent;
     }
 
+    @NonNull
     public List<EventCategory> getCategories() {
         return mCategories;
     }
 
+    @Nullable
     public EventLocation getLocation() {
         return mLocation;
     }
 
+    @NonNull
     public List<EventTag> getTags() {
         return mTags;
     }
 
-    public static void recreateRelations(List<EventPage> pages, List<EventCategory> categories, List<EventTag> tags, List<AvailableLanguage> languages, Language currentLanguage) {
+    public static void recreateRelations(@NonNull List<EventPage> pages, @NonNull List<EventCategory> categories, @NonNull List<EventTag> tags, @NonNull List<AvailableLanguage> languages, @NonNull Language currentLanguage) {
         Page.recreateRelations(pages, languages, currentLanguage);
 
         Map<Integer, List<EventCategory>> eventIdCategoryMap = new HashMap<>();
@@ -98,15 +103,12 @@ public class EventPage extends Page implements Newer {
         }
     }
 
+    @NonNull
     @Override
     public String getSearchableString() {
         String searchableString = super.getSearchableString();
-        if (mCategories != null) {
-            searchableString += " " + Objects.join(mCategories);
-        }
-        if (mTags != null) {
-            searchableString += " " + Objects.join(mTags);
-        }
+        searchableString += " " + Objects.join(mCategories);
+        searchableString += " " + Objects.join(mTags);
         return searchableString;
     }
 

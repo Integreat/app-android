@@ -1,6 +1,8 @@
 package augsburg.se.alltagsguide.common;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -17,18 +19,18 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
  * Created by Daniel-L on 10.10.2015.
  */
 public class AvailableLanguage implements Serializable {
-    private String mLanguage;
+    @NonNull private String mLanguage;
     private int mOtherPageId;
     private int mOwnPageId;
 
-    private Language mLoadedLanguage;
+    @Nullable private Language mLoadedLanguage;
 
-    public AvailableLanguage(String language, int otherPageId) {
+    public AvailableLanguage(@NonNull String language, int otherPageId) {
         mLanguage = language;
         mOtherPageId = otherPageId;
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(@NonNull Language language) {
         mLoadedLanguage = language;
     }
 
@@ -40,8 +42,8 @@ public class AvailableLanguage implements Serializable {
         return mOwnPageId;
     }
 
-
-    public static List<AvailableLanguage> fromJson(JsonElement elem) {
+    @NonNull
+    public static List<AvailableLanguage> fromJson(@NonNull JsonElement elem) {
         List<AvailableLanguage> languages = new ArrayList<>();
         Map<String, Integer> languagesMap = new Gson().fromJson(elem, new TypeToken<Map<String, Integer>>() {
         }.getType());
@@ -51,10 +53,12 @@ public class AvailableLanguage implements Serializable {
         return languages;
     }
 
+    @Nullable
     public Language getLoadedLanguage() {
         return mLoadedLanguage;
     }
 
+    @NonNull
     public String getLanguage() {
         return mLanguage;
     }
@@ -63,7 +67,8 @@ public class AvailableLanguage implements Serializable {
         return mOtherPageId;
     }
 
-    public static AvailableLanguage loadFrom(Cursor cursor) {
+    @NonNull
+    public static AvailableLanguage loadFrom(@NonNull Cursor cursor) {
         String shortLanguage = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_AVAIL_PAGE_LANGUAGE));
         int otherPageId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AVAIL_OTHER_PAGE));
         int ownPageId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AVAIL_PAGE_ID));

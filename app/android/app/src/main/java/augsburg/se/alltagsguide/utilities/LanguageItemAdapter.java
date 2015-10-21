@@ -26,8 +26,8 @@ import roboguice.RoboGuice;
  */
 public class LanguageItemAdapter extends BaseAdapter implements View.OnClickListener {
 
-    private final Context mContext;
-    private final List<Language> mItems;
+    @NonNull private final Context mContext;
+    @NonNull private final List<Language> mItems;
 
     @Inject
     private Picasso mPicasso;
@@ -54,6 +54,7 @@ public class LanguageItemAdapter extends BaseAdapter implements View.OnClickList
     }
 
     @Override
+    @NonNull
     public Object getItem(int position) {
         return mItems.get(position);
     }

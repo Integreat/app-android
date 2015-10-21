@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.network;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
 
@@ -36,6 +37,7 @@ public class NetworkServiceMock implements NetworkService {
     }
 
 
+    @NonNull
     @Override
     public List<Location> getAvailableLocations() {
 
@@ -56,8 +58,9 @@ public class NetworkServiceMock implements NetworkService {
         return sendDelayed(locations);
     }
 
+    @NonNull
     @Override
-    public List<Language> getAvailableLanguages(Location location) {
+    public List<Language> getAvailableLanguages(@NonNull Location location) {
         Language english = new Language(0, "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/100px-Flag_of_the_United_Kingdom.svg.png", "English", "en");
         Language german = new Language(1, "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/100px-Flag_of_Germany.svg.png", "Deutsch", "de");
         Language spanish = new Language(2, "https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Flag_of_Spain.svg/100px-Flag_of_Spain.svg.png", "Espanol", "es");
@@ -72,12 +75,12 @@ public class NetworkServiceMock implements NetworkService {
     }
 
     @Override
-    public void subscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_register_id") String regId, Callback<String> callback) {
+    public void subscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
         sendDelayed(callback, "Yes", TIME_TO_SLEEP);
     }
 
     @Override
-    public void unsubscribePush(@Path(value = "location", encode = false) Location location, @Query("gcm_unregister_id") String regId, Callback<String> callback) {
+    public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
         sendDelayed(callback, "Yes", TIME_TO_SLEEP);
     }
 
@@ -110,18 +113,21 @@ public class NetworkServiceMock implements NetworkService {
     }
 
 
+    @NonNull
     @Override
     public Boolean isServerAlive() {
         return sendDelayed(true);
     }
 
+    @NonNull
     @Override
-    public List<Page> getPages(@Path("language") Language language, @Path("location") Location location, @Query("since") UpdateTime updateTime) {
+    public List<Page> getPages(@NonNull @Path("language") Language language, @NonNull @Path("location") Location location, @NonNull @Query("since") UpdateTime updateTime) {
         return new ArrayList<>();
     }
 
+    @NonNull
     @Override
-    public List<EventPage> getEventPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time) {
+    public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
         return new ArrayList<>();
     }
 

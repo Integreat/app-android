@@ -3,6 +3,7 @@ package augsburg.se.alltagsguide.persistence;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
 
@@ -29,7 +30,6 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String PAGE_LOCATION = "p_location"; //11
     public static final String PAGE_LANGUAGE = "p_language"; //12
     public static final String PAGE_AUTHOR = "p_author"; //13
-    public static final int PAGE_OFFSET = 13; //TODO CHANGABLE
 
     public static final String TABLE_PAGE_AVAILABLE_LANGUAGE = "pages_languages";
     public static final String PAGE_AVAIL_PAGE_ID = "pa_id"; // 1
@@ -37,7 +37,6 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String PAGE_AVAIL_PAGE_LANGUAGE = "pa_language"; // 3
     public static final String PAGE_AVAIL_OTHER_LANGUAGE = "pa_other_lang"; // 4
     public static final String PAGE_AVAIL_OTHER_PAGE = "pa_other_page"; // 5
-    public static final int PAGE_AVAIL_OFFSET = 5; //TODO CHANGABLE
 
     public static final String TABLE_EVENT = "events";
     public static final String EVENT_ID = "e_id"; //1
@@ -60,7 +59,6 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String EVENT_CATEGORY_LANGUAGE = "ec_language"; // 3
     public static final String EVENT_CATEGORY_PAGE = "ec_page"; // 4
     public static final String EVENT_CATEGORY_EVENT_ID = "ec_event_id"; // 5
-    public static final int EVENT_OFFSET = 5;
 
     public static final String TABLE_EVENT_TAG = "event_tags";
     public static final String EVENT_TAG_NAME = "et_name"; // 1
@@ -76,7 +74,6 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String AUTHOR_USERNAME = "a_username"; // 1
     public static final String AUTHOR_FIRSTNAME = "a_firstname"; // 2
     public static final String AUTHOR_LASTNAME = "a_lastname"; //  3
-    public static final int AUTHOR_OFFSET = 3; //TODO CHANGABLE
 
     public static final String TABLE_EVENT_LOCATION = "event_location";
     public static final String EVENT_LOCATION_ID = "el_location_id"; // 1
@@ -92,7 +89,6 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String EVENT_LOCATION_PAGE = "el_location_page"; //11
     public static final String EVENT_LOCATION_LOCATION = "el_location"; //12
     public static final String EVENT_LOCATION_LANGUAGE = "el_language"; //13
-    public static final int EVENT_LOCATION_OFFSET = 13; //TODO CHANGABLE
 
     public static final String TABLE_LANGUAGE = "languages";
     public static final String LANGUAGE_ID = "l_id"; //1
@@ -113,17 +109,17 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String LOCATION_LATITUDE = "lo_latitude"; //9
     public static final String LOCATION_LONGITUDE = "lo_longitude"; //10
 
-    private PrefUtilities mPrefUtilities;
+    @NonNull private PrefUtilities mPrefUtilities;
 
     @Inject
-    public CacheHelper(final Context context, DatabaseInfo databaseInfo, PrefUtilities prefUtilities) {
+    public CacheHelper(@NonNull final Context context, @NonNull DatabaseInfo databaseInfo, @NonNull PrefUtilities prefUtilities) {
         super(context, databaseInfo.getName(), null, databaseInfo.getVersion());
         Ln.d("Opening CacheHelper(Name: %s - Version: %d)", databaseInfo.getName(), databaseInfo.getVersion());
         mPrefUtilities = prefUtilities;
     }
 
     @Override
-    public void onCreate(final SQLiteDatabase db) {
+    public void onCreate(@NonNull final SQLiteDatabase db) {
         createLocationTable(db);
         createLanguageTable(db);
 
@@ -141,7 +137,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         createEventCategoryTable(db);
     }
 
-    private void createPageAvailableLanguagesTable(SQLiteDatabase db) {
+    private void createPageAvailableLanguagesTable(@NonNull SQLiteDatabase db) {
         String availableLanguagesQuery = "CREATE TABLE " + TABLE_PAGE_AVAILABLE_LANGUAGE + "(" +
                 PAGE_AVAIL_PAGE_ID + " INTEGER," +
                 PAGE_AVAIL_PAGE_LOCATION + " INTEGER," +
@@ -159,7 +155,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(availableLanguagesQuery);
     }
 
-    private void createCategoryTable(SQLiteDatabase db) {
+    private void createCategoryTable(@NonNull SQLiteDatabase db) {
         String categoryQuery = "CREATE TABLE " + TABLE_CATEGORY + "(" +
                 CATEGORY_ID + " INTEGER PRIMARY KEY," +
                 CATEGORY_NAME + " TEXT," +
@@ -169,7 +165,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(categoryQuery);
     }
 
-    private void createTagTable(SQLiteDatabase db) {
+    private void createTagTable(@NonNull SQLiteDatabase db) {
         String tagQuery = "CREATE TABLE " + TABLE_TAG + "(" +
                 TAG_NAME + " TEXT PRIMARY KEY" +
                 ");";
@@ -177,7 +173,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(tagQuery);
     }
 
-    private void createEventCategoryTable(SQLiteDatabase db) {
+    private void createEventCategoryTable(@NonNull SQLiteDatabase db) {
         String categoryEventQuery = "CREATE TABLE " + TABLE_EVENT_CATEGORY + "(" +
                 EVENT_CATEGORY_ID + " INTEGER," +
                 EVENT_CATEGORY_LANGUAGE + " INTEGER," +
@@ -196,7 +192,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     }
 
 
-    private void createEventTagTable(SQLiteDatabase db) {
+    private void createEventTagTable(@NonNull SQLiteDatabase db) {
         String tagEventQuery = "CREATE TABLE " + TABLE_EVENT_TAG + "(" +
                 EVENT_TAG_NAME + " TEXT," +
                 EVENT_TAG_LANGUAGE + " INTEGER," +
@@ -214,7 +210,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(tagEventQuery);
     }
 
-    private void createEventLocationTable(SQLiteDatabase db) {
+    private void createEventLocationTable(@NonNull SQLiteDatabase db) {
         String eventLocationQuery = "CREATE TABLE " + TABLE_EVENT_LOCATION + "(" +
                 EVENT_LOCATION_ID + " INTEGER," +
                 EVENT_LOCATION_NAME + " TEXT," +
@@ -235,7 +231,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(eventLocationQuery);
     }
 
-    private void createEventTable(SQLiteDatabase db) {
+    private void createEventTable(@NonNull SQLiteDatabase db) {
         String eventQuery = "CREATE TABLE " + TABLE_EVENT + "(" +
                 EVENT_ID + " INTEGER," +
                 EVENT_START + " FLOAT," +
@@ -251,7 +247,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(eventQuery);
     }
 
-    private void createAuthorTable(SQLiteDatabase db) {
+    private void createAuthorTable(@NonNull SQLiteDatabase db) {
         String authorQuery = "CREATE TABLE " + TABLE_AUTHOR + "(" +
                 AUTHOR_USERNAME + " TEXT PRIMARY KEY," +
                 AUTHOR_FIRSTNAME + " TEXT," +
@@ -261,7 +257,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(authorQuery);
     }
 
-    private void createLanguageTable(SQLiteDatabase db) {
+    private void createLanguageTable(@NonNull SQLiteDatabase db) {
         String languageQuery = "CREATE TABLE " + TABLE_LANGUAGE + "(" +
                 LANGUAGE_ID + " INTEGER," +
                 LANGUAGE_SHORT + " TEXT," +
@@ -274,7 +270,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(languageQuery);
     }
 
-    private void createLocationTable(SQLiteDatabase db) {
+    private void createLocationTable(@NonNull SQLiteDatabase db) {
         String locationQuery = "CREATE TABLE " + TABLE_LOCATION + "(" +
                 LOCATION_ID + " INTEGER PRIMARY KEY," +
                 LOCATION_NAME + " TEXT," +
@@ -291,7 +287,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL(locationQuery);
     }
 
-    private void createPageTable(SQLiteDatabase db) {
+    private void createPageTable(@NonNull SQLiteDatabase db) {
         String pageQuery = "CREATE TABLE " + TABLE_PAGE + "(" +
                 PAGE_ID + " INTEGER," +
                 PAGE_TITLE + " TEXT," +
@@ -313,14 +309,14 @@ public class CacheHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onDowngrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
         dropAllTables(db);
         resetPreferences();
         onCreate(db);
     }
 
     @Override
-    public void onUpgrade(final SQLiteDatabase db, final int oldVersion,
+    public void onUpgrade(@NonNull final SQLiteDatabase db, final int oldVersion,
                           final int newVersion) {
         dropAllTables(db);
         resetPreferences();
@@ -331,7 +327,7 @@ public class CacheHelper extends SQLiteOpenHelper {
         mPrefUtilities.clear();
     }
 
-    private void dropAllTables(SQLiteDatabase db) {
+    private void dropAllTables(@NonNull SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
 

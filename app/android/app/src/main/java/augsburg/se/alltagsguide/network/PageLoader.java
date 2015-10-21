@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.network;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 
@@ -26,8 +27,8 @@ public class PageLoader extends BasicLoader<Page> {
 
     @Inject
     private DatabaseCache dbCache;
-    private Location mLocation;
-    private Language mLanguage;
+    @NonNull private Location mLocation;
+    @NonNull private Language mLanguage;
     private int mId;
 
     @Inject
@@ -49,6 +50,7 @@ public class PageLoader extends BasicLoader<Page> {
         mId = id;
     }
 
+    @Nullable
     @Override
     public Page load() {
         PageResource resource = pagesFactory.under(mLanguage, mLocation);

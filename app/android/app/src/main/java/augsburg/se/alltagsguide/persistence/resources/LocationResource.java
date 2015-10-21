@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 
@@ -12,34 +14,40 @@ import java.util.List;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 /**
  * Created by Daniel-L on 07.09.2015.
  */
 public class LocationResource implements PersistableNetworkResource<Location> {
     private NetworkService mNetwork;
+    private PrefUtilities mPreferences;
 
     @Inject
-    public LocationResource(NetworkService network) {
+    public LocationResource(NetworkService network, PrefUtilities preferences) {
         mNetwork = network;
+        mPreferences = preferences;
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_LOCATION);
         return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int id) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_PAGE);
         return builder.query(readableDatabase, new String[]{}, CacheHelper.LOCATION_ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
     }
 
+    @Nullable
     @Override
-    public Location loadFrom(Cursor cursor, SQLiteDatabase db) {
+    public Location loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
         int index = 0;
         int id = cursor.getInt(index++);
         String name = cursor.getString(index++);
@@ -55,7 +63,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
     }
 
     @Override
-    public void store(SQLiteDatabase db, List<? extends Location> locations) {
+    public void store(@NonNull SQLiteDatabase db, @NonNull List<? extends Location> locations) {
         if (locations.isEmpty()) {
             return;
         }
@@ -79,6 +87,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
         }
     }
 
+    @NonNull
     @Override
     public List<Location> request() {
         return mNetwork.getAvailableLocations();
@@ -86,6 +95,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
 
     @Override
     public boolean shouldUpdate() {
+        //mPreferences
         return false;
     }
 }

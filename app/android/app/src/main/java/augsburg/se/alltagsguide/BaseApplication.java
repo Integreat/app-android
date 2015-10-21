@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide;
 
 import android.app.Application;
 import android.app.Instrumentation;
+import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.inject.Injector;
@@ -41,7 +42,7 @@ public class BaseApplication extends Application {
      *
      * @param object object which should be injected manually
      */
-    public static void inject(Object object) {
+    public static void inject(@NonNull Object object) {
         injector.injectMembers(object);
     }
 }

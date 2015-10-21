@@ -1,13 +1,12 @@
 package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
@@ -15,13 +14,11 @@ import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.utilities.BaseAdapter;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.RoboGuice;
 
 /**
@@ -29,8 +26,8 @@ import roboguice.RoboGuice;
  */
 public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHolder, Language> {
 
-    private LanguageClickListener mListener;
-    private Context mContext;
+    @NonNull private LanguageClickListener mListener;
+    @NonNull private Context mContext;
 
     @Inject
     private Picasso mPicasso;
@@ -40,7 +37,7 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
         void onLanguageClick(Language language);
     }
 
-    public LanguageAdapter(List<Language> languages, LanguageClickListener listener, Context context) {
+    public LanguageAdapter(@NonNull List<Language> languages, @NonNull LanguageClickListener listener, @NonNull Context context) {
         super(languages);
         mListener = listener;
         mContext = context;

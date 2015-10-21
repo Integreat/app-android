@@ -5,11 +5,9 @@ import android.app.Activity;
 import com.google.inject.Inject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.LocationResource;
@@ -38,11 +36,7 @@ public class LocationLoader extends BasicLoader<List<Location>> {
     @Override
     public List<Location> load() {
         try {
-            List<Location> items = dbCache.loadOrRequest(locationResource);
-            if (items == null) {
-                items = new ArrayList<>();
-            }
-            return items;
+            return dbCache.loadOrRequest(locationResource);
         } catch (IOException e) {
             Ln.e(e);
             return Collections.emptyList();

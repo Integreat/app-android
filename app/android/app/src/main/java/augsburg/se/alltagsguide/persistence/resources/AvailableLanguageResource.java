@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -20,8 +22,8 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
  * Created by Daniel-L ON 07.09.2015.
  */
 public class AvailableLanguageResource implements PersistableResource<AvailableLanguage> {
-    private Language mLanguage;
-    private Location mLocation;
+    @NonNull private Language mLanguage;
+    @NonNull private Location mLocation;
 
     /**
      * Creation factory
@@ -31,14 +33,15 @@ public class AvailableLanguageResource implements PersistableResource<AvailableL
     }
 
     @Inject
-    public AvailableLanguageResource(@Assisted Language language,
-                                     @Assisted Location location) {
+    public AvailableLanguageResource(@NonNull @Assisted Language language,
+                                     @NonNull @Assisted Location location) {
         mLanguage = language;
         mLocation = location;
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_PAGE_AVAILABLE_LANGUAGE + " JOIN " + CacheHelper.TABLE_LANGUAGE + " ON "
                 + CacheHelper.LANGUAGE_SHORT + "=" + CacheHelper.PAGE_AVAIL_OTHER_LANGUAGE);
@@ -49,8 +52,9 @@ public class AvailableLanguageResource implements PersistableResource<AvailableL
         return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase, int pageId) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int pageId) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_PAGE_AVAILABLE_LANGUAGE + " join " + CacheHelper.TABLE_LANGUAGE + " on "
                 + CacheHelper.LANGUAGE_SHORT + "=" + CacheHelper.PAGE_AVAIL_OTHER_LANGUAGE);
@@ -63,8 +67,9 @@ public class AvailableLanguageResource implements PersistableResource<AvailableL
         return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
+    @NonNull
     @Override
-    public AvailableLanguage loadFrom(Cursor cursor, SQLiteDatabase db) {
+    public AvailableLanguage loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
         AvailableLanguage availableLanguage = AvailableLanguage.loadFrom(cursor);
         Language language = Language.fromCursor(cursor);
         availableLanguage.setLanguage(language);
@@ -72,11 +77,11 @@ public class AvailableLanguageResource implements PersistableResource<AvailableL
     }
 
     @Override
-    public void store(SQLiteDatabase writableDatabase, List<? extends AvailableLanguage> languages) {
+    public void store(@NonNull SQLiteDatabase writableDatabase, @NonNull List<? extends AvailableLanguage> languages) {
         throw new IllegalStateException("Should not be called");
     }
 
-    public void store(SQLiteDatabase db, Page page) {
+    public void store(@NonNull SQLiteDatabase db, @NonNull Page page) {
         ContentValues languageValues = new ContentValues(5);
         for (AvailableLanguage language : page.getAvailableLanguages()) {
             languageValues.clear();

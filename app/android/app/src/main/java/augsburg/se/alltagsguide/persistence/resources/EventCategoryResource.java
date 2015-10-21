@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -20,8 +22,8 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
  * Created by Daniel-L on 07.09.2015.
  */
 public class EventCategoryResource implements PersistableResource<EventCategory> {
-    private Language mLanguage;
-    private Location mLocation;
+    @NonNull private Language mLanguage;
+    @NonNull private Location mLocation;
 
     /**
      * Creation factory
@@ -31,14 +33,15 @@ public class EventCategoryResource implements PersistableResource<EventCategory>
     }
 
     @Inject
-    public EventCategoryResource(@Assisted Language language,
-                                 @Assisted Location location) {
+    public EventCategoryResource(@NonNull @Assisted Language language,
+                                 @NonNull @Assisted Location location) {
         mLanguage = language;
         mLocation = location;
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_EVENT_CATEGORY + " join " + CacheHelper.TABLE_CATEGORY + " on "
                 + CacheHelper.CATEGORY_ID + "=" + CacheHelper.EVENT_CATEGORY_EVENT_ID);
@@ -48,8 +51,9 @@ public class EventCategoryResource implements PersistableResource<EventCategory>
                 null);
     }
 
+    @NonNull
     @Override
-    public Cursor getCursor(SQLiteDatabase readableDatabase, int id) {
+    public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int id) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(CacheHelper.TABLE_EVENT_CATEGORY);
         return builder.query(readableDatabase, new String[]{},
@@ -58,17 +62,18 @@ public class EventCategoryResource implements PersistableResource<EventCategory>
                 null);
     }
 
+    @NonNull
     @Override
-    public EventCategory loadFrom(Cursor cursor, SQLiteDatabase db) {
+    public EventCategory loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
         return EventCategory.loadFrom(cursor);
     }
 
     @Override
-    public void store(SQLiteDatabase writableDatabase, List<? extends EventCategory> items) {
+    public void store(@NonNull SQLiteDatabase writableDatabase, @NonNull List<? extends EventCategory> items) {
         throw new IllegalStateException("Should not be called");
     }
 
-    public void store(SQLiteDatabase writableDatabase, EventPage page) {
+    public void store(@NonNull SQLiteDatabase writableDatabase, @NonNull EventPage page) {
         List<EventCategory> categories = page.getCategories();
 
         ContentValues categoryValues = new ContentValues(3);

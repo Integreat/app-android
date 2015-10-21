@@ -1,7 +1,6 @@
 package augsburg.se.alltagsguide.navigation;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.Theme;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,23 +19,23 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.utilities.BitmapInvertTransformation;
 import augsburg.se.alltagsguide.utilities.Objects;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.RoboGuice;
 
 public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.NavigationViewHolder> {
     private OnNavigationSelected mListener;
     private static final int HEADER = 0;
-    private static final int ITEM = 1;
-    private List<Page> mPages;
+    @NonNull private List<Page> mPages;
     private int mColor;
-    private Context mContext;
     private int mCurrentPageId;
     @Inject
     private Picasso mPicasso;
+    private BitmapInvertTransformation mInvertTransformation;
+    private int textColor;
+    private int whiteColor;
 
-
-    public void setPages(List<Page> pages) {
+    public void setPages(@NonNull List<Page> pages) {
         mPages = Page.filterParents(pages);
         Collections.sort(mPages);
         notifyDataSetChanged();
@@ -53,10 +52,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
     public NavigationAdapter(OnNavigationSelected listener, int color, Context context, int currentPageId) {
         RoboGuice.injectMembers(context, this);
+        mPages = new ArrayList<>();
         mListener = listener;
         mColor = color;
-        mContext = context;
         mCurrentPageId = currentPageId;
+        mInvertTransformation = new BitmapInvertTransformation();
+        textColor = context.getResources().getColor(android.R.color.primary_text_light);
+        whiteColor = context.getResources().getColor(android.R.color.white);
     }
 
     @Override
@@ -66,27 +68,17 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
     @Override
     public int getItemViewType(int position) {
-        if (mPages == null) {
-            return 0;
-        }
-        Page item = mPages.get(position);
-        return item.getSubPages() != null ? HEADER : ITEM;
+        return HEADER;
     }
 
     @Override
     public int getItemCount() {
-        if (mPages == null) {
-            return 0;
-        }
         return mPages.size();
     }
 
 
     @Override
     public void onBindViewHolder(NavigationViewHolder holder, int position) {
-        if (mPages == null) {
-            return;
-        }
         final Page item = mPages.get(position);
         boolean selected = Objects.equals(item.getId(), mCurrentPageId);
         holder.counter.setText(String.valueOf(item.getContentCount()));
@@ -97,11 +89,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
                 mListener.onNavigationClicked(item);
             }
         });
-        holder.itemView.setBackgroundColor(selected ? mColor : mContext.getResources().getColor(android.R.color.white));
-        holder.counter.setTextColor(selected ? mContext.getResources().getColor(android.R.color.white) : mContext.getResources().getColor(android.R.color.primary_text_light));
-        holder.title.setTextColor(selected ? mContext.getResources().getColor(android.R.color.white) : mContext.getResources().getColor(android.R.color.primary_text_light));
+        holder.itemView.setBackgroundColor(selected ? mColor : whiteColor);
+        holder.counter.setTextColor(selected ? whiteColor : textColor);
+        holder.title.setTextColor(selected ? whiteColor : textColor);
         if (!Objects.isNullOrEmpty(item.getThumbnail())) {
-            mPicasso.load(item.getThumbnail()).into(holder.image);
+            RequestCreator creator = mPicasso.load(item.getThumbnail());
+            if (selected) {
+                creator = creator.transform(mInvertTransformation);
+            }
+            creator.into(holder.image);
         } else {
             holder.image.setImageDrawable(null);
         }

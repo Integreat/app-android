@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.event;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +13,7 @@ import android.view.ViewGroup;
 
 import com.google.inject.Inject;
 
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -127,7 +126,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         }
     }
 
-    private void setOrInitPageAdapter(List<EventPage> eventPages) {
+    private void setOrInitPageAdapter(@NonNull List<EventPage> eventPages) {
         if (mAdapter == null) {
             mAdapter = new EventPageAdapter(eventPages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
         } else {

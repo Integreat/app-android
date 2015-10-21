@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.common;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,18 +18,19 @@ import roboguice.util.Ln;
  * Created by Daniel-L on 08.10.2015.
  */
 public class EventLocation implements Serializable {
-    private int mId;
-    private String mName;
-    private String mAddress;
-    private String mTown;
-    private String mState;
-    private int mPostcode;
-    private String mRegion;
-    private String mCountry;
+
+    @Nullable private String mName;
+    @Nullable private String mAddress;
+    @Nullable private String mTown;
+    @Nullable private String mState;
+    @Nullable private String mRegion;
+    @Nullable private String mCountry;
     private float mLatitude;
     private float mLongitude;
+    private int mPostcode;
+    private int mId;
 
-    public EventLocation(int id, String name, String address, String town, String state, int postcode, String region, String country, float latitude, float longitude) {
+    public EventLocation(int id, @Nullable String name, @Nullable String address, @Nullable String town, @Nullable String state, int postcode, @Nullable String region, @Nullable String country, float latitude, float longitude) {
         mId = id;
         mName = name;
         mAddress = address;
@@ -45,22 +47,27 @@ public class EventLocation implements Serializable {
         return mId;
     }
 
+    @Nullable
     public String getName() {
         return mName;
     }
 
+    @Nullable
     public String getAddress() {
         return mAddress;
     }
 
+    @Nullable
     public String getTown() {
         return mTown;
     }
 
+    @Nullable
     public String getState() {
         return mState;
     }
 
+    @Nullable
     public String getRegion() {
         return mRegion;
     }
@@ -69,6 +76,7 @@ public class EventLocation implements Serializable {
         return mPostcode;
     }
 
+    @Nullable
     public String getCountry() {
         return mCountry;
     }
@@ -81,6 +89,7 @@ public class EventLocation implements Serializable {
         return mLongitude;
     }
 
+    @Nullable
     public static EventLocation fromJson(@NonNull JsonObject jsonPage) {
         if (jsonPage.isJsonNull()) {
             return null;
@@ -106,7 +115,8 @@ public class EventLocation implements Serializable {
                 Helper.getFloatOrDefault(jsonPage.get("longitude"), 0.0f));
     }
 
-    public static EventLocation fromCursor(Cursor cursor) {
+    @NonNull
+    public static EventLocation fromCursor(@NonNull Cursor cursor) {
         if (BuildConfig.DEBUG) {
             Ln.d("Column count: %d", cursor.getColumnCount());
             if (cursor.isClosed()) {

@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -16,8 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import augsburg.se.alltagsguide.persistence.resources.PersistableResource;
 import augsburg.se.alltagsguide.persistence.resources.PersistableNetworkResource;
+import augsburg.se.alltagsguide.persistence.resources.PersistableResource;
 import roboguice.util.Ln;
 
 /**
@@ -35,7 +37,8 @@ public class DatabaseCache {
      * @param helper
      * @return writable database or null if it failed to create/open
      */
-    protected SQLiteDatabase getWritable(SQLiteOpenHelper helper) {
+    @Nullable
+    protected SQLiteDatabase getWritable(@NonNull SQLiteOpenHelper helper) {
         try {
             return helper.getWritableDatabase();
         } catch (SQLiteException e1) {
@@ -49,7 +52,8 @@ public class DatabaseCache {
     }
 
 
-    public Cursor executeRawQuery(String query, String[] args) {
+    @Nullable
+    public Cursor executeRawQuery(@NonNull String query, String[] args) {
         SQLiteOpenHelper helper = helperProvider.get();
         final SQLiteDatabase db = getReadable(helper);
         if (db == null) {
@@ -64,7 +68,8 @@ public class DatabaseCache {
      * @param helper
      * @return readable database or null if it failed to create/open
      */
-    protected SQLiteDatabase getReadable(SQLiteOpenHelper helper) {
+    @Nullable
+    protected SQLiteDatabase getReadable(@NonNull SQLiteOpenHelper helper) {
         try {
             return helper.getReadableDatabase();
         } catch (SQLiteException e1) {
@@ -79,12 +84,14 @@ public class DatabaseCache {
         }
     }
 
-    public <E> List<E> load(PersistableResource<E> persistableResource) {
+    @NonNull
+    public <E> List<E> load(@NonNull PersistableResource<E> persistableResource) {
         SQLiteOpenHelper helper = helperProvider.get();
         return loadFromDB(helper, persistableResource);
     }
 
-    public <E> E load(PersistableResource<E> persistableResource, int id) {
+    @Nullable
+    public <E> E load(@NonNull PersistableResource<E> persistableResource, int id) {
         SQLiteOpenHelper helper = helperProvider.get();
         return loadFromDB(helper, persistableResource, id);
     }
@@ -96,16 +103,18 @@ public class DatabaseCache {
      * @return resource
      * @throws IOException
      */
-    public <E> List<E> loadOrRequest(PersistableNetworkResource<E> persistableResource)
+    @Deprecated
+    @NonNull
+    public <E> List<E> loadOrRequestDeprecated(@NonNull PersistableNetworkResource<E> persistableResource)
             throws IOException {
         SQLiteOpenHelper helper = helperProvider.get();
         try {
             List<E> items = loadFromDB(helper, persistableResource);
-            if (items != null && !items.isEmpty()) {
+            if (!items.isEmpty()) {
                 if (persistableResource.shouldUpdate()) {
                     Ln.d("Items exist in database. ShouldUpdate is true, so check network data first");
                     List<? extends E> newItems = requestAndStore(helper, persistableResource);
-                    if (newItems != null && !newItems.isEmpty()) {
+                    if (!newItems.isEmpty()) {
                         Ln.d("shouldUpdate is true and new requested items are not null -> save and return new date");
                         return loadFromDB(helper, persistableResource);
                     }
@@ -120,6 +129,30 @@ public class DatabaseCache {
         }
     }
 
+    @NonNull
+    public <E> List<E> loadOrRequest(@NonNull PersistableNetworkResource<E> persistableResource)
+            throws IOException {
+        SQLiteOpenHelper helper = helperProvider.get();
+        try {
+            if (!persistableResource.shouldUpdate()) {
+                Ln.d("Should update is false, try to load data from database");
+                // should not update, so check database
+                List<E> items = loadFromDB(helper, persistableResource);
+                if (!items.isEmpty()) {
+                    Ln.d("Database has items. Return them.");
+                    return items;
+                }
+                Ln.d("Database has no items.");
+            }
+            Ln.d("database did not have any items, load them from network");
+            requestAndStore(helper, persistableResource);
+            Ln.d("Return merged (database + network) data");
+            return loadFromDB(helper, persistableResource);
+        } finally {
+            helper.close();
+        }
+    }
+
     /**
      * Request and store given resources
      *
@@ -127,8 +160,8 @@ public class DatabaseCache {
      * @return resources
      * @throws IOException
      */
-    public <E> List<E> requestAndStore(
-            PersistableNetworkResource<E> persistableResource) throws IOException {
+    @NonNull
+    public <E> List<E> requestAndStore(@NonNull PersistableNetworkResource<E> persistableResource) throws IOException {
         SQLiteOpenHelper helper = helperProvider.get();
         try {
             return requestAndStore(helper, persistableResource);
@@ -137,11 +170,12 @@ public class DatabaseCache {
         }
     }
 
-    private <E> List<E> requestAndStore(final SQLiteOpenHelper helper,
-                                        final PersistableNetworkResource<E> persistableResource)
+    @NonNull
+    private <E> List<E> requestAndStore(@NonNull final SQLiteOpenHelper helper,
+                                        @NonNull final PersistableNetworkResource<E> persistableResource)
             throws IOException {
         final List<E> items = persistableResource.request();
-        if (items == null || items.isEmpty()) {
+        if (items.isEmpty()) {
             return new ArrayList<>();
         }
 
@@ -160,12 +194,13 @@ public class DatabaseCache {
         return items;
     }
 
-    private <E> List<E> loadFromDB(final SQLiteOpenHelper helper,
-                                   final PersistableResource<E> persistableResource) {
+    @NonNull
+    private <E> List<E> loadFromDB(@NonNull final SQLiteOpenHelper helper,
+                                   @NonNull final PersistableResource<E> persistableResource) {
         final SQLiteDatabase db = getReadable(helper);
         if (db == null) {
             Ln.d("SQLiteDatabase is null");
-            return null;
+            return new ArrayList<>();
         }
 
         Cursor cursor = persistableResource.getCursor(db);
@@ -185,6 +220,7 @@ public class DatabaseCache {
         }
     }
 
+    @Nullable
     private <E> E loadFromDB(final SQLiteOpenHelper helper,
                              final PersistableResource<E> persistableResource, int id) {
         final SQLiteDatabase db = getReadable(helper);

@@ -11,12 +11,13 @@ import java.util.Locale;
  * Created by Daniel-L on 23.09.2015.
  */
 public class UpdateTime implements Serializable {
-    private String mDate;
+    @NonNull private String mDate;
 
     public UpdateTime(long time) {
         mDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault()).format(new Date(time));
     }
 
+    @NonNull
     @Override
     public String toString() {
         return mDate;

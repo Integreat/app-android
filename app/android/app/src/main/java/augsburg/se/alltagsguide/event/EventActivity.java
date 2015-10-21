@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide.event;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,8 +57,8 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
     @InjectView(R.id.location)
     private TextView locationTextView;
 
-    private SimpleDateFormat dateFormatFrom = new SimpleDateFormat("HH:mm dd.MM.yy", Locale.GERMANY);
-    private SimpleDateFormat allDayDateFormat = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
+    @NonNull private SimpleDateFormat dateFormatFrom = new SimpleDateFormat("HH:mm dd.MM.yy", Locale.GERMANY);
+    @NonNull private SimpleDateFormat allDayDateFormat = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
 
     @Override
     protected void setMorePageDetails(EventPage page) {
@@ -81,7 +82,7 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
             authorLayout.setVisibility(View.GONE);
         }
 
-        if (mPage.getCategories() != null && !mPage.getCategories().isEmpty()) {
+        if (!mPage.getCategories().isEmpty()) {
             for (EventCategory category : mPage.getCategories()) {
                 @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.category_item, null, false);
                 view.setText(category.getName());
@@ -91,7 +92,7 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
             categoriesBaseLayout.setVisibility(View.GONE);
         }
 
-        if (mPage.getTags() != null && !mPage.getTags().isEmpty()) {
+        if (!mPage.getTags().isEmpty()) {
             for (EventTag tag : mPage.getTags()) {
                 @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.tag_item, null, false);
                 view.setText(tag.getName());
