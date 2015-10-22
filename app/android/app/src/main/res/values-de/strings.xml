@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">RefGuide+</string>
     <string name="action_settings">Einstellungen</string>
 
     <string name="single_columns">Eine Spalte</string>
@@ -27,7 +26,6 @@
     <string name="page_more">Mehr</string>
     <string name="no_languages_found">Es wurden keine Sprachen gefunden.\nEs scheint, als würde der angegebene Ort derzeit nicht verfügbar sein.\nBitte versuchen Sie es später erneut.</string>
     <string name="no_locations_found">Es wurden keine Orte gefunden.\nEs scheint, als würde die App derzeit nicht zur Verfügung stehen.\nBitte versuchen Sie es später erneut.</string>
-    <string name="welcome_to_x">Willkommen in %s</string>
     <string name="dialog_choose_language_title">Wähle eine Sprache</string>
     <string name="search_title">Suche</string>
     <string name="preferences">Einstellungen</string>
@@ -35,4 +33,8 @@
     <string name="information">Informationen</string>
     <string name="dialog_title_loading_language">Laden…</string>
     <string name="dialog_content_loading_language">Der Inhalt wird geladen.</string>
+    <string name="language_fragment_title">SELECT A LANGUAGE</string>
+    <string name="language_fragment_subtitle">What language do you speak?</string>
+    <string name="location_fragment_title">SELECT A LOCATION</string>
+    <string name="location_fragment_subtitle">Where are you?</string>
 </resources>

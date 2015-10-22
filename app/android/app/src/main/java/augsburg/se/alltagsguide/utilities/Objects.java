@@ -4,8 +4,6 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import augsburg.se.alltagsguide.common.EventCategory;
-
 /**
  * Created by Daniel-L on 16.08.2015.
  */

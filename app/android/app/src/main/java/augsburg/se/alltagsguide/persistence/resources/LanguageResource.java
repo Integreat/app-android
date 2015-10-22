@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import java.util.Date;
 import java.util.List;
 
 import augsburg.se.alltagsguide.common.Language;
@@ -99,7 +100,14 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
 
     @Override
     public boolean shouldUpdate() {
-        //mPreferences
-        return false;
+        long lastUpdate = mPreferences.lastLanguageUpdateTime(mLocation);
+        long now = new Date().getTime();
+        long updateCachingTime = 1000 * 60 * 60 * 4; // 4 hours
+        return now - lastUpdate > updateCachingTime;
+    }
+
+    @Override
+    public void loadedFromNetwork() {
+        mPreferences.setLastLanguageUpdateTime(mLocation);
     }
 }

@@ -5,12 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import augsburg.se.alltagsguide.BuildConfig;
@@ -28,7 +28,6 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
-import roboguice.util.Ln;
 
 /**
  * Created by Daniel-L on 07.09.2015.
@@ -210,7 +209,14 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
 
     @Override
     public boolean shouldUpdate() {
-        //mPreferences
-        return true;
+        long lastUpdate = mPreferences.lastEventPageUpdateTime(mLanguage, mLocation);
+        long now = new Date().getTime();
+        long updateCachingTime = 1000 * 60 * 60 * 4; // 4 hours
+        return now - lastUpdate > updateCachingTime;
+    }
+
+    @Override
+    public void loadedFromNetwork() {
+        mPreferences.setLastEventPageUpdateTime(mLanguage, mLocation);
     }
 }

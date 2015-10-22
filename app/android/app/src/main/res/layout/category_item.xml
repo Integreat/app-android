@@ -3,11 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="5dp"
-    android:layout_marginRight="5dp"
-    android:padding="3dp"
+    android:layout_margin="2dp"
+    android:padding="2dp"
     android:textSize="?attr/font_small"
-    tools:text="Sports"
-    tools:textColor="@android:color/holo_blue_dark">
+    tools:text="Sports">
 
 </TextView>

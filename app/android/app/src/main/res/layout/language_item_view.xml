@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            tools:src="@drawable/german_flag" />
+            tools:src="@drawable/icon_language_loading_error" />
 
         <RelativeLayout
             android:layout_width="match_parent"

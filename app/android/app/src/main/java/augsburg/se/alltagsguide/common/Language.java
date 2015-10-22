@@ -85,7 +85,7 @@ public class Language implements Serializable, Newer {
     }
 
     @NonNull
-    public static Language fromCursor(Cursor cursor) {
+    public static Language fromCursor(@NonNull Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.LANGUAGE_ID));
         String shortName = cursor.getString(cursor.getColumnIndex(CacheHelper.LANGUAGE_SHORT));
         String name = cursor.getString(cursor.getColumnIndex(CacheHelper.LANGUAGE_NAME));

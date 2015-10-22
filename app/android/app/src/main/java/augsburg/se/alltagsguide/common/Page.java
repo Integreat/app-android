@@ -80,7 +80,7 @@ public class Page implements Serializable, Newer {
         String title = jsonPage.get("title").getAsString();
         String type = jsonPage.get("type").getAsString();
         String status = jsonPage.get("status").getAsString();
-        long modified = 0;
+        long modified;
         try {
             modified = Helper.FROM_DATE_FORMAT.parse(jsonPage.get("modified_gmt").getAsString()).getTime();
         } catch (ParseException e) {
@@ -111,13 +111,14 @@ public class Page implements Serializable, Newer {
         int compare = 0;
         if (o instanceof Page) {
             Page other = (Page) o;
-            if (other.getParent() != null) {
-                compare = this.compareTo(other.getParent());
-            } else if (getParent() != null) {
-                compare = getParent().compareTo(other);
-            }
-            if (compare == 0) {
-                compare = Objects.compareTo(getOrder(), other.getOrder());
+            if (this.getDepth() == other.getDepth()) {
+                if (Objects.equals(this.getParent(), other.getParent())) {
+                    return Objects.compareTo(this.getOrder(), other.getOrder());
+                } else {
+                    return this.getParent().compareTo(other.getParent());
+                }
+            } else {
+                return Objects.compareTo(this.getDepth(), other.getDepth());
             }
         }
         return compare;

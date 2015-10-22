@@ -60,8 +60,8 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
         holder.title.setText(language.getName());
         mPicasso.load(language.getIconPath())
                 .transform(transformation)
-                .placeholder(R.drawable.ic_location_not_found_black)
-                .error(R.drawable.ic_location_not_found_black)
+                .placeholder(R.drawable.icon_language_loading)
+                .error(R.drawable.icon_language_loading_error)
                 .fit()
                 .centerInside()
                 .into(holder.image);

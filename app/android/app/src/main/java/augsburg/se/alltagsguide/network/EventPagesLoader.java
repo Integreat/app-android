@@ -15,7 +15,6 @@ import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.EventTag;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.persistence.resources.EventCategoryResource;
@@ -51,8 +50,8 @@ public class EventPagesLoader extends BasicLoader<List<EventPage>> {
      *
      * @param activity
      */
-    public EventPagesLoader(Activity activity, @NonNull Location location, @NonNull Language language) {
-        super(activity);
+    public EventPagesLoader(Activity activity, @NonNull Location location, @NonNull Language language, boolean force) {
+        super(activity, force);
         mLocation = location;
         mLanguage = language;
     }
@@ -60,7 +59,7 @@ public class EventPagesLoader extends BasicLoader<List<EventPage>> {
     @Override
     public List<EventPage> load() {
         try {
-            List<EventPage> pages = dbCache.loadOrRequest(pagesFactory.under(mLanguage, mLocation));
+            List<EventPage> pages = requestIfForced(pagesFactory.under(mLanguage, mLocation));
             List<EventCategory> categories = dbCache.load(categoriesFactory.under(mLanguage, mLocation));
             List<EventTag> tags = dbCache.load(tagsFactory.under(mLanguage, mLocation));
             List<AvailableLanguage> languages = dbCache.load(languageFactory.under(mLanguage, mLocation));

@@ -82,7 +82,6 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final Page page) {
         contentHolder.title.setText(page.getTitle());
         contentHolder.title.setTextColor(mColor);
-        // contentHolder.title.setBackgroundColor(mColor); //TODO?
         String desc = page.getDescription();
         contentHolder.date.setText(dateFormatTo.format(page.getModified()));
         contentHolder.description.setText(Html.fromHtml(desc));

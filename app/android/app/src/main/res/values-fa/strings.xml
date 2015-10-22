@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_fragment_title">SELECT A LANGUAGE</string>
+    <string name="language_fragment_subtitle">What language do you speak?</string>
+    <string name="location_fragment_title">SELECT A LOCATION</string>
+    <string name="location_fragment_subtitle">Where are you?</string>
+</resources>

@@ -23,9 +23,9 @@ public class LanguageSerializer implements JsonDeserializer<List<Language>> {
     @NonNull
     @Override
     public List<Language> deserialize(@NonNull JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        List<Language> Languages = parseLanguages(json.getAsJsonArray());
-        printLanguages(Languages);
-        return Languages;
+        List<Language> languages = parseLanguages(json.getAsJsonArray());
+        printLanguages(languages);
+        return languages;
     }
 
     @NonNull

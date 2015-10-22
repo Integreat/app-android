@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;

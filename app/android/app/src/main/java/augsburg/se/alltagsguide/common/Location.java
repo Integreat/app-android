@@ -1,12 +1,14 @@
 package augsburg.se.alltagsguide.common;
 
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 
+import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.utilities.Newer;
 import augsburg.se.alltagsguide.utilities.Objects;
 
@@ -131,5 +133,20 @@ public class Location implements Serializable, Newer {
     @Override
     public long getTimestamp() {
         return -1;
+    }
+
+    @NonNull
+    public static Location fromCursor(@NonNull Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.LOCATION_ID));
+        String name = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_NAME));
+        String icon = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_ICON));
+        String path = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_PATH));
+        String description = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_DESCRIPTION));
+        boolean global = cursor.getInt(cursor.getColumnIndex(CacheHelper.LOCATION_GLOBAL)) == 1;
+        int color = cursor.getInt(cursor.getColumnIndex(CacheHelper.LOCATION_COLOR));
+        String cityImage = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_CITY_IMAGE));
+        float latitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LATITUDE));
+        float longitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LONGITUDE));
+        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
     }
 }

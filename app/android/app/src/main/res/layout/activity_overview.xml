@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+<android.support.v4.widget.DrawerLayout android:id="@+id/drawer"
+                                        xmlns:android="http://schemas.android.com/apk/res/android"
+                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        xmlns:tools="http://schemas.android.com/tools"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="?attr/font_medium"
                         android:textStyle="bold"
-                        tools:title="Title" />
+                        tools:title="Title"/>
 
                     <TextView
                         android:id="@+id/toolbar_subtitle"
@@ -49,7 +49,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="?attr/font_small"
                         android:textStyle="bold"
-                        tools:title="Subtitle" />
+                        tools:title="Subtitle"/>
                 </LinearLayout>
 
                 <RelativeLayout
@@ -66,9 +66,9 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:padding="4dp"
-                        android:src="@drawable/german_flag"
+                        android:src="@drawable/augsburg"
                         app:civ_border_color="#fff"
-                        app:civ_border_width="1dp" />
+                        app:civ_border_width="1dp"/>
 
                     <FrameLayout
                         android:id="@+id/others"
@@ -86,7 +86,7 @@
                             android:gravity="center"
                             android:src="@drawable/circle_background"
                             app:civ_border_color="#fff"
-                            app:civ_border_width="1dp" />
+                            app:civ_border_width="1dp"/>
 
                         <TextView
                             android:id="@+id/other_language_count"
@@ -97,7 +97,7 @@
                             android:lines="1"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            tools:text="+2" />
+                            tools:text="+2"/>
                     </FrameLayout>
                 </RelativeLayout>
 
@@ -114,14 +114,14 @@
                 android:id="@+id/pages_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
 
             <FrameLayout
                 android:id="@+id/events_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -147,13 +147,13 @@
 
                 <ImageView
                     android:id="@+id/header_image_view"
-                    android:scaleType="centerCrop"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="60dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
@@ -168,9 +168,9 @@
                         android:gravity="start"
                         android:paddingBottom="4dp"
                         android:textColor="#FFF"
-                        android:textSize="?attr/font_small"
+                        android:textSize="?attr/font_large"
                         android:textStyle="bold"
-                        tools:text="Augsburg" />
+                        tools:text="Augsburg"/>
 
                     <TextView
                         android:id="@+id/description"
@@ -180,37 +180,44 @@
                         android:gravity="start"
                         android:textColor="#fff"
                         android:textSize="?attr/font_small"
-                        tools:text="www.augsburg.de" />
+                        android:visibility="gone"
+                        tools:text="www.augsburg.de"/>
                 </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/emptyNavView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/header"
-                android:layout_centerInParent="true"
-                android:orientation="vertical">
+                android:layout_centerInParent="true">
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="false"
-                    android:src="@drawable/empty_entries_white" />
-
-                <TextView
-                    android:id="@+id/name"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_below="@+id/imageView"
-                    android:layout_centerHorizontal="true"
-                    android:singleLine="true"
-                    android:text="@string/no_entries_found"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/white"
-                    android:textSize="?attr/font_large" />
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="false"
+                        android:src="@drawable/icon_location_loading_error"/>
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="20dp"
+                        android:gravity="center"
+                        android:text="@string/no_entries_found"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="?attr/font_large"/>
+                </LinearLayout>
             </RelativeLayout>
 
             <LinearLayout
@@ -223,7 +230,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
+                    android:background="@android:color/darker_gray"/>
 
                 <TextView
                     android:id="@+id/settings"
@@ -235,7 +242,7 @@
                     android:gravity="center_vertical"
                     android:text="@string/action_settings"
                     android:textColor="@android:color/primary_text_light"
-                    android:textSize="?attr/font_small" />
+                    android:textSize="?attr/font_small"/>
 
                 <TextView
                     android:id="@+id/change_login"
@@ -247,7 +254,7 @@
                     android:gravity="center_vertical"
                     android:text="@string/change_language_location"
                     android:textColor="@android:color/primary_text_light"
-                    android:textSize="?attr/font_small" />
+                    android:textSize="?attr/font_small"/>
             </LinearLayout>
 
             <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
@@ -255,7 +262,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/footer"
-                android:layout_below="@id/header" />
+                android:layout_below="@id/header"/>
         </RelativeLayout>
 
     </android.support.design.widget.NavigationView>

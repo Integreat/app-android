@@ -2,9 +2,9 @@ package augsburg.se.alltagsguide.overview;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.PagesLoader;
 import augsburg.se.alltagsguide.utilities.BaseFragment;
@@ -27,6 +29,8 @@ import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
 public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<List<Page>> {
+    private static final String PAGE_KEY = "PAGE_KEY";
+    private static final String FORCED_KEY = "FORCED";
 
     @InjectView(R.id.recycler_view)
     private SuperRecyclerView mRecyclerView;
@@ -34,7 +38,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     private OnPageFragmentInteractionListener mListener;
     private StaggeredGridLayoutManager mLayoutManager;
-    private List<Page> mPages;
+    @NonNull private List<Page> mPages = new ArrayList<>();
 
     public static PageOverviewFragment newInstance() {
         return new PageOverviewFragment();
@@ -82,13 +86,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
 
     private int getSpanCount() {
-        switch (getResources().getConfiguration().orientation) {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                return mPrefUtilities.useMultipleColumnsLandscape() ? 2 : 1;
-            case Configuration.ORIENTATION_PORTRAIT:
-                return mPrefUtilities.useMultipleColumnsPortrait() ? 2 : 1;
-        }
-        return 1;
+        return getResources().getInteger(R.integer.grid_rows_page);
     }
 
 
@@ -105,7 +103,12 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     }
 
     private void setDefaultTitle() {
-        setTitle(getString(R.string.refguide, mPrefUtilities.getLocation().getName()));
+        Location location = mPrefUtilities.getLocation();
+        if (location != null) {
+            setTitle(getString(R.string.refguide, mPrefUtilities.getLocation().getName()));
+        } else {
+            setTitle("");
+        }
         setSubTitle("");
     }
 
@@ -117,7 +120,14 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        onRefresh();
+        if (savedInstanceState != null) {
+            Serializable serializable = savedInstanceState.getSerializable(PAGE_KEY);
+            if (serializable != null) {
+                pagesLoaded((ArrayList<Page>) serializable);
+                return;
+            }
+        }
+        refresh(false);
     }
 
     @Override
@@ -146,7 +156,16 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     @Override
     public void onRefresh() {
-        getLoaderManager().restartLoader(0, null, this);
+        refresh(true);
+    }
+
+    public void refresh(boolean forced) {
+        Bundle bundle = null;
+        if (forced) {
+            bundle = new Bundle();
+            bundle.putBoolean(FORCED_KEY, true);
+        }
+        getLoaderManager().restartLoader(0, bundle, this);
     }
 
     public void indexUpdated() {
@@ -156,11 +175,19 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     @Override
     public Loader<List<Page>> onCreateLoader(int id, Bundle args) {
-        return new PagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage());
+        boolean forced = false;
+        if (args != null && args.containsKey(FORCED_KEY)) {
+            forced = args.getBoolean(FORCED_KEY);
+        }
+        return new PagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), forced);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Page>> loader, final List<Page> pages) {
+        pagesLoaded(pages);
+    }
+
+    private void pagesLoaded(List<Page> pages) {
         mPages = pages;
         setOrInitPageAdapter(restoreVisiblePages(pages));
         mListener.onPagesLoaded(pages);
@@ -204,26 +231,29 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     }
 
     public void filterByText(String filterText) {
-        if (mPages != null) { //TODO save attributes at orientation changes
-            if (Objects.isNullOrEmpty(filterText)) {
-                setOrInitPageAdapter(restoreVisiblePages(mPages));
-            } else {
-                List<Page> pages = new ArrayList<>();
-                for (Page page : mPages) {
-                    String relevantContent = page.getTitle();
-                    if (page.getContent() != null) {
-                        relevantContent += page.getContent();
-                    }
-
-                    if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
-                        pages.add(page);
-                    }
+        if (Objects.isNullOrEmpty(filterText)) {
+            setOrInitPageAdapter(restoreVisiblePages(mPages));
+        } else {
+            List<Page> pages = new ArrayList<>();
+            for (Page page : mPages) {
+                String relevantContent = page.getTitle();
+                if (page.getContent() != null) {
+                    relevantContent += page.getContent();
                 }
-                setOrInitPageAdapter(pages);
+
+                if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
+                    pages.add(page);
+                }
             }
+            setOrInitPageAdapter(pages);
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(PAGE_KEY, new ArrayList<>(mPages));
+        super.onSaveInstanceState(outState);
+    }
 
     public interface OnPageFragmentInteractionListener {
         void onOpenPage(Page page);

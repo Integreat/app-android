@@ -29,14 +29,14 @@ public class LocationLoader extends BasicLoader<List<Location>> {
      *
      * @param activity
      */
-    public LocationLoader(Activity activity) {
-        super(activity);
+    public LocationLoader(Activity activity, boolean force) {
+        super(activity, force);
     }
 
     @Override
     public List<Location> load() {
         try {
-            return dbCache.loadOrRequest(locationResource);
+            return requestIfForced(locationResource);
         } catch (IOException e) {
             Ln.e(e);
             return Collections.emptyList();

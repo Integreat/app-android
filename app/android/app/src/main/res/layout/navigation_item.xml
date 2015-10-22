@@ -16,7 +16,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
         android:gravity="center_vertical"
-        tools:src="@drawable/ic_info_black_24dp" />
+        tools:src="@drawable/icon_language_loading" />
 
     <TextView
         android:id="@+id/counter"

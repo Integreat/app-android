@@ -13,7 +13,6 @@ import com.google.inject.name.Named;
 import java.io.File;
 import java.util.List;
 
-import augsburg.se.alltagsguide.common.EventCategory;
 import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;

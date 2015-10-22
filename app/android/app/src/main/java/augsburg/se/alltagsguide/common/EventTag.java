@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,12 +30,10 @@ public class EventTag implements Serializable {
         return mName;
     }
 
-    @Nullable
-    public static EventTag fromJson(@NonNull final JsonElement jsonTag) {
-        String name = Helper.getStringOrDefault(jsonTag, null);
-        if (name == null) {
-            return null;
-        }
+    @NonNull
+    public static EventTag fromJson(@NonNull final JsonObject jsonTag) {
+        String name = Helper.getStringOrDefault(jsonTag.get("name"), "");
+        //TODO Tags have an id now.
         return new EventTag(name);
     }
 
@@ -43,10 +41,8 @@ public class EventTag implements Serializable {
     public static List<EventTag> fromJson(@NonNull JsonArray array) {
         List<EventTag> tags = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
-            EventTag tag = fromJson(array.get(i));
-            if (tag != null) {
-                tags.add(tag);
-            }
+            EventTag tag = fromJson(array.get(i).getAsJsonObject());
+            tags.add(tag);
         }
         return tags;
     }

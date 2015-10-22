@@ -50,8 +50,8 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
         final Location location = get(position);
         holder.title.setText(location.getName());
         mPicasso.load(location.getIcon())
-                .placeholder(R.drawable.ic_location_not_found_black)
-                .error(R.drawable.ic_location_not_found_black)
+                .placeholder(R.drawable.icon_location_loading)
+                .error(R.drawable.icon_location_loading_error)
                 .fit()
                 .into(holder.image);
 

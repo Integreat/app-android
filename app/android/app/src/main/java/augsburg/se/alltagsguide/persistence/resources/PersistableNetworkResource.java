@@ -29,4 +29,5 @@ public interface PersistableNetworkResource<E> extends PersistableResource<E> {
      */
     boolean shouldUpdate();
 
+    void loadedFromNetwork();
 }

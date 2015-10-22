@@ -3,18 +3,19 @@ package augsburg.se.alltagsguide.common;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+
+import augsburg.se.alltagsguide.utilities.Helper;
 
 /**
  * Created by Daniel-L on 23.09.2015.
  */
 public class UpdateTime implements Serializable {
     @NonNull private String mDate;
+    private static final int OFFSET = 1000;
 
     public UpdateTime(long time) {
-        mDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault()).format(new Date(time));
+        mDate = Helper.TO_DATE_FORMAT.format(new Date(time + OFFSET));
     }
 
     @NonNull

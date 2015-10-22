@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.google.inject.Inject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,9 @@ import roboguice.inject.InjectView;
  */
 public class EventOverviewFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<EventPage>> {
 
+    private static final String EVENT_PAGE_KEY = "EVENT_PAGE_KEY";
+    private static final String FORCED_KEY = "FORCED";
+
     @InjectView(R.id.recycler_view)
     private RecyclerView mRecyclerView;
 
@@ -40,21 +44,28 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
     private OnEventPageFragmentInteractionListener mListener;
 
-    private List<EventPage> mEventPages;
-
-    //TODO categories, tags
+    @NonNull private List<EventPage> mEventPages = new ArrayList<>();
 
     @Override
-    public Loader<List<EventPage>> onCreateLoader(int i, Bundle bundle) {
-        return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage());
+    public Loader<List<EventPage>> onCreateLoader(int i, Bundle args) {
+        boolean forced = false;
+        if (args != null && args.containsKey(FORCED_KEY)) {
+            forced = args.getBoolean(FORCED_KEY);
+        }
+        return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), forced);
     }
 
     @Override
     public void onLoadFinished(Loader<List<EventPage>> loader, List<EventPage> eventPages) {
+        pagesLoaded(eventPages);
+    }
+
+    private void pagesLoaded(List<EventPage> eventPages) {
         mEventPages = eventPages;
         setOrInitPageAdapter(eventPages);
         mListener.onEventPagesLoaded(eventPages);
     }
+
 
     @Override
     public void onLoaderReset(Loader<List<EventPage>> loader) {
@@ -75,15 +86,28 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         mRecyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
     }
 
-    public void onRefresh() {
-        getLoaderManager().restartLoader(0, null, this);
+    public void refresh(boolean forced) {
+        Bundle bundle = null;
+        if (forced) {
+            bundle = new Bundle();
+            bundle.putBoolean(FORCED_KEY, true);
+        }
+        getLoaderManager().restartLoader(0, bundle, this);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        onRefresh();
+        if (savedInstanceState != null) {
+            Serializable serializable = savedInstanceState.getSerializable(EVENT_PAGE_KEY);
+            if (serializable != null) {
+                pagesLoaded((ArrayList<EventPage>) serializable);
+                return;
+            }
+        }
+        refresh(false);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,19 +134,17 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     }
 
     public void filterByText(String filterText) {
-        if (mEventPages != null) { //TODO save attributes at orientation changes
-            if (Objects.isNullOrEmpty(filterText)) {
-                setOrInitPageAdapter(mEventPages);
-            } else {
-                List<EventPage> pages = new ArrayList<>();
-                for (EventPage page : mEventPages) {
-                    String relevantContent = page.getSearchableString();
-                    if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
-                        pages.add(page);
-                    }
+        if (Objects.isNullOrEmpty(filterText)) {
+            setOrInitPageAdapter(mEventPages);
+        } else {
+            List<EventPage> pages = new ArrayList<>();
+            for (EventPage page : mEventPages) {
+                String relevantContent = page.getSearchableString();
+                if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
+                    pages.add(page);
                 }
-                setOrInitPageAdapter(pages);
             }
+            setOrInitPageAdapter(pages);
         }
     }
 
@@ -141,5 +163,11 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         void onOpenEventPage(EventPage page);
 
         void onEventPagesLoaded(List<EventPage> pages);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(EVENT_PAGE_KEY, new ArrayList<>(mEventPages));
+        super.onSaveInstanceState(outState);
     }
 }

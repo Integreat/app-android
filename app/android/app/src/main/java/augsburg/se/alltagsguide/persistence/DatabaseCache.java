@@ -188,6 +188,7 @@ public class DatabaseCache {
         try {
             persistableResource.store(db, items);
             db.setTransactionSuccessful();
+            persistableResource.loadedFromNetwork();
         } finally {
             db.endTransaction();
         }

@@ -44,7 +44,7 @@ public class PageLoader extends BasicLoader<Page> {
      * @param activity
      */
     public PageLoader(Activity activity, @NonNull Location location, @NonNull Language language, int id) {
-        super(activity);
+        super(activity, false);
         mLocation = location;
         mLanguage = language;
         mId = id;

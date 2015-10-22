@@ -83,8 +83,8 @@ public class LanguageItemAdapter extends BaseAdapter implements View.OnClickList
         }
         ((TextView) convertView.findViewById(R.id.language_name)).setText(language.getName());
         mPicasso.load(language.getIconPath())
-                .placeholder(R.drawable.ic_location_not_found_black)
-                .error(R.drawable.ic_location_not_found_black)
+                .placeholder(R.drawable.icon_language_loading)
+                .error(R.drawable.icon_language_loading_error)
                 .fit()
                 .into((ImageView) convertView.findViewById(R.id.language_icon));
 
@@ -93,6 +93,5 @@ public class LanguageItemAdapter extends BaseAdapter implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        Integer index = (Integer) v.getTag();
     }
 }

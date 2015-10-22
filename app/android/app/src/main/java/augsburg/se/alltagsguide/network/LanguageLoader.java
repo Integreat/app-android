@@ -6,13 +6,11 @@ import android.support.annotation.NonNull;
 import com.google.inject.Inject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.LanguageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
@@ -36,8 +34,8 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
      *
      * @param activity
      */
-    public LanguageLoader(Activity activity, @NonNull Location location) {
-        super(activity);
+    public LanguageLoader(Activity activity, @NonNull Location location, boolean force) {
+        super(activity, force);
         mLocation = location;
     }
 
@@ -45,7 +43,7 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
     @Override
     public List<Language> load() {
         try {
-            return db.loadOrRequest(languageFactory.under(mLocation));
+            return requestIfForced(languageFactory.under(mLocation));
         } catch (IOException e) {
             Ln.e(e);
             return Collections.emptyList();

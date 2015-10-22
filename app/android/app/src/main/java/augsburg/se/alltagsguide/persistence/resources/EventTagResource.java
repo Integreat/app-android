@@ -17,6 +17,7 @@ import augsburg.se.alltagsguide.common.EventTag;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
+import roboguice.util.Ln;
 
 /**
  * Created by Daniel-L on 07.09.2015.
@@ -77,6 +78,7 @@ public class EventTagResource implements PersistableResource<EventTag> {
         ContentValues tagValues = new ContentValues(1);
         ContentValues eventTagValues = new ContentValues(5);
         for (EventTag tag : tags) {
+            Ln.d("Saving EventTag: " + tag.getName());
             tagValues.clear();
             tagValues.put(CacheHelper.TAG_NAME, tag.getName());
             writableDatabase.replace(CacheHelper.TABLE_TAG, null, tagValues);

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 
+import java.util.Date;
 import java.util.List;
 
 import augsburg.se.alltagsguide.common.Location;
@@ -48,18 +49,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
     @Nullable
     @Override
     public Location loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
-        int index = 0;
-        int id = cursor.getInt(index++);
-        String name = cursor.getString(index++);
-        String icon = cursor.getString(index++);
-        String path = cursor.getString(index++);
-        String description = cursor.getString(index++);
-        boolean global = cursor.getInt(index++) == 1;
-        int color = cursor.getInt(index++);
-        String cityImage = cursor.getString(index++);
-        float latitude = cursor.getFloat(index++);
-        float longitude = cursor.getFloat(index++);
-        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
+        return Location.fromCursor(cursor);
     }
 
     @Override
@@ -95,7 +85,14 @@ public class LocationResource implements PersistableNetworkResource<Location> {
 
     @Override
     public boolean shouldUpdate() {
-        //mPreferences
-        return false;
+        long lastUpdate = mPreferences.lastLocationUpdateTime();
+        long now = new Date().getTime();
+        long updateCachingTime = 1000 * 60 * 60 * 4; // 4 hours
+        return now - lastUpdate > updateCachingTime;
+    }
+
+    @Override
+    public void loadedFromNetwork() {
+        mPreferences.setLastLocationUpdateTime();
     }
 }

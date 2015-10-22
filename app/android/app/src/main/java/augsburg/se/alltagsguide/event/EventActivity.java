@@ -86,6 +86,8 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
             for (EventCategory category : mPage.getCategories()) {
                 @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.category_item, null, false);
                 view.setText(category.getName());
+                view.setTextColor(color);
+                view.setBackgroundColor(getResources().getColor(android.R.color.white));
                 categoriesLayout.addView(view);
             }
         } else {
@@ -96,6 +98,7 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
             for (EventTag tag : mPage.getTags()) {
                 @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.tag_item, null, false);
                 view.setText(tag.getName());
+                view.setTextColor(getResources().getColor(android.R.color.white));
                 view.setBackgroundColor(color);
                 tagsLayout.addView(view);
             }

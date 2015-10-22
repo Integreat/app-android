@@ -14,7 +14,7 @@
         android:layout_gravity="center"
         android:adjustViewBounds="false"
         android:scaleType="centerCrop"
-        android:src="@drawable/empty_languages_white" />
+        android:src="@drawable/icon_language_loading_error" />
 
     <TextView
         android:id="@+id/name"

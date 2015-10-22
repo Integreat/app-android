@@ -81,8 +81,8 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     @SuppressLint("SetTextI18n")
     protected void setupLanguagesButton() {
         mPicasso.load(mPage.getLanguage().getIconPath())
-                .placeholder(R.drawable.ic_location_not_found_black)
-                .error(R.drawable.ic_location_not_found_black)
+                .placeholder(R.drawable.icon_language_loading)
+                .error(R.drawable.icon_language_loading_error)
                 .fit()
                 .into(circleImageView);
         circleImageView.setOnClickListener(new View.OnClickListener() {

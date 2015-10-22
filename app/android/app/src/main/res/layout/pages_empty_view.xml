@@ -15,7 +15,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:adjustViewBounds="false"
-            android:src="@drawable/empty_entries_white" />
+            android:src="@drawable/icon_location_loading_error" />
 
         <TextView
             android:id="@+id/name"

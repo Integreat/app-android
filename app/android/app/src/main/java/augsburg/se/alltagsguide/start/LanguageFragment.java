@@ -28,6 +28,7 @@ import roboguice.inject.InjectView;
 
 public class LanguageFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Language>> {
     private static final String ARG_LOCATION = "location";
+    private static final String FORCED_KEY = "FORCED";
     private Location mLocation;
     private OnLanguageFragmentInteractionListener mListener;
     private LanguageAdapter mAdapter;
@@ -73,16 +74,17 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle("SELECT A LANGUAGE");
-        setSubTitle("What language do you speak?");
+        setTitle(getString(R.string.language_fragment_title));
+        setSubTitle(getString(R.string.language_fragment_subtitle));
         cityTextView.setText(mLocation.getName());
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+        int rows = getResources().getInteger(R.integer.grid_rows_welcome);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
         mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
         mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refresh(true);
             }
         });
     }
@@ -90,11 +92,16 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        refresh();
+        refresh(false);
     }
 
-    private void refresh() {
-        getLoaderManager().restartLoader(0, null, this);
+    private void refresh(boolean forced) {
+        Bundle bundle = null;
+        if (forced) {
+            bundle = new Bundle();
+            bundle.putBoolean(FORCED_KEY, true);
+        }
+        getLoaderManager().restartLoader(0, bundle, this);
     }
 
     @Override
@@ -115,8 +122,12 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public Loader<List<Language>> onCreateLoader(int i, Bundle bundle) {
-        return new LanguageLoader(getActivity(), mLocation);
+    public Loader<List<Language>> onCreateLoader(int i, Bundle args) {
+        boolean forced = false;
+        if (args != null && args.containsKey(FORCED_KEY)) {
+            forced = args.getBoolean(FORCED_KEY);
+        }
+        return new LanguageLoader(getActivity(), mLocation, forced);
     }
 
     @Override

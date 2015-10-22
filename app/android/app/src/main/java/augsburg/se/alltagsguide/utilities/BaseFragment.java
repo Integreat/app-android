@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.google.inject.Inject;
 
-import roboguice.RoboGuice;
 import roboguice.fragment.RoboFragment;
 
 
@@ -44,11 +43,15 @@ public class BaseFragment extends RoboFragment {
     }
 
     protected void setTitle(String title) {
-        mListener.setTitle(title);
+        if (mListener != null) {
+            mListener.setTitle(title);
+        }
     }
 
     protected void setSubTitle(String subTitle) {
-        mListener.setSubTitle(subTitle);
+        if (mListener != null) {
+            mListener.setSubTitle(subTitle);
+        }
     }
 
     public interface OnBaseFragmentInteractionListener {

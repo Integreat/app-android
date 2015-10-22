@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
@@ -28,7 +27,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
 
-import java.lang.ref.WeakReference;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +64,7 @@ public class OverviewActivity extends BaseActivity
 
     // delay to launch nav drawer item, to allow close animation to play
     private static final long NAVDRAWER_LAUNCH_DELAY = 300;
+    private static final String OTHER_LANGUAGES_KEY = "OTHER_LANGUAGE_KEY";
 
     private NavigationAdapter mNavigationAdapter;
 
@@ -114,7 +114,6 @@ public class OverviewActivity extends BaseActivity
     protected Picasso mPicasso;
 
 
-    private EventPagesHandler eventPagesHandler = new EventPagesHandler(this);
     private PageOverviewFragment mPageOverviewFragment;
     private EventOverviewFragment mEventOverviewFragment;
 
@@ -165,7 +164,20 @@ public class OverviewActivity extends BaseActivity
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        loadLanguage(mLanguage);
+        if (savedInstanceState != null) {
+            Serializable serializable = savedInstanceState.getSerializable(OTHER_LANGUAGES_KEY);
+            if (serializable != null) {
+                // set languages button again from the data we already have
+                ArrayList<Language> others = (ArrayList<Language>) serializable;
+                setLanguageButton(others);
+            } else {
+                // we need to only hookup the other-languages call as the fragments state should be restored
+                loadOtherLanguages();
+            }
+        } else {
+            // init everything
+            loadLanguage(mLanguage);
+        }
     }
 
     @Override
@@ -173,13 +185,11 @@ public class OverviewActivity extends BaseActivity
         return false;
     }
 
-    @SuppressLint("SetTextI18n")
-    protected void setupLanguagesButton(List<Language> data) {
-        data.remove(mLanguage);
-        mOtherLanguages = data;
+    private void setLanguageButton(@NonNull List<Language> others) {
+        mOtherLanguages = others;
         mPicasso.load(mLanguage.getIconPath())
-                .placeholder(R.drawable.ic_location_not_found_black)
-                .error(R.drawable.ic_location_not_found_black)
+                .placeholder(R.drawable.icon_language_loading)
+                .error(R.drawable.icon_language_loading_error)
                 .fit()
                 .into(circleImageView);
         circleImageView.setOnClickListener(new View.OnClickListener() {
@@ -202,20 +212,29 @@ public class OverviewActivity extends BaseActivity
     }
 
     @SuppressLint("SetTextI18n")
+    protected void setupLanguagesButton(@NonNull List<Language> data) {
+        data.remove(mLanguage);
+        setLanguageButton(data);
+    }
+
+    @SuppressLint("SetTextI18n")
     private void updateLanguageCount() {
         otherLanguageCountTextView.setText("+" + mOtherLanguages.size());
     }
 
-    private void loadLanguage(Language language) {
+    private void loadLanguage(@NonNull Language language) {
         mLanguage = language;
         mPrefUtilities.setLanguage(language);
 
         startLoading();
-        mPageOverviewFragment.onRefresh();
-        mEventOverviewFragment.onRefresh();
-        getSupportLoaderManager().restartLoader(0, null, this);
+        mPageOverviewFragment.refresh(false);
+        mEventOverviewFragment.refresh(false);
+        loadOtherLanguages();
     }
 
+    private void loadOtherLanguages() {
+        getSupportLoaderManager().restartLoader(0, null, this);
+    }
 
     private void initNavigationDrawer() {
         locationNameTextView.setText(mLocation.getName());
@@ -344,7 +363,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    public void onOpenPage(Page page) {
+    public void onOpenPage(@NonNull Page page) {
         Intent intent = new Intent(OverviewActivity.this, PageActivity.class);
         intent.putExtra(PageActivity.ARG_INFO, page);
         startActivity(intent);
@@ -352,7 +371,7 @@ public class OverviewActivity extends BaseActivity
 
 
     @Override
-    public void onPagesLoaded(final List<Page> pages) {
+    public void onPagesLoaded(@NonNull final List<Page> pages) {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -365,7 +384,7 @@ public class OverviewActivity extends BaseActivity
 
 
     @Override
-    public void onNavigationClicked(final Page item) {
+    public void onNavigationClicked(@NonNull final Page item) {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -375,7 +394,7 @@ public class OverviewActivity extends BaseActivity
         drawerLayout.closeDrawers();
     }
 
-    private void goToNavDrawerItem(Page item) {
+    private void goToNavDrawerItem(@NonNull Page item) {
         mPrefUtilities.setSelectedPage(item.getId());
         if (mNavigationAdapter != null) {
             mNavigationAdapter.setSelectedIndex(item.getId());
@@ -443,7 +462,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    public void onOpenEventPage(EventPage page) {
+    public void onOpenEventPage(@NonNull EventPage page) {
         Intent intent = new Intent(OverviewActivity.this, EventActivity.class);
         intent.putExtra(EventActivity.ARG_INFO, page);
         startActivity(intent);
@@ -451,51 +470,48 @@ public class OverviewActivity extends BaseActivity
 
 
     @Override
-    public void onEventPagesLoaded(final List<EventPage> pages) {
-        int messageCode = pages == null || pages.isEmpty() ? 0 : 1;
-        eventPagesHandler.sendEmptyMessage(messageCode);
+    public void onEventPagesLoaded(@NonNull final List<EventPage> pages) {
+        new Handler().post(new Runnable() {
+            final int messageCode = pages.isEmpty() ? 0 : 1;
+
+            public void run() {
+                try {
+                    if (messageCode == 1) {
+                        getSupportFragmentManager().beginTransaction()
+                                .show(mEventOverviewFragment)
+                                .commitAllowingStateLoss();
+                        mEventContainerView.setVisibility(View.VISIBLE);
+                    } else {
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(mEventOverviewFragment)
+                                .commitAllowingStateLoss();
+                        mEventContainerView.setVisibility(View.GONE);
+                    }
+                    mContentView.invalidate();
+                } catch (IllegalStateException e) {
+                    // Ignore if this happens
+                    Ln.e(e);
+                }
+            }
+        });
     }
 
     @Override
     public Loader<List<Language>> onCreateLoader(int id, Bundle args) {
-        return new LanguageLoader(this, mLocation);
+        boolean forced = false;
+        if (args != null && args.containsKey("FORCED")) {
+            forced = args.getBoolean("FORCED");
+        }
+        return new LanguageLoader(this, mLocation, forced);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Language>> loader, List<Language> data) {
+    public void onLoadFinished(Loader<List<Language>> loader, @NonNull List<Language> data) {
         setupLanguagesButton(data);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Language>> loader) {
-    }
-
-    static class EventPagesHandler extends Handler {
-        private final WeakReference<OverviewActivity> mActivity;
-
-        EventPagesHandler(OverviewActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            OverviewActivity activity = mActivity.get();
-            if (activity != null) {
-                if (msg.what == 1) {
-                    activity.getSupportFragmentManager().beginTransaction()
-                            .show(activity.mEventOverviewFragment)
-                            .commit();
-                    activity.mEventContainerView.setVisibility(View.VISIBLE);
-                } else {
-                    activity.getSupportFragmentManager().beginTransaction()
-                            .hide(activity.mEventOverviewFragment)
-                            .commit();
-                    activity.mEventContainerView.setVisibility(View.GONE);
-                }
-                activity.mContentView.invalidate();
-            }
-
-        }
     }
 
     private MaterialDialog mLoadingDialog;
@@ -516,5 +532,11 @@ public class OverviewActivity extends BaseActivity
         mLoadingDialog = null;
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(OTHER_LANGUAGES_KEY, new ArrayList<>(mOtherLanguages));
+        super.onSaveInstanceState(outState);
+    }
 
 }

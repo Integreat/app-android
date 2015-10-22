@@ -33,6 +33,7 @@ public class EventPage extends Page implements Newer {
         mCategories = categories;
     }
 
+    @NonNull
     public static EventPage fromJson(@NonNull final JsonObject jsonPage) {
         Page page = Page.fromJson(jsonPage);
         //TODO jsonPage.get("page") !?

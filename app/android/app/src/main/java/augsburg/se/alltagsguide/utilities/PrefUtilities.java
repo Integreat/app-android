@@ -42,6 +42,7 @@ public class PrefUtilities {
      * The Constant PROPERTY_REG_ID.
      */
     private static final String PROPERTY_REG_ID = "reg_id";
+    private static final String LAST_LOCATION_UPDATE = "last_location_update";
 
     private final SharedPreferences preferences;
 
@@ -189,4 +190,47 @@ public class PrefUtilities {
         save(editor);
     }
 
+    public long lastLocationUpdateTime() {
+        return preferences.getLong(LAST_LOCATION_UPDATE, 0);
+    }
+
+    public void setLastLocationUpdateTime() {
+        save(preferences.edit().putLong(LAST_LOCATION_UPDATE, new Date().getTime()));
+    }
+
+    public long lastEventPageUpdateTime(Language language, Location location) {
+        return preferences.getLong(makeEventPageKey(language, location), 0);
+    }
+
+    private String makeEventPageKey(Language language, Location location) {
+        return String.format("event_page_key(%d)(%d)", language.getId(), location.getId());
+    }
+
+    private String makePageKey(Language language, Location location) {
+        return String.format("page_key(%d)(%d)", language.getId(), location.getId());
+    }
+
+    public void setLastEventPageUpdateTime(Language language, Location location) {
+        save(preferences.edit().putLong(makeEventPageKey(language, location), new Date().getTime()));
+    }
+
+    public long lastLanguageUpdateTime(Location location) {
+        return preferences.getLong(makeLocationKey(location), 0);
+    }
+
+    private String makeLocationKey(Location location) {
+        return String.format("location_key(%d)", location.getId());
+    }
+
+    public void setLastLanguageUpdateTime(Location location) {
+        save(preferences.edit().putLong(makeLocationKey(location), new Date().getTime()));
+    }
+
+    public long lastPageUpdateTime(Language language, Location location) {
+        return preferences.getLong(makePageKey(language, location), 0);
+    }
+
+    public void setLastPageUpdateTime(Language language, Location location) {
+        save(preferences.edit().putLong(makePageKey(language, location), new Date().getTime()));
+    }
 }

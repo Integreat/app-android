@@ -26,6 +26,7 @@ import roboguice.inject.InjectView;
 
 public class LocationFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Location>> {
 
+    private static final String FORCED_KEY = "FORCED";
     private OnLocationFragmentInteractionListener mListener;
     private LocationAdapter mAdapter;
 
@@ -60,15 +61,16 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle("SELECT A LOCATION");
-        setSubTitle("Where are you?");
+        setTitle(getString(R.string.location_fragment_title));
+        setSubTitle(getString(R.string.location_fragment_subtitle));
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+        int rows = getResources().getInteger(R.integer.grid_rows_welcome);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
         mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
         mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refresh(true);
             }
         });
     }
@@ -76,12 +78,16 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        refresh();
+        refresh(false);
     }
 
-
-    private void refresh() {
-        getLoaderManager().restartLoader(0, null, this);
+    private void refresh(boolean forced) {
+        Bundle bundle = null;
+        if (forced) {
+            bundle = new Bundle();
+            bundle.putBoolean(FORCED_KEY, true);
+        }
+        getLoaderManager().restartLoader(0, bundle, this);
     }
 
     @Override
@@ -102,8 +108,12 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public Loader<List<Location>> onCreateLoader(int i, Bundle bundle) {
-        return new LocationLoader(getActivity());
+    public Loader<List<Location>> onCreateLoader(int i, Bundle args) {
+        boolean forced = false;
+        if (args != null && args.containsKey(FORCED_KEY)) {
+            forced = args.getBoolean(FORCED_KEY);
+        }
+        return new LocationLoader(getActivity(), forced);
     }
 
 

@@ -110,7 +110,7 @@ public class ServicesModule extends AbstractModule {
                     return service.getAvailableLocations();
                 } catch (RetrofitError e) {
                     Ln.e(e);
-                    return null;
+                    return new ArrayList<>();
                 }
             }
 
@@ -121,7 +121,7 @@ public class ServicesModule extends AbstractModule {
                     return service.getAvailableLanguages(location);
                 } catch (RetrofitError e) {
                     Ln.e(e);
-                    return null;
+                    return new ArrayList<>();
                 }
             }
 

@@ -32,13 +32,11 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         String preBuildLocation = getString(R.string.pre_build_location);
         if (!Objects.equals("", preBuildLocation)) {
             // location was set during gradle build, so dont show location here
             throw new IllegalStateException("Not implemented yet");
         }
-
         if (prefUtilities.getLocation() != null && prefUtilities.getLanguage() != null) {
             startOverview();
         }
@@ -49,7 +47,6 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
                     .replace(R.id.container, LocationFragment.newInstance())
                     .commit();
         }
-
     }
 
 

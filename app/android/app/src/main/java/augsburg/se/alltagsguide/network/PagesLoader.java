@@ -13,7 +13,6 @@ import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
@@ -24,8 +23,6 @@ import roboguice.util.Ln;
  */
 public class PagesLoader extends BasicLoader<List<Page>> {
 
-    @Inject
-    private DatabaseCache dbCache;
     @NonNull private Location mLocation;
     @NonNull private Language mLanguage;
 
@@ -41,8 +38,8 @@ public class PagesLoader extends BasicLoader<List<Page>> {
      *
      * @param activity
      */
-    public PagesLoader(Activity activity, @NonNull Location location, @NonNull Language language) {
-        super(activity);
+    public PagesLoader(Activity activity, @NonNull Location location, @NonNull Language language, boolean forced) {
+        super(activity, forced);
         mLocation = location;
         mLanguage = language;
     }
@@ -51,7 +48,7 @@ public class PagesLoader extends BasicLoader<List<Page>> {
     @Override
     public List<Page> load() {
         try {
-            List<Page> pages = dbCache.loadOrRequest(pagesFactory.under(mLanguage, mLocation));
+            List<Page> pages = requestIfForced(pagesFactory.under(mLanguage, mLocation));
             List<AvailableLanguage> languages = dbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
             Page.recreateRelations(pages, languages, mLanguage);
             return pages;

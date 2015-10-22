@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import augsburg.se.alltagsguide.BuildConfig;
@@ -119,9 +120,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
         for (Page mPage : mPages) {
             List<Page> pages = new ArrayList<>();
             pages.add(mPage);
-            if (mPage.getSubPages() != null) {
-                pages.addAll(mPage.getSubPages());
-            }
+            pages.addAll(mPage.getSubPages());
             for (Page page : pages) {
                 pageValues.clear();
                 pageValues.put(CacheHelper.PAGE_ID, page.getId());
@@ -183,7 +182,14 @@ public class PageResource implements PersistableNetworkResource<Page> {
 
     @Override
     public boolean shouldUpdate() {
-        //mPreferences
-        return true;
+        long lastUpdate = mPreferences.lastPageUpdateTime(mLanguage, mLocation);
+        long now = new Date().getTime();
+        long updateCachingTime = 1000 * 60 * 60 * 4; // 4 hours
+        return now - lastUpdate > updateCachingTime;
+    }
+
+    @Override
+    public void loadedFromNetwork() {
+        mPreferences.setLastPageUpdateTime(mLanguage, mLocation);
     }
 }

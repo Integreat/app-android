@@ -53,7 +53,7 @@ public class EventPageLoader extends BasicLoader<EventPage> {
      * @param activity
      */
     public EventPageLoader(Activity activity, @NonNull Location location, @NonNull Language language, int id) {
-        super(activity);
+        super(activity, false);
         mLocation = location;
         mLanguage = language;
         mId = id;

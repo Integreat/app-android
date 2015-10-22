@@ -2,7 +2,6 @@ package augsburg.se.alltagsguide.utilities;
 
 import android.annotation.TargetApi;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
@@ -11,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,12 +17,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import roboguice.util.Ln;
 
 public class Helper {
 
     public static SimpleDateFormat FROM_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMANY);
+    public static SimpleDateFormat TO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.GERMANY);
+
+    static {
+        FROM_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+        TO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     @NonNull
     public static String quote(String s) {
