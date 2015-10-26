@@ -25,7 +25,7 @@ import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.ui.BitmapColorTransformation;
 
-public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, Page> {
+public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page> {
 
     private PageOverviewFragment.OnPageFragmentInteractionListener mListener;
     private int mColor;
@@ -46,41 +46,15 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
     }
 
     @Override
-    public int getItemViewType(int position) {
-        final Page page = get(position);
-        if (Objects.isNullOrEmpty(page.getContent())) {
-            return TITLE;
-        }
-        return ENTRY;
-    }
-
-
-    @Override
-    public BaseContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case ENTRY:
-                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
-            case TITLE:
-                return new TitleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
-            default:
-                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
-        }
+    public ContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(BaseContentViewHolder holder, int position) {
+    public void onBindViewHolder(ContentViewHolder holder, int position) {
         final Page page = get(position);
-        if (holder instanceof ContentViewHolder) {
-            onBindContentViewHolder((ContentViewHolder) holder, page);
-        } else if (holder instanceof TitleViewHolder) {
-            onBindTitleViewHolder((TitleViewHolder) holder, page);
-        }
+        onBindContentViewHolder(holder, page);
     }
-
-    private void onBindTitleViewHolder(TitleViewHolder titleHolder, Page page) {
-        titleHolder.title.setText(page.getTitle());
-    }
-
 
     private void onBindContentViewHolder(ContentViewHolder contentHolder, final Page page) {
         contentHolder.title.setText(page.getTitle());
@@ -110,23 +84,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         }
     }
 
-
-    public class BaseContentViewHolder extends RecyclerView.ViewHolder {
-        public BaseContentViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    public class TitleViewHolder extends BaseContentViewHolder {
-        TextView title;
-
-        public TitleViewHolder(View itemView) {
-            super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-        }
-    }
-
-    public class ContentViewHolder extends BaseContentViewHolder {
+    public class ContentViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView description;
         ImageView image;
