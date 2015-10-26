@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
-import augsburg.se.alltagsguide.utilities.BaseActivity;
+import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 
 public class SettingsActivity extends BaseActivity {
 

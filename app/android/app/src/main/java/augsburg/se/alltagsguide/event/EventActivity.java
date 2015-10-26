@@ -3,6 +3,7 @@ package augsburg.se.alltagsguide.event;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,7 @@ import augsburg.se.alltagsguide.common.EventCategory;
 import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.EventTag;
 import augsburg.se.alltagsguide.network.EventPageLoader;
-import augsburg.se.alltagsguide.utilities.BasePageWebViewLanguageActivity;
+import augsburg.se.alltagsguide.utilities.ui.BasePageWebViewLanguageActivity;
 import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -87,7 +88,7 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
                 @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.category_item, null, false);
                 view.setText(category.getName());
                 view.setTextColor(color);
-                view.setBackgroundColor(getResources().getColor(android.R.color.white));
+                view.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
                 categoriesLayout.addView(view);
             }
         } else {
@@ -98,7 +99,7 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
             for (EventTag tag : mPage.getTags()) {
                 @SuppressLint("InflateParams") TextView view = (TextView) LayoutInflater.from(this).inflate(R.layout.tag_item, null, false);
                 view.setText(tag.getName());
-                view.setTextColor(getResources().getColor(android.R.color.white));
+                view.setTextColor(ContextCompat.getColor(this, android.R.color.white));
                 view.setBackgroundColor(color);
                 tagsLayout.addView(view);
             }

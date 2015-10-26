@@ -18,14 +18,10 @@ public class Objects {
     }
 
     public static int compareTo(int a, int b) {
-        if (a > b) {
-            return 1;
-        } else if (a < b) {
-            return -1;
-        }
-        return 0;
+        return a > b ? +1 : a < b ? -1 : 0;
     }
 
+    @NonNull
     public static String emptyIfNull(Object object) {
         if (object == null) {
             return "";

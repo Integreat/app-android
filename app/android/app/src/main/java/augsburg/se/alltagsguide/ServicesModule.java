@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
@@ -43,27 +44,38 @@ public class ServicesModule extends AbstractModule {
     protected void configure() {
     }
 
+    @Singleton
     @Provides
     OkHttpClient okHttpClient(Context context, @Named("cacheDir") File cachedir) {
-        int cacheSize = 30 * 1024 * 1024; // 30 MiB
+        Ln.d("okHttpClient is intialized.");
+        int cacheSize = 50 * 1024 * 1024; // 50 MiB
         Cache cache = new Cache(cachedir, cacheSize);
         OkHttpClient client = new OkHttpClient();
         client.setCache(cache);
+        client.setConnectTimeout(10, TimeUnit.SECONDS);
+        client.setWriteTimeout(10, TimeUnit.SECONDS);
+        client.setReadTimeout(30, TimeUnit.SECONDS);
         return client;
     }
 
     @Provides
+    @Singleton
     OkHttpDownloader okHttpDownloader(OkHttpClient client) {
+        Ln.d("OkHttpDownloader is intialized.");
         return new OkHttpDownloader(client);
     }
 
     @Provides
+    @Singleton
     Picasso picasso(Context context, OkHttpDownloader downloader) {
+        Ln.d("Picasso is intialized.");
         return new Picasso.Builder(context).downloader(downloader).build();
     }
 
     @Provides
+    @Singleton
     NetworkService networkService(Context context, GsonConverter gsonConverter, OkHttpClient client) {
+        Ln.d("NetworkService is intialized.");
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setLogLevel(BuildConfig.DEBUG ?
@@ -138,15 +150,17 @@ public class ServicesModule extends AbstractModule {
     }
 
 
-    @Singleton
     @Provides
+    @Singleton
     ColorManager colorManager(Context context) {
+        Ln.d("ColorManager is intialized.");
         return new ColorManager(context);
     }
 
     @Provides
     @Singleton
     PrefUtilities prefUtilities(Context context) {
+        Ln.d("PrefUtilities is intialized.");
         return new PrefUtilities(context);
     }
 }

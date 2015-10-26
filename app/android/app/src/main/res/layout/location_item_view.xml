@@ -22,7 +22,7 @@
             android:adjustViewBounds="true"
             android:padding="4dp"
             android:scaleType="fitCenter"
-            tools:src="@drawable/augsburg" />
+            tools:src="@drawable/icon_location_loading" />
 
         <TextView
             android:id="@+id/title"

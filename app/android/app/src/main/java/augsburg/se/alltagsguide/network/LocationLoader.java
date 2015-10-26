@@ -1,6 +1,6 @@
 package augsburg.se.alltagsguide.network;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.google.inject.Inject;
 
@@ -12,6 +12,7 @@ import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.LocationResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import roboguice.util.Ln;
 
 /**
@@ -27,16 +28,16 @@ public class LocationLoader extends BasicLoader<List<Location>> {
     /**
      * Create loader for context
      *
-     * @param activity
+     * @param context
      */
-    public LocationLoader(Activity activity, boolean force) {
-        super(activity, force);
+    public LocationLoader(Context context, LoadingType loadingType) {
+        super(context, loadingType);
     }
 
     @Override
     public List<Location> load() {
         try {
-            return requestIfForced(locationResource);
+            return get(locationResource);
         } catch (IOException e) {
             Ln.e(e);
             return Collections.emptyList();

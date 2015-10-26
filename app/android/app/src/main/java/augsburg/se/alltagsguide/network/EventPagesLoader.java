@@ -1,6 +1,6 @@
 package augsburg.se.alltagsguide.network;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
@@ -21,6 +21,7 @@ import augsburg.se.alltagsguide.persistence.resources.EventCategoryResource;
 import augsburg.se.alltagsguide.persistence.resources.EventPageResource;
 import augsburg.se.alltagsguide.persistence.resources.EventTagResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import roboguice.util.Ln;
 
 /**
@@ -48,10 +49,10 @@ public class EventPagesLoader extends BasicLoader<List<EventPage>> {
     /**
      * Create loader for context
      *
-     * @param activity
+     * @param context
      */
-    public EventPagesLoader(Activity activity, @NonNull Location location, @NonNull Language language, boolean force) {
-        super(activity, force);
+    public EventPagesLoader(Context context, @NonNull Location location, @NonNull Language language, LoadingType loadingType) {
+        super(context, loadingType);
         mLocation = location;
         mLanguage = language;
     }
@@ -59,7 +60,7 @@ public class EventPagesLoader extends BasicLoader<List<EventPage>> {
     @Override
     public List<EventPage> load() {
         try {
-            List<EventPage> pages = requestIfForced(pagesFactory.under(mLanguage, mLocation));
+            List<EventPage> pages = get(pagesFactory.under(mLanguage, mLocation));
             List<EventCategory> categories = dbCache.load(categoriesFactory.under(mLanguage, mLocation));
             List<EventTag> tags = dbCache.load(tagsFactory.under(mLanguage, mLocation));
             List<AvailableLanguage> languages = dbCache.load(languageFactory.under(mLanguage, mLocation));

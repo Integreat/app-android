@@ -20,7 +20,7 @@ import roboguice.util.Ln;
 /**
  * Created by Daniel-L on 20.09.2015.
  */
-public class Page implements Serializable, Newer {
+public class Page implements Serializable, Newer<Page> {
     private final int mId;
     @NonNull private final String mTitle;
     private final String mType;
@@ -107,21 +107,15 @@ public class Page implements Serializable, Newer {
     }
 
     @Override
-    public int compareTo(@NonNull Object o) {
-        int compare = 0;
-        if (o instanceof Page) {
-            Page other = (Page) o;
-            if (this.getDepth() == other.getDepth()) {
-                if (Objects.equals(this.getParent(), other.getParent())) {
-                    return Objects.compareTo(this.getOrder(), other.getOrder());
-                } else {
-                    return this.getParent().compareTo(other.getParent());
-                }
-            } else {
-                return Objects.compareTo(this.getDepth(), other.getDepth());
-            }
+    public int compareTo(@NonNull Page other) {
+        return getKey().compareTo(other.getKey());
+    }
+
+    private String getKey() {
+        if (getParent() != null) {
+            return getParent().getKey() + (char) mOrder;
         }
-        return compare;
+        return "" + (char) mOrder;
     }
 
 
@@ -177,18 +171,6 @@ public class Page implements Serializable, Newer {
     }
 
     @NonNull
-    public List<Page> getSubPagesRecursively(int depth) {
-        List<Page> recPages = new ArrayList<>();
-        recPages.add(this);
-        if (depth > 0) {
-            for (Page page : mSubPages) {
-                recPages.addAll(page.getSubPagesRecursively(depth - 1));
-            }
-        }
-        return recPages;
-    }
-
-    @NonNull
     public List<Page> getSubPagesRecursively() {
         List<Page> recPages = new ArrayList<>();
         if (hasContent()) {
@@ -203,13 +185,6 @@ public class Page implements Serializable, Newer {
     private boolean hasContent() {
         String empty = Html.fromHtml(getContent()).toString();
         return !Objects.isNullOrEmpty(empty);
-    }
-
-    public int getDepth() {
-        if (getParent() == null) {
-            return 0;
-        }
-        return 1 + getParent().getDepth();
     }
 
     public static void recreateRelations(@NonNull List<? extends Page> pages, @NonNull List<AvailableLanguage> languages, @NonNull Language currentLanguage) {
@@ -280,4 +255,5 @@ public class Page implements Serializable, Newer {
     public long getTimestamp() {
         return mModified;
     }
+
 }

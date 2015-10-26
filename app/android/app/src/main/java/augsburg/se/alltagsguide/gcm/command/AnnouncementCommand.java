@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.gcm.GCMCommand;
@@ -43,7 +44,7 @@ public class AnnouncementCommand extends GCMCommand {
                         .setTicker(message)
                         .setContentTitle(context.getString(R.string.app_name))
                         .setContentText(message)
-                        .setColor(context.getResources().getColor(R.color.myPrimaryColor))
+                        .setColor(ContextCompat.getColor(context, R.color.myPrimaryColor))
                         .setContentIntent(
                                 PendingIntent.getActivity(context, 0,
                                         new Intent(context, OverviewActivity.class)

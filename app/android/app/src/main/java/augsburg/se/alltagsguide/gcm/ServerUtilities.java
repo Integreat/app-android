@@ -111,8 +111,6 @@ public final class ServerUtilities {
      */
     public void unregister(final Location location, final String regId) {
         Ln.i("unregistering device (regId = " + regId + ")");
-        Map<String, String> params = new HashMap<>();
-        params.put("regId", regId);
         mNetworkCommunication.unsubscribePush(location, regId, new Callback<String>() {
                     @Override
                     public void success(String s, Response response) {

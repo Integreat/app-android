@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.content.Loader;
@@ -43,10 +44,11 @@ import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.settings.SettingsActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
-import augsburg.se.alltagsguide.utilities.BaseActivity;
-import augsburg.se.alltagsguide.utilities.BaseFragment;
-import augsburg.se.alltagsguide.utilities.EmptyRecyclerView;
-import augsburg.se.alltagsguide.utilities.LanguageItemAdapter;
+import augsburg.se.alltagsguide.utilities.LoadingType;
+import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
+import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
+import augsburg.se.alltagsguide.utilities.ui.EmptyRecyclerView;
+import augsburg.se.alltagsguide.utilities.ui.LanguageItemAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
@@ -61,6 +63,8 @@ public class OverviewActivity extends BaseActivity
         EventOverviewFragment.OnEventPageFragmentInteractionListener,
         BaseFragment.OnBaseFragmentInteractionListener,
         NavigationAdapter.OnNavigationSelected {
+
+    private static final String LOADING_TYPE_KEY = "FORCED";
 
     // delay to launch nav drawer item, to allow close animation to play
     private static final long NAVDRAWER_LAUNCH_DELAY = 300;
@@ -172,7 +176,7 @@ public class OverviewActivity extends BaseActivity
                 setLanguageButton(others);
             } else {
                 // we need to only hookup the other-languages call as the fragments state should be restored
-                loadOtherLanguages();
+                loadOtherLanguages(LoadingType.FORCE_DATABASE);
             }
         } else {
             // init everything
@@ -195,17 +199,21 @@ public class OverviewActivity extends BaseActivity
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new MaterialDialog.Builder(OverviewActivity.this)
-                        .title(R.string.dialog_choose_language_title)
-                        .adapter(new LanguageItemAdapter(OverviewActivity.this, mOtherLanguages),
-                                new MaterialDialog.ListCallback() {
-                                    @Override
-                                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                        loadLanguage(mOtherLanguages.get(which));
-                                        dialog.cancel();
-                                    }
-                                })
-                        .show();
+                if (!mOtherLanguages.isEmpty()) {
+                    new MaterialDialog.Builder(OverviewActivity.this)
+                            .title(R.string.dialog_choose_language_title)
+                            .adapter(new LanguageItemAdapter(OverviewActivity.this, mOtherLanguages),
+                                    new MaterialDialog.ListCallback() {
+                                        @Override
+                                        public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                            loadLanguage(mOtherLanguages.get(which));
+                                            dialog.cancel();
+                                        }
+                                    })
+                            .show();
+                } else {
+                    Snackbar.make(mContentView, R.string.no_other_languages_available_location, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         updateLanguageCount();
@@ -227,13 +235,15 @@ public class OverviewActivity extends BaseActivity
         mPrefUtilities.setLanguage(language);
 
         startLoading();
-        mPageOverviewFragment.refresh(false);
-        mEventOverviewFragment.refresh(false);
-        loadOtherLanguages();
+        mPageOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
+        mEventOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
+        loadOtherLanguages(LoadingType.NETWORK_OR_DATABASE);
     }
 
-    private void loadOtherLanguages() {
-        getSupportLoaderManager().restartLoader(0, null, this);
+    private void loadOtherLanguages(LoadingType type) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(LOADING_TYPE_KEY, type);
+        getSupportLoaderManager().restartLoader(0, bundle, this);
     }
 
     private void initNavigationDrawer() {
@@ -498,11 +508,8 @@ public class OverviewActivity extends BaseActivity
 
     @Override
     public Loader<List<Language>> onCreateLoader(int id, Bundle args) {
-        boolean forced = false;
-        if (args != null && args.containsKey("FORCED")) {
-            forced = args.getBoolean("FORCED");
-        }
-        return new LanguageLoader(this, mLocation, forced);
+        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        return new LanguageLoader(this, mLocation, loadingType);
     }
 
     @Override

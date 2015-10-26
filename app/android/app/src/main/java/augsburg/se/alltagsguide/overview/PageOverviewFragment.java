@@ -23,14 +23,15 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.PagesLoader;
-import augsburg.se.alltagsguide.utilities.BaseFragment;
+import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
 public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<List<Page>> {
     private static final String PAGE_KEY = "PAGE_KEY";
-    private static final String FORCED_KEY = "FORCED";
+    private static final String LOADING_TYPE_KEY = "FORCED";
 
     @InjectView(R.id.recycler_view)
     private SuperRecyclerView mRecyclerView;
@@ -127,7 +128,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
                 return;
             }
         }
-        refresh(false);
+        refresh(LoadingType.NETWORK_OR_DATABASE);
     }
 
     @Override
@@ -156,15 +157,12 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     @Override
     public void onRefresh() {
-        refresh(true);
+        refresh(LoadingType.FORCE_NETWORK);
     }
 
-    public void refresh(boolean forced) {
-        Bundle bundle = null;
-        if (forced) {
-            bundle = new Bundle();
-            bundle.putBoolean(FORCED_KEY, true);
-        }
+    public void refresh(LoadingType type) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(LOADING_TYPE_KEY, type);
         getLoaderManager().restartLoader(0, bundle, this);
     }
 
@@ -175,11 +173,8 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
 
     @Override
     public Loader<List<Page>> onCreateLoader(int id, Bundle args) {
-        boolean forced = false;
-        if (args != null && args.containsKey(FORCED_KEY)) {
-            forced = args.getBoolean(FORCED_KEY);
-        }
-        return new PagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), forced);
+        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        return new PagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override

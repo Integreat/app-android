@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Describes how to store, load or request-an-update-for a particular set of
+ * Describes how to store, load or get-an-update-for a particular set of
  * data.
  *
  * @param <E> type of item

@@ -7,7 +7,7 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.PageLoader;
-import augsburg.se.alltagsguide.utilities.BasePageWebViewLanguageActivity;
+import augsburg.se.alltagsguide.utilities.ui.BasePageWebViewLanguageActivity;
 import roboguice.inject.ContentView;
 import roboguice.util.Ln;
 

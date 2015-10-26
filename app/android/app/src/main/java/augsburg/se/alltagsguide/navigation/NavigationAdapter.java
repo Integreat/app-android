@@ -19,7 +19,7 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.utilities.BitmapInvertTransformation;
+import augsburg.se.alltagsguide.utilities.ui.BitmapInvertTransformation;
 import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.RoboGuice;
 
@@ -82,7 +82,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
         final Page item = mPages.get(position);
         boolean selected = Objects.equals(item.getId(), mCurrentPageId);
         holder.counter.setText(String.valueOf(item.getContentCount()));
-        holder.title.setText(generatePadding(item.getDepth(), item.getTitle()));
+        holder.title.setText(item.getTitle());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,14 +115,5 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
             title = (TextView) itemView.findViewById(R.id.title);
             counter = (TextView) itemView.findViewById(R.id.counter);
         }
-    }
-
-    private String generatePadding(int depth, String title) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            builder.append("   ");
-        }
-        builder.append(title);
-        return builder.toString();
     }
 }

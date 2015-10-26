@@ -10,31 +10,39 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.inject.Inject;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Transformation;
+
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.utilities.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
+import augsburg.se.alltagsguide.utilities.ui.BitmapColorTransformation;
 
 public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, Page> {
 
     private PageOverviewFragment.OnPageFragmentInteractionListener mListener;
     private int mColor;
-    @NonNull private Context mContext;
     private static final int ENTRY = 7;
     private static final int TITLE = 42;
+
     @NonNull private SimpleDateFormat dateFormatTo;
+    @Inject private Picasso mPicasso;
+    private Transformation mTransformation;
 
     public PageAdapter(@NonNull List<Page> pages, PageOverviewFragment.OnPageFragmentInteractionListener listener, int primaryColor, @NonNull Context context) {
-        super(pages);
+        super(pages, context);
         mListener = listener;
         mColor = primaryColor;
         mContext = context;
         dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
+        mTransformation = new BitmapColorTransformation(mColor);
     }
 
     @Override
@@ -46,21 +54,16 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         return ENTRY;
     }
 
-    @Override
-    public void setItems(@NonNull List<Page> pages) {
-        Collections.sort(pages);
-        super.setItems(pages);
-    }
 
     @Override
     public BaseContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case ENTRY:
-                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item_new, parent, false));
+                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
             case TITLE:
-                return new TitleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item_new, parent, false));
+                return new TitleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
             default:
-                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item_new, parent, false));
+                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
         }
     }
 
@@ -94,6 +97,17 @@ public class PageAdapter extends BaseAdapter<PageAdapter.BaseContentViewHolder, 
         });
         contentHolder.more.setTextColor(mColor);
         contentHolder.date.setTextColor(mColor);
+
+        if (!Objects.isNullOrEmpty(page.getThumbnail())) {
+            RequestCreator creator = mPicasso.load(page.getThumbnail());
+            creator.transform(mTransformation)
+                    .fit()
+                    .centerInside()
+                    .into(contentHolder.image);
+            contentHolder.image.setVisibility(View.VISIBLE);
+        } else {
+            contentHolder.image.setVisibility(View.GONE);
+        }
     }
 
 

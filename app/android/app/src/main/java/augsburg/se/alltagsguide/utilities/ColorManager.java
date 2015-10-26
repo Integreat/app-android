@@ -3,7 +3,11 @@ package augsburg.se.alltagsguide.utilities;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+
+import com.google.inject.Inject;
 
 import augsburg.se.alltagsguide.R;
 
@@ -11,6 +15,7 @@ public class ColorManager {
     @NonNull private final int[] colors;
     @NonNull private final int[] darkColors;
 
+    @Inject
     public ColorManager(@NonNull Context context) {
         final TypedArray typedArrayDefault = context.getResources().obtainTypedArray(R.array.colors);
         colors = new int[typedArrayDefault.length()];

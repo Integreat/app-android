@@ -21,14 +21,15 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.LanguageLoader;
-import augsburg.se.alltagsguide.utilities.BaseFragment;
+import augsburg.se.alltagsguide.utilities.LoadingType;
+import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.inject.InjectView;
 
 
 public class LanguageFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Language>> {
     private static final String ARG_LOCATION = "location";
-    private static final String FORCED_KEY = "FORCED";
+    private static final String LOADING_TYPE_KEY = "FORCED";
     private Location mLocation;
     private OnLanguageFragmentInteractionListener mListener;
     private LanguageAdapter mAdapter;
@@ -84,7 +85,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
         mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh(true);
+                refresh(LoadingType.FORCE_NETWORK);
             }
         });
     }
@@ -92,15 +93,12 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        refresh(false);
+        refresh(LoadingType.NETWORK_OR_DATABASE);
     }
 
-    private void refresh(boolean forced) {
-        Bundle bundle = null;
-        if (forced) {
-            bundle = new Bundle();
-            bundle.putBoolean(FORCED_KEY, true);
-        }
+    public void refresh(LoadingType type) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(LOADING_TYPE_KEY, type);
         getLoaderManager().restartLoader(0, bundle, this);
     }
 
@@ -123,11 +121,8 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public Loader<List<Language>> onCreateLoader(int i, Bundle args) {
-        boolean forced = false;
-        if (args != null && args.containsKey(FORCED_KEY)) {
-            forced = args.getBoolean(FORCED_KEY);
-        }
-        return new LanguageLoader(getActivity(), mLocation, forced);
+        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        return new LanguageLoader(getActivity(), mLocation, loadingType);
     }
 
     @Override

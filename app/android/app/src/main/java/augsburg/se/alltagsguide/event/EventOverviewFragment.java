@@ -19,11 +19,13 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.EventPage;
+import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.EventPagesLoader;
-import augsburg.se.alltagsguide.utilities.BaseFragment;
-import augsburg.se.alltagsguide.utilities.MyLinearLayoutManager;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
+import augsburg.se.alltagsguide.utilities.ui.MyLinearLayoutManager;
 import roboguice.inject.InjectView;
 
 /**
@@ -32,7 +34,7 @@ import roboguice.inject.InjectView;
 public class EventOverviewFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<EventPage>> {
 
     private static final String EVENT_PAGE_KEY = "EVENT_PAGE_KEY";
-    private static final String FORCED_KEY = "FORCED";
+    private static final String LOADING_TYPE_KEY = "FORCED";
 
     @InjectView(R.id.recycler_view)
     private RecyclerView mRecyclerView;
@@ -48,11 +50,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
     @Override
     public Loader<List<EventPage>> onCreateLoader(int i, Bundle args) {
-        boolean forced = false;
-        if (args != null && args.containsKey(FORCED_KEY)) {
-            forced = args.getBoolean(FORCED_KEY);
-        }
-        return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), forced);
+        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override
@@ -86,12 +85,9 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         mRecyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
     }
 
-    public void refresh(boolean forced) {
-        Bundle bundle = null;
-        if (forced) {
-            bundle = new Bundle();
-            bundle.putBoolean(FORCED_KEY, true);
-        }
+    public void refresh(LoadingType type) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(LOADING_TYPE_KEY, type);
         getLoaderManager().restartLoader(0, bundle, this);
     }
 
@@ -105,7 +101,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
                 return;
             }
         }
-        refresh(false);
+        refresh(LoadingType.NETWORK_OR_DATABASE);
     }
 
 
@@ -152,7 +148,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         if (mAdapter == null) {
             mAdapter = new EventPageAdapter(eventPages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
         } else {
-            mAdapter.setItems(eventPages);
+            mAdapter.setItems(new ArrayList<Page>(eventPages));
         }
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);

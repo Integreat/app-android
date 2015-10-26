@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout android:id="@+id/drawer"
-                                        xmlns:android="http://schemas.android.com/apk/res/android"
-                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                        xmlns:tools="http://schemas.android.com/tools"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:fitsSystemWindows="true">
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,7 +67,6 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:padding="4dp"
-                        android:src="@drawable/augsburg"
                         app:civ_border_color="#fff"
                         app:civ_border_width="1dp"/>
 
@@ -240,6 +240,7 @@
                     android:drawablePadding="20dp"
                     android:drawableStart="@android:drawable/ic_menu_manage"
                     android:gravity="center_vertical"
+                    android:padding="2dp"
                     android:text="@string/action_settings"
                     android:textColor="@android:color/primary_text_light"
                     android:textSize="?attr/font_small"/>
@@ -252,12 +253,13 @@
                     android:drawablePadding="20dp"
                     android:drawableStart="@android:drawable/ic_menu_mapmode"
                     android:gravity="center_vertical"
+                    android:padding="2dp"
                     android:text="@string/change_language_location"
                     android:textColor="@android:color/primary_text_light"
                     android:textSize="?attr/font_small"/>
             </LinearLayout>
 
-            <augsburg.se.alltagsguide.utilities.EmptyRecyclerView
+            <augsburg.se.alltagsguide.utilities.ui.EmptyRecyclerView
                 android:id="@+id/recycler_view_nav"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

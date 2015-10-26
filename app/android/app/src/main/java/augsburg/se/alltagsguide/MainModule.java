@@ -70,8 +70,8 @@ public class MainModule extends AbstractModule {
     }
 
     @Provides
-    GsonConverter gsonConverter() {
-        Gson gson = new GsonBuilder()
+    Gson gson(){
+        return new GsonBuilder()
                 .registerTypeAdapter(new TypeToken<List<Page>>() {
                 }.getType(), new PageSerializer())
                 .registerTypeAdapter(new TypeToken<List<Language>>() {
@@ -81,6 +81,10 @@ public class MainModule extends AbstractModule {
                 .registerTypeAdapter(new TypeToken<List<EventPage>>() {
                 }.getType(), new EventPageSerializer())
                 .create();
+    }
+
+    @Provides
+    GsonConverter gsonConverter(Gson gson) {
         return new GsonConverter(gson);
     }
 

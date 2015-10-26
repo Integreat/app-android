@@ -16,8 +16,7 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
-import augsburg.se.alltagsguide.utilities.BaseAdapter;
-import roboguice.RoboGuice;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 
 /**
  * Created by Daniel-L on 16.08.2015.
@@ -25,19 +24,15 @@ import roboguice.RoboGuice;
 public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHolder, Location> {
 
     @NonNull private LocationClickListener mListener;
-    @NonNull private Context mContext;
-    @Inject
-    private Picasso mPicasso;
+    @Inject private Picasso mPicasso;
 
     public interface LocationClickListener {
         void onLocationClick(Location location);
     }
 
     public LocationAdapter(@NonNull List<Location> locations, @NonNull LocationClickListener listener, @NonNull Context context) {
-        super(locations);
+        super(locations, context);
         mListener = listener;
-        mContext = context;
-        RoboGuice.injectMembers(context, this);
     }
 
     @Override

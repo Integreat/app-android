@@ -17,7 +17,7 @@ import augsburg.se.alltagsguide.utilities.Objects;
 /**
  * Created by Daniel-L on 20.09.2015.
  */
-public class EventPage extends Page implements Newer {
+public class EventPage extends Page implements Newer<Page> {
 
     @NonNull private Event mEvent;
     @Nullable private EventLocation mLocation;
@@ -50,7 +50,7 @@ public class EventPage extends Page implements Newer {
 
 
     @Override
-    public int compareTo(@NonNull Object o) {
+    public int compareTo(@NonNull Page o) {
         EventPage other = (EventPage) o;
         return Long.valueOf(getEvent().getStartTime()).compareTo(other.getEvent().getStartTime());
     }

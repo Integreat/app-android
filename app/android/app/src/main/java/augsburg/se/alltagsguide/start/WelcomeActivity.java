@@ -12,7 +12,7 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
-import augsburg.se.alltagsguide.utilities.BaseActivity;
+import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;

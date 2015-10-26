@@ -14,7 +14,7 @@ import augsburg.se.alltagsguide.utilities.Newer;
 /**
  * Created by Daniel-L on 16.08.2015.
  */
-public class Language implements Serializable, Newer {
+public class Language implements Serializable, Newer<Language> {
 
     private int mId;
     @NonNull private String mShortName;
@@ -30,11 +30,8 @@ public class Language implements Serializable, Newer {
     }
 
     @Override
-    public int compareTo(@NonNull Object another) {
-        if (another instanceof Language) {
-            return mShortName.compareTo(((Language) another).mShortName);
-        }
-        return 1;
+    public int compareTo(@NonNull Language another) {
+        return mShortName.compareTo(another.mShortName);
     }
 
     public void setLocation(@NonNull Location location) {

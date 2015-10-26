@@ -2,6 +2,9 @@ package augsburg.se.alltagsguide.utilities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -24,38 +27,61 @@ public abstract class BasicLoader<D> extends AsyncLoader<D> {
     @Inject
     private ContextScope contextScope;
 
-    /**
-     * Activity using this loader
-     */
-    @Inject
-    protected Activity activity;
-
     @Inject
     protected NetworkService network;
 
     @Inject
     protected DatabaseCache dbCache;
 
-    private boolean mForce;
+    private LoadingType mLoadingType;
+
+    private Handler handler;
+
 
     /**
      * Create loader for context
      *
      * @param context
-     * @param force
+     * @param loadingType
      */
-    public BasicLoader(@NonNull final Context context, boolean force) {
+    public BasicLoader(@NonNull final Context context, @NonNull LoadingType loadingType) {
         super(context);
         RoboGuice.injectMembers(context, this);
-        mForce = force;
+        mLoadingType = loadingType;
     }
 
-    protected <E> List<E> requestIfForced(PersistableNetworkResource<E> resource) throws IOException {
-        if (mForce) {
-            dbCache.requestAndStore(resource);
-            return dbCache.load(resource);
-        } else {
-            return dbCache.loadOrRequest(resource);
+    protected <E> List<E> get(PersistableNetworkResource<E> resource) throws IOException {
+        switch (mLoadingType) {
+            case FORCE_DATABASE:
+                return dbCache.load(resource);
+            case FORCE_NETWORK:
+                dbCache.requestAndStore(resource);
+                //TODO maybe consider just returning new network-data (or maybe not -> deletion more complicated)
+                return dbCache.load(resource);
+            case NETWORK_OR_DATABASE:
+                return dbCache.loadOrRequest(resource);
+            default:
+                return dbCache.loadOrRequest(resource);
+        }
+    }
+
+    /**
+     * Helper to publish string value
+     *
+     * @param value
+     */
+    protected void publishMessage(int value) {
+        if (handler != null) {
+            Bundle data = new Bundle();
+            data.putSerializable("message", value);
+
+            /* Creating a message */
+            Message msg = new Message();
+            msg.setData(data);
+            msg.what = value;
+
+            /* Sending the message */
+            handler.sendMessage(msg);
         }
     }
 
@@ -68,6 +94,10 @@ public abstract class BasicLoader<D> extends AsyncLoader<D> {
         } finally {
             contextScope.exit(getContext());
         }
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
     }
 
     /**

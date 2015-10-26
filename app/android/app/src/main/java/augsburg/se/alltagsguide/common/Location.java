@@ -12,7 +12,7 @@ import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.utilities.Newer;
 import augsburg.se.alltagsguide.utilities.Objects;
 
-public class Location implements Serializable, Newer {
+public class Location implements Serializable, Newer<Location> {
     private int mId;
     @NonNull private String mName;
     private String mIcon;
@@ -38,11 +38,8 @@ public class Location implements Serializable, Newer {
     }
 
     @Override
-    public int compareTo(@NonNull Object another) {
-        if (another instanceof Location) {
-            return mName.compareTo(((Location) another).mName);
-        }
-        return 0;
+    public int compareTo(@NonNull Location another) {
+        return mName.compareTo(another.mName);
     }
 
     @Override

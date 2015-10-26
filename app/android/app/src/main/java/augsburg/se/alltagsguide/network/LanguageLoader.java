@@ -1,6 +1,6 @@
 package augsburg.se.alltagsguide.network;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
@@ -14,6 +14,7 @@ import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.resources.LanguageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import roboguice.util.Ln;
 
 /**
@@ -32,10 +33,10 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
     /**
      * Create loader for context
      *
-     * @param activity
+     * @param context
      */
-    public LanguageLoader(Activity activity, @NonNull Location location, boolean force) {
-        super(activity, force);
+    public LanguageLoader(Context context, @NonNull Location location, LoadingType loadingType) {
+        super(context, loadingType);
         mLocation = location;
     }
 
@@ -43,7 +44,7 @@ public class LanguageLoader extends BasicLoader<List<Language>> {
     @Override
     public List<Language> load() {
         try {
-            return requestIfForced(languageFactory.under(mLocation));
+            return get(languageFactory.under(mLocation));
         } catch (IOException e) {
             Ln.e(e);
             return Collections.emptyList();

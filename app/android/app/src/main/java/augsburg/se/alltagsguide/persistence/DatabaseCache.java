@@ -97,7 +97,7 @@ public class DatabaseCache {
     }
 
     /**
-     * Load or request given resources
+     * Load or get given resources
      *
      * @param persistableResource
      * @return resource
@@ -128,6 +128,7 @@ public class DatabaseCache {
             helper.close();
         }
     }
+
 
     @NonNull
     public <E> List<E> loadOrRequest(@NonNull PersistableNetworkResource<E> persistableResource)

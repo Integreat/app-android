@@ -2,6 +2,7 @@ package augsburg.se.alltagsguide;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -29,6 +30,7 @@ import augsburg.se.alltagsguide.network.NetworkServiceMock;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.persistence.DatabaseInfo;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
+import retrofit.Callback;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import roboguice.RoboGuice;
@@ -87,29 +89,44 @@ public class DatabaseTest {
         NetworkService networkService(Context context) {
             final NetworkService mock = new NetworkServiceMock(context);
             return new NetworkService() {
+                @NonNull
                 @Override
                 public Boolean isServerAlive() {
                     return true;
                 }
 
+                @NonNull
                 @Override
-                public List<Page> getPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time) {
+                public List<Page> getPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
                     return mock.getPages(language, location, time);
                 }
 
+                @NonNull
                 @Override
-                public List<EventPage> getEventPages(@Path("language") Language language, @Path(value = "location", encode = false) Location location, @Query("since") UpdateTime time) {
+                public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
                     return mock.getEventPages(language, location, time);
                 }
 
+                @NonNull
                 @Override
                 public List<Location> getAvailableLocations() {
                     return mock.getAvailableLocations();
                 }
 
+                @NonNull
                 @Override
-                public List<Language> getAvailableLanguages(@Path(value = "location", encode = false) Location location) {
+                public List<Language> getAvailableLanguages(@NonNull @Path(value = "location", encode = false) Location location) {
                     return mock.getAvailableLanguages(location);
+                }
+
+                @Override
+                public void subscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
+
+                }
+
+                @Override
+                public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
+
                 }
             };
         }

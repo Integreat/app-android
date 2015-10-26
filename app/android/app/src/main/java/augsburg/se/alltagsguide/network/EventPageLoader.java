@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.network;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -22,6 +23,7 @@ import augsburg.se.alltagsguide.persistence.resources.EventCategoryResource;
 import augsburg.se.alltagsguide.persistence.resources.EventPageResource;
 import augsburg.se.alltagsguide.persistence.resources.EventTagResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import roboguice.util.Ln;
 
 /**
@@ -50,10 +52,10 @@ public class EventPageLoader extends BasicLoader<EventPage> {
     /**
      * Create loader for context
      *
-     * @param activity
+     * @param context
      */
-    public EventPageLoader(Activity activity, @NonNull Location location, @NonNull Language language, int id) {
-        super(activity, false);
+    public EventPageLoader(Context context, @NonNull Location location, @NonNull Language language, int id) {
+        super(context, LoadingType.NETWORK_OR_DATABASE);
         mLocation = location;
         mLanguage = language;
         mId = id;

@@ -1,6 +1,6 @@
 package augsburg.se.alltagsguide.network;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.inject.Inject;
@@ -16,6 +16,7 @@ import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
+import augsburg.se.alltagsguide.utilities.LoadingType;
 import roboguice.util.Ln;
 
 /**
@@ -32,23 +33,24 @@ public class PagesLoader extends BasicLoader<List<Page>> {
     @Inject
     private AvailableLanguageResource.Factory availableLanguageFactory;
 
-
     /**
      * Create loader for context
      *
-     * @param activity
+     * @param context
      */
-    public PagesLoader(Activity activity, @NonNull Location location, @NonNull Language language, boolean forced) {
-        super(activity, forced);
+    public PagesLoader(Context context, @NonNull Location location, @NonNull Language language, LoadingType loadingType) {
+        super(context, loadingType);
         mLocation = location;
         mLanguage = language;
     }
+
+
 
     @NonNull
     @Override
     public List<Page> load() {
         try {
-            List<Page> pages = requestIfForced(pagesFactory.under(mLanguage, mLocation));
+            List<Page> pages = get(pagesFactory.under(mLanguage, mLocation));
             List<AvailableLanguage> languages = dbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
             Page.recreateRelations(pages, languages, mLanguage);
             return pages;

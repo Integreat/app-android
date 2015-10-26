@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.inject.Inject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Date;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
 import static android.os.Build.VERSION.SDK_INT;
@@ -25,6 +27,8 @@ import static android.os.Build.VERSION_CODES.GINGERBREAD;
  */
 @SuppressLint("CommitPrefEdits")
 public class PrefUtilities {
+    @Inject
+    private Gson mGson;
     public static final String MULTIPLE_COLUMNS_PORTRAIT = "multiple_columns_portrait";
     public static final String MULTIPLE_COLUMNS_LANDSCAPE = "multiple_columns_landscape";
     private static final String LOCATION = "location";
@@ -53,6 +57,7 @@ public class PrefUtilities {
     public PrefUtilities(@NonNull Context context) {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
+        RoboGuice.injectMembers(context, this);
     }
 
     public Language getLanguage() {
@@ -61,7 +66,7 @@ public class PrefUtilities {
 
     public <T> T getObject(@NonNull Class<T> clazz, @NonNull String key) {
         try {
-            return new Gson().fromJson(preferences.getString(key, null), clazz);
+            return mGson.fromJson(preferences.getString(key, null), clazz);
         } catch (JsonSyntaxException e) {
             return null;
         }
@@ -69,7 +74,7 @@ public class PrefUtilities {
 
 
     public void setLocation(Location location) {
-        save(preferences.edit().putString(LOCATION, new Gson().toJson(location)));
+        save(preferences.edit().putString(LOCATION, mGson.toJson(location)));
     }
 
     public Location getLocation() {
@@ -78,7 +83,7 @@ public class PrefUtilities {
 
 
     public void setLanguage(Language language) {
-        save(preferences.edit().putString(LANGUAGE, new Gson().toJson(language)));
+        save(preferences.edit().putString(LANGUAGE, mGson.toJson(language)));
     }
 
     private static boolean isEditorApplyAvailable() {

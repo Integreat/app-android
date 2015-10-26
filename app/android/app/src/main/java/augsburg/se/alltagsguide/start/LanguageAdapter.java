@@ -18,8 +18,7 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
-import augsburg.se.alltagsguide.utilities.BaseAdapter;
-import roboguice.RoboGuice;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 
 /**
  * Created by Daniel-L on 16.08.2015.
@@ -27,10 +26,8 @@ import roboguice.RoboGuice;
 public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHolder, Language> {
 
     @NonNull private LanguageClickListener mListener;
-    @NonNull private Context mContext;
 
-    @Inject
-    private Picasso mPicasso;
+    @Inject private Picasso mPicasso;
 
 
     public interface LanguageClickListener {
@@ -38,10 +35,8 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
     }
 
     public LanguageAdapter(@NonNull List<Language> languages, @NonNull LanguageClickListener listener, @NonNull Context context) {
-        super(languages);
+        super(languages, context);
         mListener = listener;
-        mContext = context;
-        RoboGuice.injectMembers(context, this);
     }
 
     @Override

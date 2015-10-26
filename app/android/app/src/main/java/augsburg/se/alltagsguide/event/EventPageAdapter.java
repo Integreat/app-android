@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,20 +20,19 @@ import java.util.Locale;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.EventPage;
-import augsburg.se.alltagsguide.utilities.BaseAdapter;
+import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
 
-public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentViewHolder, EventPage> {
+public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentViewHolder, Page> {
 
     @NonNull private EventOverviewFragment.OnEventPageFragmentInteractionListener mListener;
     private int mColor;
-    @NonNull private Context mContext;
     private static final int WITHOUT_IMAGE = 7;
-    private static final int WITH_IMAGE = 42;
     @NonNull SimpleDateFormat dateFormatTo;
 
     public EventPageAdapter(@NonNull List<EventPage> pages, @NonNull EventOverviewFragment.OnEventPageFragmentInteractionListener listener, int primaryColor, @NonNull Context context) {
-        super(pages);
+        super(new ArrayList<Page>(pages), context);
         mListener = listener;
         mColor = primaryColor;
         mContext = context;
@@ -40,7 +40,7 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
     }
 
     @Override
-    public void setItems(@NonNull List<EventPage> pages) {
+    public void setItems(@NonNull List<Page> pages) {
         super.setItems(pages);
         Collections.sort(pages);
         notifyDataSetChanged();
@@ -56,8 +56,6 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
         switch (viewType) {
             case WITHOUT_IMAGE:
                 return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_event_item, parent, false));
-            case WITH_IMAGE:
-                return new ContentWithImageViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_event_with_image_item, parent, false));
             default:
                 return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_event_item, parent, false));
         }
@@ -65,7 +63,7 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
 
     @Override
     public void onBindViewHolder(BaseContentViewHolder holder, int position) {
-        final EventPage page = get(position);
+        final EventPage page = (EventPage) get(position);
         if (holder instanceof ContentViewHolder) {
             onBindContentViewHolder((ContentViewHolder) holder, page);
         } else if (holder instanceof ContentWithImageViewHolder) {
