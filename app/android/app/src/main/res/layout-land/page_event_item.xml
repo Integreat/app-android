@@ -3,10 +3,7 @@
                                     xmlns:tools="http://schemas.android.com/tools"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginEnd="2dp"
-                                    android:layout_marginLeft="2dp"
-                                    android:layout_marginRight="2dp"
-                                    android:layout_marginStart="2dp"
+                                    android:layout_margin="2dp"
                                     app:cardCornerRadius="0dp"
                                     app:cardElevation="1dp"
                                     tools:context="augsburg.se.alltagsguide.category.InformationActivity">
@@ -44,7 +41,7 @@
                 android:textSize="?attr/font_small"
                 android:textStyle="bold"
                 tools:text="Tag der offenen Tür des Rathauses Augsburg"
-                tools:textColor="@color/myAccentColor"/>
+                tools:textColor="@color/accent"/>
         </LinearLayout>
 
         <LinearLayout
@@ -69,7 +66,7 @@
                 android:paddingTop="4dp"
                 android:textSize="?attr/font_small"
                 tools:text="Montag, 08.01.2016, 16:00 - 20:00 Uhr"
-                tools:textColor="@color/myAccentColor"/>
+                tools:textColor="@color/accent"/>
         </LinearLayout>
 
 
@@ -96,21 +93,20 @@
                 android:paddingTop="4dp"
                 android:textSize="?attr/font_small"
                 tools:text="Augsburg, Karolinenstraße 4"
-                tools:textColor="@color/myAccentColor"/>
+                tools:textColor="@color/accent"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:padding="4dp"
                 android:paddingBottom="0dp"
                 android:textSize="?attr/font_xsmall"

@@ -7,6 +7,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 
 import com.squareup.picasso.Transformation;
@@ -15,9 +16,9 @@ import com.squareup.picasso.Transformation;
  * Created by Daniel-L on 19.10.2015.
  */
 public class BitmapColorTransformation implements Transformation {
-    int mColor;
+    @ColorInt int mColor;
 
-    public BitmapColorTransformation(@ColorRes int color) {
+    public BitmapColorTransformation(@ColorInt int color) {
         mColor = color;
     }
 

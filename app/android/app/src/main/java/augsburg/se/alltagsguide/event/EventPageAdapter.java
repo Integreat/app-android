@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.event;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -27,11 +28,11 @@ import augsburg.se.alltagsguide.utilities.Objects;
 public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentViewHolder, Page> {
 
     @NonNull private EventOverviewFragment.OnEventPageFragmentInteractionListener mListener;
-    private int mColor;
+    @ColorInt private int mColor;
     private static final int WITHOUT_IMAGE = 7;
     @NonNull SimpleDateFormat dateFormatTo;
 
-    public EventPageAdapter(@NonNull List<EventPage> pages, @NonNull EventOverviewFragment.OnEventPageFragmentInteractionListener listener, int primaryColor, @NonNull Context context) {
+    public EventPageAdapter(@NonNull List<EventPage> pages, @NonNull EventOverviewFragment.OnEventPageFragmentInteractionListener listener, @ColorInt int primaryColor, @NonNull Context context) {
         super(new ArrayList<Page>(pages), context);
         mListener = listener;
         mColor = primaryColor;

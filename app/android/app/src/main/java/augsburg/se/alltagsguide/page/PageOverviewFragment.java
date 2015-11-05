@@ -1,4 +1,4 @@
-package augsburg.se.alltagsguide.overview;
+package augsburg.se.alltagsguide.page;
 
 import android.content.Context;
 import android.content.SharedPreferences;

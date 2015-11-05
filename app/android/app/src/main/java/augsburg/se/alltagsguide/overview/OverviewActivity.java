@@ -49,6 +49,7 @@ import augsburg.se.alltagsguide.event.EventOverviewFragment;
 import augsburg.se.alltagsguide.navigation.NavigationAdapter;
 import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.page.PageActivity;
+import augsburg.se.alltagsguide.page.PageOverviewFragment;
 import augsburg.se.alltagsguide.settings.SettingsActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
 import augsburg.se.alltagsguide.utilities.LoadingType;

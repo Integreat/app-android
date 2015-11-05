@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -16,8 +17,6 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.nineoldandroids.animation.ValueAnimator;
-
-import java.io.Serializable;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.utilities.ColorManager;
@@ -86,11 +85,11 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         changeColor(primaryColor);
     }
 
-    protected void changeTabColor(Drawable drawable, int color) {
+    protected void changeTabColor(Drawable drawable, @ColorInt int color) {
         /* overridable */
     }
 
-    protected void changeColor(int primaryColor) {
+    protected void changeColor(@ColorInt int primaryColor) {
         int secondaryColor = ColorManager.shiftColor(primaryColor);
         ColorDrawable colorDrawableActivity = new ColorDrawable(primaryColor);
         ColorDrawable colorDrawableTabs = new ColorDrawable(primaryColor);
@@ -114,7 +113,7 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         mPrefUtilities.saveCurrentColor(primaryColor);
     }
 
-    private void animateStatusBar(final int secondaryColor) {
+    private void animateStatusBar(@ColorInt final int secondaryColor) {
         final Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (oldStatusBarColor == null) {
@@ -143,7 +142,9 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         oldStatusBarColor = secondaryColor;
     }
 
-    private int alpha(int color) {
+    private
+    @ColorInt
+    int alpha(@ColorInt int color) {
         int alpha = Math.round(Color.alpha(color) * 0.85f);
         int red = Color.red(color);
         int green = Color.green(color);
@@ -151,7 +152,8 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         return Color.argb(alpha, red, green, blue);
     }
 
-    private int blendColors(int from, int to, float ratio) {
+    @ColorInt
+    private int blendColors(@ColorInt int from, @ColorInt int to, float ratio) {
         final float inverseRatio = 1f - ratio;
 
         final float r = Color.red(to) * ratio + Color.red(from) * inverseRatio;
@@ -160,49 +162,6 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
 
         return Color.rgb((int) r, (int) g, (int) b);
     }
-
-
-    /**
-     * Get intent extra
-     *
-     * @param name
-     * @return serializable
-     */
-    @SuppressWarnings("unchecked")
-    protected <V extends Serializable> V getSerializableExtra(final String name) {
-        return (V) getIntent().getSerializableExtra(name);
-    }
-
-    /**
-     * Get intent extra
-     *
-     * @param name
-     * @return int
-     */
-    protected int getIntExtra(final String name) {
-        return getIntent().getIntExtra(name, -1);
-    }
-
-    /**
-     * Get intent extra
-     *
-     * @param name
-     * @return string
-     */
-    protected String getStringExtra(final String name) {
-        return getIntent().getStringExtra(name);
-    }
-
-    /**
-     * Get intent extra
-     *
-     * @param name
-     * @return string array
-     */
-    protected String[] getStringArrayExtra(final String name) {
-        return getIntent().getStringArrayExtra(name);
-    }
-
 
     @Override
     public void onBackPressed() {

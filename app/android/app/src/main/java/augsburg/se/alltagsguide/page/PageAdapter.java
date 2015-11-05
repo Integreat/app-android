@@ -1,6 +1,7 @@
-package augsburg.se.alltagsguide.overview;
+package augsburg.se.alltagsguide.page;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -28,7 +29,7 @@ import augsburg.se.alltagsguide.utilities.ui.BitmapColorTransformation;
 public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page> {
 
     private PageOverviewFragment.OnPageFragmentInteractionListener mListener;
-    private int mColor;
+    @ColorInt private int mColor;
     private static final int ENTRY = 7;
     private static final int TITLE = 42;
 
@@ -36,7 +37,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
     @Inject private Picasso mPicasso;
     private Transformation mTransformation;
 
-    public PageAdapter(@NonNull List<Page> pages, PageOverviewFragment.OnPageFragmentInteractionListener listener, int primaryColor, @NonNull Context context) {
+    public PageAdapter(@NonNull List<Page> pages, PageOverviewFragment.OnPageFragmentInteractionListener listener, @ColorInt int primaryColor, @NonNull Context context) {
         super(pages, context);
         mListener = listener;
         mColor = primaryColor;

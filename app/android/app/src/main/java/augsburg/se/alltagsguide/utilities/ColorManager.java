@@ -27,45 +27,31 @@ public class ColorManager {
         typedArrayDefault.recycle();
     }
 
-    public static int shiftColor(int color) {
+    public static
+    @ColorInt
+    int shiftColor(@ColorInt int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
         hsv[2] *= 0.9f; // value component
         return Color.HSVToColor(hsv);
     }
 
-    private int getColorById(int id) {
-        if (id < colors.length && id >= 0) {
-            return colors[id];
-        }
-        return id;
-    }
 
-    private int getDarkColorById(int id) {
-        if (id < darkColors.length && id >= 0) {
-            return darkColors[id];
-        }
-        return id;
-    }
-
-    public int getIdByColor(int color) {
-        for (int i = 0; i < colors.length; i++) {
-            if (colors[i] == color) {
-                return i;
-            }
-        }
-        return color;
-    }
-
-    public int getDarkColor(int id) {
+    public
+    @ColorInt
+    int getDarkColor(int id) {
         return darkColors[id % darkColors.length];
     }
 
-    public int getColor(int id) {
+    public
+    @ColorInt
+    int getColor(int id) {
         return colors[id % colors.length];
     }
 
-    public static int moreAlpha(int currentColor, int alpha) {
+    public
+    @ColorInt
+    static int moreAlpha(@ColorInt int currentColor, int alpha) {
         int red = Color.red(currentColor);
         int green = Color.green(currentColor);
         int blue = Color.blue(currentColor);

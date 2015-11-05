@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -81,7 +82,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
 
         int rows = getResources().getInteger(R.integer.grid_rows_welcome);
         mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
-        mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+        mRecyclerView.getEmptyView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.primary));
         mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

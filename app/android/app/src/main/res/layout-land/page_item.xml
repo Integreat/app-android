@@ -41,7 +41,7 @@
                     android:gravity="start"
                     android:textSize="?attr/font_small"
                     tools:text="Hausordnung"
-                    tools:textColor="@color/myAccentColor"/>
+                    tools:textColor="@color/accent"/>
 
                 <TextView
                     android:id="@+id/date"
@@ -50,7 +50,7 @@
                     android:padding="4dp"
                     android:textSize="?attr/font_xsmall"
                     tools:text="22.10.2015"
-                    tools:textColor="@color/myAccentColor"/>
+                    tools:textColor="@color/accent"/>
 
 
             </LinearLayout>
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:maxLines="3"
                 android:textSize="?attr/font_xsmall"
                 tools:text="Wir trennen Müll, um durch Recycling die Umwelt zu schonen. Werfen Sie Papier und Kartons in den Papiermüll und ihre Dosen in dafür vorgesehen Container. Diese finden Sie..."/>
 
@@ -82,7 +82,7 @@
                 android:padding="4dp"
                 android:text="@string/page_more"
                 android:textSize="?attr/font_xsmall"
-                tools:textColor="@color/myAccentColor"/>
+                tools:textColor="@color/accent"/>
         </RelativeLayout>
 
 

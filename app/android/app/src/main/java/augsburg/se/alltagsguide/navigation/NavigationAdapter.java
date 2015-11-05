@@ -1,6 +1,7 @@
 package augsburg.se.alltagsguide.navigation;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +30,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
     @NonNull private List<Page> mPages;
     private Page mSelectedPage;
 
-    private int mColor;
+    @ColorInt private int mColor;
     private int mCurrentPageId;
     @Inject
     private Picasso mPicasso;
@@ -52,7 +53,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
         void onNavigationClicked(Page item);
     }
 
-    public NavigationAdapter(OnNavigationSelected listener, int color, Context context, int currentPageId) {
+    public NavigationAdapter(OnNavigationSelected listener, @ColorInt int color, Context context, int currentPageId) {
         RoboGuice.injectMembers(context, this);
         mPages = new ArrayList<>();
         mListener = listener;

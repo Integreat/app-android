@@ -4,8 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -55,7 +56,10 @@ public class PrefUtilities {
         preferences.edit().clear().commit();
     }
 
+    private Context mContext;
+
     public PrefUtilities(@NonNull Context context) {
+        mContext = context;
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
         RoboGuice.injectMembers(context, this);
@@ -104,13 +108,13 @@ public class PrefUtilities {
         }
     }
 
-    public void saveCurrentColor(@ColorRes int color) {
+    public void saveCurrentColor(@ColorInt int color) {
         save(preferences.edit().putInt(CURRENT_COLOR, color));
     }
 
-    @ColorRes
+    @ColorInt
     public int getCurrentColor() {
-        return preferences.getInt(CURRENT_COLOR, R.color.primary);
+        return preferences.getInt(CURRENT_COLOR, ContextCompat.getColor(mContext, R.color.primary));
     }
 
     public int getSelectedPageId() {

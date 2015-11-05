@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context="augsburg.se.alltagsguide.start.LanguageFragment">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context="augsburg.se.alltagsguide.start.LanguageFragment">
 
     <RelativeLayout
         android:id="@+id/navigation"
@@ -20,7 +20,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:textSize="?attr/font_medium"
-            tools:text="Augsburg" />
+            tools:text="Augsburg"/>
     </RelativeLayout>
 
     <com.malinskiy.superrecyclerview.SuperRecyclerView
@@ -31,5 +31,5 @@
         app:layout_empty="@layout/languages_empty_view"
         app:recyclerClipToPadding="false"
         app:recyclerPadding="5dp"
-        app:scrollbarStyle="outsideOverlay" />
+        app:scrollbarStyle="outsideOverlay"/>
 </RelativeLayout>

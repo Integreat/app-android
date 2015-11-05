@@ -30,7 +30,7 @@ android {
         applicationId "augsburg.se.alltagsguide"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 8
+        versionCode 9
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

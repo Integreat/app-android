@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +25,6 @@ import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
-import augsburg.se.alltagsguide.utilities.ui.MyLinearLayoutManager;
 import roboguice.inject.InjectView;
 
 /**
@@ -45,6 +44,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     private PrefUtilities mPrefUtilities;
 
     private OnEventPageFragmentInteractionListener mListener;
+    private StaggeredGridLayoutManager mLayoutManager;
 
     @NonNull private List<EventPage> mEventPages = new ArrayList<>();
 
@@ -79,10 +79,16 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         // Required empty public constructor
     }
 
+
+    private int getSpanCount() {
+        return getResources().getInteger(R.integer.grid_rows_page);
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView.setLayoutManager(new MyLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mLayoutManager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
     public void refresh(LoadingType type) {
