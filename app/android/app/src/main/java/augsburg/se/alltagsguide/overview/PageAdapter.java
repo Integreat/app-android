@@ -69,7 +69,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
                 mListener.onOpenPage(page);
             }
         });
-        contentHolder.more.setTextColor(mColor);
+        //contentHolder.more.setTextColor(mColor);
         contentHolder.date.setTextColor(mColor);
 
         if (!Objects.isNullOrEmpty(page.getThumbnail())) {
@@ -88,7 +88,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
         TextView title;
         TextView description;
         ImageView image;
-        TextView more;
+        //TextView more;
         TextView date;
 
         public ContentViewHolder(View itemView) {
@@ -96,7 +96,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
             title = (TextView) itemView.findViewById(R.id.title);
             description = (TextView) itemView.findViewById(R.id.description);
             image = (ImageView) itemView.findViewById(R.id.image);
-            more = (TextView) itemView.findViewById(R.id.more);
+            //more = (TextView) itemView.findViewById(R.id.more);
             date = (TextView) itemView.findViewById(R.id.date);
         }
     }

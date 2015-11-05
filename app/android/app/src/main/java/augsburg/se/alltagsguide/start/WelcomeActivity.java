@@ -12,21 +12,16 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
-import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.Objects;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 import roboguice.inject.ContentView;
 
 @ContentView(R.layout.activity_welcome)
 public class WelcomeActivity extends BaseActivity implements LanguageFragment.OnLanguageFragmentInteractionListener, LocationFragment.OnLocationFragmentInteractionListener {
 
     @Inject
-    private PrefUtilities prefUtilities;
-
-    @Inject
     private ColorManager mColorManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +32,7 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
             // location was set during gradle build, so dont show location here
             throw new IllegalStateException("Not implemented yet");
         }
-        if (prefUtilities.getLocation() != null && prefUtilities.getLanguage() != null) {
+        if (mPrefUtilities.getLocation() != null && mPrefUtilities.getLanguage() != null) {
             startOverview();
         }
 
@@ -49,6 +44,10 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
         }
     }
 
+    @Override
+    protected void setLastColor() {
+        //override and do nothing as we only show it when a location is selected.
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,8 +83,7 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
                 .addToBackStack(null)
                 .commit();
         int color = mColorManager.getColor(location.getColor());
-        prefUtilities.saveCurrentColor(color);
-        changeColor(color);
+        mPrefUtilities.saveCurrentColor(color);
     }
 
 }

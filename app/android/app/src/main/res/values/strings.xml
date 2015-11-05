@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name" translatable="false">RefGuide+</string>
-    <string name="refguide" translatable="false">RefGuide+ %s</string>
+    <string name="app_name" translatable="false">Integreat</string>
+    <string name="refguide" translatable="false">Integreat %s</string>
 
     <string name="action_settings">Settings</string>
 

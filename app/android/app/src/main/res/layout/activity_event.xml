@@ -148,7 +148,7 @@
                         android:paddingTop="4dp"
                         android:textSize="?attr/font_small"
                         tools:text="Montag, 08.01.2016, 16:00 - 20:00 Uhr"
-                        tools:textColor="@color/myAccentColor"/>
+                        tools:textColor="@color/accent"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -174,7 +174,7 @@
                         android:paddingTop="4dp"
                         android:textSize="?attr/font_small"
                         tools:text="Montag, 08.01.2016, 16:00 - 20:00 Uhr"
-                        tools:textColor="@color/myAccentColor"/>
+                        tools:textColor="@color/accent"/>
                 </LinearLayout>
 
 
@@ -201,7 +201,7 @@
                         android:paddingTop="4dp"
                         android:textSize="?attr/font_small"
                         tools:text="Montag, 08.01.2016, 16:00 - 20:00 Uhr"
-                        tools:textColor="@color/myAccentColor"/>
+                        tools:textColor="@color/accent"/>
                 </LinearLayout>
 
 
@@ -228,7 +228,7 @@
                         android:paddingTop="4dp"
                         android:textSize="?attr/font_small"
                         tools:text="Augsburg, Karolinenstraße 4"
-                        tools:textColor="@color/myAccentColor"/>
+                        tools:textColor="@color/accent"/>
                 </LinearLayout>
 
                 <LinearLayout

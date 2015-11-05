@@ -81,12 +81,12 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         startActivity(intent);
     }
 
-    private void setLastColor() {
+    protected void setLastColor() {
         int primaryColor = mPrefUtilities.getCurrentColor();
         changeColor(primaryColor);
     }
 
-    void changeTabColor(Drawable drawable) {
+    protected void changeTabColor(Drawable drawable, int color) {
         /* overridable */
     }
 
@@ -98,12 +98,12 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         if (ab != null) {
             if (oldBackgroundActivity == null) {
                 ab.setBackgroundDrawable(colorDrawableActivity);
-                changeTabColor(colorDrawableTabs);
+                changeTabColor(colorDrawableTabs, primaryColor);
             } else {
                 TransitionDrawable tdActivity = new TransitionDrawable(new Drawable[]{oldBackgroundActivity, colorDrawableActivity});
                 TransitionDrawable tdTabs = new TransitionDrawable(new Drawable[]{oldBackgroundTabs, colorDrawableTabs});
                 ab.setBackgroundDrawable(tdActivity);
-                changeTabColor(tdTabs);
+                changeTabColor(tdTabs, primaryColor);
                 tdActivity.startTransition(DURATION);
                 tdTabs.startTransition(DURATION);
             }
@@ -144,7 +144,7 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
     }
 
     private int alpha(int color) {
-        int alpha = Math.round(Color.alpha(color) * 0.6f);
+        int alpha = Math.round(Color.alpha(color) * 0.85f);
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);

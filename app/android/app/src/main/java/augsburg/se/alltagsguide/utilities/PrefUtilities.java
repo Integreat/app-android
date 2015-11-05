@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -103,12 +104,13 @@ public class PrefUtilities {
         }
     }
 
-    public void saveCurrentColor(int color) {
+    public void saveCurrentColor(@ColorRes int color) {
         save(preferences.edit().putInt(CURRENT_COLOR, color));
     }
 
+    @ColorRes
     public int getCurrentColor() {
-        return preferences.getInt(CURRENT_COLOR, R.color.myPrimaryColor);
+        return preferences.getInt(CURRENT_COLOR, R.color.primary);
     }
 
     public int getSelectedPageId() {

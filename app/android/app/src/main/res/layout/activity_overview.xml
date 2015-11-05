@@ -109,26 +109,22 @@
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
-        <LinearLayout
-            android:id="@+id/content"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <FrameLayout
-                android:id="@+id/pages_container"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <FrameLayout
-                android:id="@+id/events_container"
+            <android.support.v4.view.PagerTabStrip
+                android:id="@+id/pager_tab_strip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:visibility="gone"/>
-
-        </LinearLayout>
+                android:layout_gravity="bottom"
+                android:background="#fff"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:textColor="#fff"/>
+        </android.support.v4.view.ViewPager>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
@@ -166,10 +162,10 @@
                     android:padding="5dp">
 
                     <TextView
-                        android:id="@+id/location"
+                        android:id="@+id/locationName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_above="@+id/description"
+                        android:layout_above="@+id/locationDescription"
                         android:gravity="start"
                         android:paddingBottom="4dp"
                         android:textColor="#FFF"
@@ -178,7 +174,7 @@
                         tools:text="Augsburg"/>
 
                     <TextView
-                        android:id="@+id/description"
+                        android:id="@+id/locationDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"

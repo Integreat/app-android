@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="2dp"
-    android:padding="1dp"
-    android:textSize="?attr/font_small"
-    tools:background="@android:color/holo_blue_dark"
-    tools:text="Sports">
-
-</TextView>
+          xmlns:tools="http://schemas.android.com/tools"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="2dp"
+          android:padding="2dp"
+          android:textSize="?attr/font_small"
+          tools:background="@android:color/holo_blue_dark"
+          tools:text="Sports"/>

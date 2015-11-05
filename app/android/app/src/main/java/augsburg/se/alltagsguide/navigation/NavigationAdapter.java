@@ -27,6 +27,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
     private OnNavigationSelected mListener;
     private static final int HEADER = 0;
     @NonNull private List<Page> mPages;
+    private Page mSelectedPage;
+
     private int mColor;
     private int mCurrentPageId;
     @Inject
@@ -76,12 +78,17 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
         return mPages.size();
     }
 
+    public Page getSelectedPage() {
+        return mSelectedPage;
+    }
 
     @Override
     public void onBindViewHolder(NavigationViewHolder holder, int position) {
         final Page item = mPages.get(position);
         boolean selected = Objects.equals(item.getId(), mCurrentPageId);
-        holder.counter.setText(String.valueOf(item.getContentCount()));
+        if (selected) {
+            mSelectedPage = item;
+        }
         holder.title.setText(item.getTitle());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +97,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
             }
         });
         holder.itemView.setBackgroundColor(selected ? mColor : whiteColor);
-        holder.counter.setTextColor(selected ? whiteColor : textColor);
         holder.title.setTextColor(selected ? whiteColor : textColor);
         if (!Objects.isNullOrEmpty(item.getThumbnail())) {
             RequestCreator creator = mPicasso.load(item.getThumbnail());
@@ -107,13 +113,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
         ImageView image;
         TextView title;
-        TextView counter;
 
         public NavigationViewHolder(View itemView) {
             super(itemView);
             image = (ImageView) itemView.findViewById(R.id.image);
             title = (TextView) itemView.findViewById(R.id.title);
-            counter = (TextView) itemView.findViewById(R.id.counter);
         }
     }
 }

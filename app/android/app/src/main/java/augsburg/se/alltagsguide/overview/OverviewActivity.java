@@ -4,15 +4,20 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +25,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
@@ -45,11 +52,11 @@ import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.settings.SettingsActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
 import augsburg.se.alltagsguide.utilities.LoadingType;
+import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
 import augsburg.se.alltagsguide.utilities.ui.EmptyRecyclerView;
 import augsburg.se.alltagsguide.utilities.ui.LanguageItemAdapter;
-import augsburg.se.alltagsguide.utilities.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -72,12 +79,6 @@ public class OverviewActivity extends BaseActivity
 
     private NavigationAdapter mNavigationAdapter;
 
-    @InjectView(R.id.content)
-    private View mContentView;
-
-    @InjectView(R.id.events_container)
-    private View mEventContainerView;
-
     @InjectView(R.id.emptyNavView)
     private View mEmptyView;
 
@@ -93,10 +94,10 @@ public class OverviewActivity extends BaseActivity
     @InjectView(R.id.header)
     private View navigationHeaderView;
 
-    @InjectView(R.id.location)
+    @InjectView(R.id.locationName)
     private TextView locationNameTextView;
 
-    @InjectView(R.id.description)
+    @InjectView(R.id.locationDescription)
     private TextView locationDescriptionTextView;
 
     @InjectView(R.id.settings)
@@ -114,9 +115,13 @@ public class OverviewActivity extends BaseActivity
     @InjectView(R.id.current_language)
     protected CircleImageView circleImageView;
 
+    @InjectView(R.id.pager_tab_strip)
+    private PagerTabStrip pagerTabStrip;
     @Inject
     protected Picasso mPicasso;
 
+    @InjectView(R.id.pager)
+    private ViewPager mViewPager;
 
     private PageOverviewFragment mPageOverviewFragment;
     private EventOverviewFragment mEventOverviewFragment;
@@ -135,22 +140,6 @@ public class OverviewActivity extends BaseActivity
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
         mHandler = new Handler();
-        initNavigationDrawer();
-        if (savedInstanceState == null) {
-            mPageOverviewFragment = PageOverviewFragment.newInstance();
-            mEventOverviewFragment = EventOverviewFragment.newInstance();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.events_container, mEventOverviewFragment, "events")
-                    .commit();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.pages_container, mPageOverviewFragment, "pages")
-                    .commit();
-        } else {
-            mEventOverviewFragment = (EventOverviewFragment) getSupportFragmentManager().findFragmentByTag("events");
-            mPageOverviewFragment = (PageOverviewFragment) getSupportFragmentManager().findFragmentByTag("pages");
-        }
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,6 +152,17 @@ public class OverviewActivity extends BaseActivity
                 startActivity(new Intent(OverviewActivity.this, SettingsActivity.class));
             }
         });
+        initPager();
+        initNavigationDrawer();
+    }
+
+    @Override
+    protected void changeTabColor(Drawable drawable, int color) {
+        pagerTabStrip.setBackgroundDrawable(drawable);
+    }
+
+    private void initPager() {
+        mViewPager.setAdapter(new InformationFragmentPagerAdapter());
     }
 
     @Override
@@ -212,7 +212,7 @@ public class OverviewActivity extends BaseActivity
                                     })
                             .show();
                 } else {
-                    Snackbar.make(mContentView, R.string.no_other_languages_available_location, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mViewPager, R.string.no_other_languages_available_location, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -231,12 +231,27 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void loadLanguage(@NonNull Language language) {
+        Page selectedPage = mNavigationAdapter.getSelectedPage();
+        if (selectedPage != null) {
+            for (AvailableLanguage lang : selectedPage.getAvailableLanguages()) {
+                if (lang.getLoadedLanguage() != null) {
+                    if (Objects.equals(lang.getLoadedLanguage().getId(), language.getId())) {
+                        mPrefUtilities.setSelectedPage(lang.getOtherPageId());
+                        break;
+                    }
+                }
+            }
+        }
         mLanguage = language;
         mPrefUtilities.setLanguage(language);
 
         startLoading();
-        mPageOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
-        mEventOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
+        if (mPageOverviewFragment != null) {
+            mPageOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
+        }
+        if (mEventOverviewFragment != null) {
+            mEventOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
+        }
         loadOtherLanguages(LoadingType.NETWORK_OR_DATABASE);
     }
 
@@ -336,8 +351,12 @@ public class OverviewActivity extends BaseActivity
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mPageOverviewFragment.filterByText(newText);
-                mEventOverviewFragment.filterByText(newText);
+                if (mPageOverviewFragment != null) {
+                    mPageOverviewFragment.filterByText(newText);
+                }
+                if (mEventOverviewFragment != null) {
+                    mEventOverviewFragment.filterByText(newText);
+                }
                 return false;
             }
         });
@@ -410,7 +429,9 @@ public class OverviewActivity extends BaseActivity
             mNavigationAdapter.setSelectedIndex(item.getId());
             mNavigationAdapter.notifyDataSetChanged();
         }
-        mPageOverviewFragment.indexUpdated();
+        if (mPageOverviewFragment != null) {
+            mPageOverviewFragment.indexUpdated();
+        }
     }
 
     @Override
@@ -481,29 +502,6 @@ public class OverviewActivity extends BaseActivity
 
     @Override
     public void onEventPagesLoaded(@NonNull final List<EventPage> pages) {
-        new Handler().post(new Runnable() {
-            final int messageCode = pages.isEmpty() ? 0 : 1;
-
-            public void run() {
-                try {
-                    if (messageCode == 1) {
-                        getSupportFragmentManager().beginTransaction()
-                                .show(mEventOverviewFragment)
-                                .commitAllowingStateLoss();
-                        mEventContainerView.setVisibility(View.VISIBLE);
-                    } else {
-                        getSupportFragmentManager().beginTransaction()
-                                .hide(mEventOverviewFragment)
-                                .commitAllowingStateLoss();
-                        mEventContainerView.setVisibility(View.GONE);
-                    }
-                    mContentView.invalidate();
-                } catch (IllegalStateException e) {
-                    // Ignore if this happens
-                    Ln.e(e);
-                }
-            }
-        });
     }
 
     @Override
@@ -546,4 +544,51 @@ public class OverviewActivity extends BaseActivity
         super.onSaveInstanceState(outState);
     }
 
+    public class InformationFragmentPagerAdapter extends FragmentPagerAdapter {
+        final int PAGE_COUNT = 2;
+
+        public InformationFragmentPagerAdapter() {
+            super(getSupportFragmentManager());
+        }
+
+        @Override
+        public int getCount() {
+            return PAGE_COUNT;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (position == 1) {
+                return EventOverviewFragment.newInstance();
+            }
+            return PageOverviewFragment.newInstance();
+        }
+
+        public CharSequence getPageTitle(int position) {
+            if (position == 1) {
+                return getResources().getString(R.string.event_list_title);
+            }
+            return getResources().getString(R.string.information);
+        }
+
+        // Here we can finally safely save a reference to the created
+        // Fragment, no matter where it came from (either getItem() or
+        // FragmentManger). Simply save the returned Fragment from
+        // super.instantiateItem() into an appropriate reference depending
+        // on the ViewPager position.
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
+            // save the appropriate reference depending on position
+            switch (position) {
+                case 0:
+                    mPageOverviewFragment = (PageOverviewFragment) createdFragment;
+                    break;
+                case 1:
+                    mEventOverviewFragment = (EventOverviewFragment) createdFragment;
+                    break;
+            }
+            return createdFragment;
+        }
+    }
 }

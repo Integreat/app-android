@@ -6,23 +6,13 @@
     android:paddingBottom="1dp"
     android:paddingTop="1dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginStart="3dp"
-        android:text="@string/information"
-        android:textSize="?attr/font_small"
-        android:textStyle="bold" />
-
     <com.malinskiy.superrecyclerview.SuperRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_empty="@layout/pages_empty_view"
         app:recyclerClipToPadding="false"
-        app:recyclerPadding="2dp"
+        app:recyclerPadding="1dp"
         app:scrollbarStyle="insideInset" />
 
 </LinearLayout>

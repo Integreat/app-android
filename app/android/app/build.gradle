@@ -30,7 +30,7 @@ android {
         applicationId "augsburg.se.alltagsguide"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 6
+        versionCode 8
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -47,6 +47,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "pre_build_location", location
+        }
+    }
+
+    productFlavors {
+        storeVersion {
+            applicationId "tuerantuer.app.integreat"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 

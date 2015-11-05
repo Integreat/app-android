@@ -44,7 +44,7 @@ public class AnnouncementCommand extends GCMCommand {
                         .setTicker(message)
                         .setContentTitle(context.getString(R.string.app_name))
                         .setContentText(message)
-                        .setColor(ContextCompat.getColor(context, R.color.myPrimaryColor))
+                        .setColor(ContextCompat.getColor(context, R.color.primary))
                         .setContentIntent(
                                 PendingIntent.getActivity(context, 0,
                                         new Intent(context, OverviewActivity.class)
