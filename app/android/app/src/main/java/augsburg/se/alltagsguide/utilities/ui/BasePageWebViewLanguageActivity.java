@@ -132,24 +132,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebView() {
-        descriptionView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.toLowerCase().contains(".pdf")) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    try {
-                        BasePageWebViewLanguageActivity.this.startActivity(intent);
-                        return true;
-                    } catch (ActivityNotFoundException e) {
-                        //user does not have a pdf viewer installed
-                        Ln.e(e);
-                        view.loadUrl("https://docs.google.com/viewer?" + url);
-                        return true;
-                    }
-                }
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-        });
+        descriptionView.setWebViewClient(new MyWebViewClient(this));
         descriptionView.getSettings().setJavaScriptEnabled(true);
         descriptionView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         descriptionView.getSettings().setDefaultTextEncodingName("utf-8");
