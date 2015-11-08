@@ -425,6 +425,11 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void goToNavDrawerItem(@NonNull Page item) {
+        if (item.getSubPages().isEmpty()) {
+            mPrefUtilities.setSelectedPage(-1);
+            onOpenPage(item);
+            return;
+        }
         mPrefUtilities.setSelectedPage(item.getId());
         if (mNavigationAdapter != null) {
             mNavigationAdapter.setSelectedIndex(item.getId());
