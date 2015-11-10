@@ -128,6 +128,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
                 return;
             }
         }
+        refresh(LoadingType.FORCE_DATABASE);
         refresh(LoadingType.NETWORK_OR_DATABASE);
     }
 
@@ -174,12 +175,14 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     public Loader<List<Page>> onCreateLoader(int id, Bundle args) {
         LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        mRecyclerView.getSwipeToRefresh().setRefreshing(true);
         return new PagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Page>> loader, final List<Page> pages) {
         pagesLoaded(pages);
+        mRecyclerView.getSwipeToRefresh().setRefreshing(false);
     }
 
     private void pagesLoaded(List<Page> pages) {
