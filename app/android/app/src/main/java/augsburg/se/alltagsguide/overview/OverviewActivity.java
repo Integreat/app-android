@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import augsburg.se.alltagsguide.start.LocationSelectionActivity;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
@@ -51,7 +52,6 @@ import augsburg.se.alltagsguide.network.LanguageLoader;
 import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.page.PageOverviewFragment;
 import augsburg.se.alltagsguide.settings.SettingsActivity;
-import augsburg.se.alltagsguide.start.WelcomeActivity;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
@@ -144,7 +144,7 @@ public class OverviewActivity extends BaseActivity
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startWelcome();
+                startLocationSelection();
             }
         });
         settingsView.setOnClickListener(new View.OnClickListener() {
@@ -484,10 +484,8 @@ public class OverviewActivity extends BaseActivity
     }
 
 
-    private void startWelcome() {
-        mPrefUtilities.setLocation(null);
-        mPrefUtilities.setLanguage(null);
-        Intent intent = new Intent(OverviewActivity.this, WelcomeActivity.class);
+    private void startLocationSelection() {
+        Intent intent = new Intent(this, LocationSelectionActivity.class);
         intent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

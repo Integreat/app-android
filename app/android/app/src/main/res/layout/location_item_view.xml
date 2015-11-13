@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="7dp"
-    android:foreground="?attr/selectableItemBackground"
-    android:padding="5dp"
-    app:cardCornerRadius="6dp">
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="7dp"
+                                    android:id="@+id/container"
+                                    android:foreground="?attr/selectableItemBackground"
+                                    app:cardCornerRadius="6dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="110dp">
 
         <ImageView
-            android:id="@+id/image"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:padding="4dp"
-            android:scaleType="fitCenter"
-            tools:src="@drawable/icon_location_loading" />
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/icon_location_loading"/>
 
         <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="4dp"
-            android:textSize="?attr/font_xlarge"
-            tools:text="Augsburg" />
-    </LinearLayout>
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:gravity="center"
+                android:padding="4dp"
+                android:background="#55000000"
+                android:textColor="@android:color/white"
+                tools:text="Augsburg"/>
+        <!--android:textSize="?attr/font_xlarge"-->
+    </FrameLayout>
 </android.support.v7.widget.CardView>

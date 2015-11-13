@@ -7,4 +7,12 @@
         <attr name="font_large" format="dimension" />
         <attr name="font_xlarge" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="CurrentPageIndicatorView">
+        <attr name="page_count" format="integer" />
+        <attr name="selected_item" format="integer" />
+        <attr name="item_spacing" format="dimension" />
+        <attr name="radius" format="dimension" />
+        <attr name="selected_color" format="color" />
+        <attr name="not_selected_color" format="color" />
+    </declare-styleable>
 </resources>

@@ -45,4 +45,8 @@
     <string name="location_fragment_subtitle" translatable="false">Where are you?</string>
     <string name="no_other_languages_available_page">No other languages available for this article.</string>
     <string name="no_other_languages_available_location">No other language available.</string>
+    <string name="search_city_or_zip">Search for City</string>
+
+    <!-- Strings belonging to Welcome-screens -->
+    <string name="skip">skip</string>
 </resources>

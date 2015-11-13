@@ -32,6 +32,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     private static final String ARG_LOCATION = "location";
     private static final String LOADING_TYPE_KEY = "FORCED";
     private Location mLocation;
+    private Language oldLanguage;
     private OnLanguageFragmentInteractionListener mListener;
     private LanguageAdapter mAdapter;
 
@@ -138,6 +139,16 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
         } else {
             mAdapter.setItems(languages);
         }
+        if(oldLanguage != null) {
+            boolean oldLanguageAvailable = false;
+            for(Language language:languages) {
+                if(language.equals(this.oldLanguage)) {
+                    oldLanguageAvailable = true;
+                    break;
+                }
+            }
+            if(oldLanguageAvailable) mListener.onOldLanguageAvailable();
+        }
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);
         }
@@ -153,8 +164,13 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     public void onLoaderReset(Loader<List<Language>> loader) {
     }
 
+    public void setOldLanguage(Language language) {
+        this.oldLanguage = language;
+    }
+
     public interface OnLanguageFragmentInteractionListener {
         void onLanguageSelected(Location location, Language language);
+        void onOldLanguageAvailable();
     }
 
 }

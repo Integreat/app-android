@@ -18,7 +18,7 @@
             android:adjustViewBounds="false"
             android:src="@drawable/icon_location_loading_error" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,6 +28,6 @@
             android:text="@string/no_locations_found"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white"
-            android:textSize="?attr/font_large" />
+            android:textSize="?attr/font_large" />-->
     </LinearLayout>
 </RelativeLayout>

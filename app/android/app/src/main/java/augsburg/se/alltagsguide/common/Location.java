@@ -4,6 +4,7 @@ package augsburg.se.alltagsguide.common;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import android.support.annotation.Nullable;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
@@ -125,6 +126,12 @@ public class Location implements Serializable, Newer<Location> {
     @Override
     public boolean equals(@NonNull Object another) {
         return another instanceof Location && mId == ((Location) another).getId();
+    }
+
+    @Nullable
+    public GPSCoordinate getGPSCoordinate() {
+        if(mLatitude == 0 && mLongitude == 0 || mLatitude == Float.NaN || mLongitude == Float.NaN) return null;
+        return new GPSCoordinate(mLatitude, mLongitude);
     }
 
     @Override

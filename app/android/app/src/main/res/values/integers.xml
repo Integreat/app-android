@@ -2,4 +2,5 @@
 <resources>
     <item name="grid_rows_page" type="integer">1</item>
     <item name="grid_rows_welcome" type="integer">2</item>
+    <item name="grid_rows_locations" type="integer">2</item>
 </resources>

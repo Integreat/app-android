@@ -30,4 +30,5 @@
     <string name="preference_category_general">vue générale</string>
     <string name="search_title">Recherche</string>
     <string name="single_columns">Une colonne</string>
+    <string name="skip">passer</string>
 </resources>
