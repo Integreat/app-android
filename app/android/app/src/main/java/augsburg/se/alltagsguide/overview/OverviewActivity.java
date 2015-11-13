@@ -207,6 +207,7 @@ public class OverviewActivity extends BaseActivity
                                     new MaterialDialog.ListCallback() {
                                         @Override
                                         public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                            startLoading();
                                             loadLanguage(mOtherLanguages.get(which));
                                             dialog.cancel();
                                         }
@@ -246,7 +247,6 @@ public class OverviewActivity extends BaseActivity
         mLanguage = language;
         mPrefUtilities.setLanguage(language);
 
-        startLoading();
         if (mPageOverviewFragment != null) {
             mPageOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
         }
