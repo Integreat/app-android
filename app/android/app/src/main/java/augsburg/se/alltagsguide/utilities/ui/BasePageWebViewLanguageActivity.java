@@ -3,6 +3,7 @@ package augsburg.se.alltagsguide.utilities.ui;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import java.io.Serializable;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
@@ -132,27 +135,52 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebView() {
-        descriptionView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.toLowerCase().contains(".pdf")) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    try {
-                        BasePageWebViewLanguageActivity.this.startActivity(intent);
-                        return true;
-                    } catch (ActivityNotFoundException e) {
-                        //user does not have a pdf viewer installed
-                        Ln.e(e);
-                        view.loadUrl("https://docs.google.com/viewer?" + url);
-                        return true;
-                    }
-                }
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-        });
+        descriptionView.setWebViewClient(new MyWebViewClient(this));
         descriptionView.getSettings().setJavaScriptEnabled(true);
         descriptionView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         descriptionView.getSettings().setDefaultTextEncodingName("utf-8");
+
+        setFontSize();
+    }
+
+    private void setFontSize() {
+        switch (mPrefUtilities.getFontStyle().getResId()) {
+            case R.style.FontStyle_XSmall:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    descriptionView.getSettings().setTextZoom(75);
+                } else {
+                    descriptionView.getSettings().setTextSize(WebSettings.TextSize.SMALLEST);
+                }
+                break;
+            case R.style.FontStyle_Small:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    descriptionView.getSettings().setTextZoom(100);
+                } else {
+                    descriptionView.getSettings().setTextSize(WebSettings.TextSize.SMALLER);
+                }
+                break;
+            case R.style.FontStyle_Medium:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    descriptionView.getSettings().setTextZoom(125);
+                } else {
+                    descriptionView.getSettings().setTextSize(WebSettings.TextSize.NORMAL);
+                }
+                break;
+            case R.style.FontStyle_Large:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    descriptionView.getSettings().setTextZoom(150);
+                } else {
+                    descriptionView.getSettings().setTextSize(WebSettings.TextSize.LARGER);
+                }
+                break;
+            case R.style.FontStyle_XLarge:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    descriptionView.getSettings().setTextZoom(175);
+                } else {
+                    descriptionView.getSettings().setTextSize(WebSettings.TextSize.LARGEST);
+                }
+                break;
+        }
     }
 
     // wraps a div with table-responsive as class around the table
