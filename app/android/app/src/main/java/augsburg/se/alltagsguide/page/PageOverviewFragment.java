@@ -221,6 +221,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);
         }
+        mListener.onSetItemsChanged();
     }
 
 
@@ -253,10 +254,25 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         super.onSaveInstanceState(outState);
     }
 
+    public boolean goBack() {
+        if (canGoBack()) {
+            mPrefUtilities.setSelectedPage(-1);
+            indexUpdated();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean canGoBack() {
+        return mPrefUtilities.getSelectedPageId() != -1;
+    }
+
     public interface OnPageFragmentInteractionListener {
         void onOpenPage(Page page);
 
         void onPagesLoaded(List<Page> pages);
+
+        void onSetItemsChanged();
     }
 
 }

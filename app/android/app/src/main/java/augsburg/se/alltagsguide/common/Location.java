@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.utilities.Newer;
@@ -57,27 +59,24 @@ public class Location implements Serializable, Newer<Location> {
         String description = jsonPage.get("description").getAsString();
         boolean global = jsonPage.get("global").getAsBoolean();
         int color = id; //TODO CALCULATE
-        String cityImage = loadCityImage(name.toLowerCase());  //TODO
+        String cityImage = loadCityImage(name);  //TODO
         float latitude = 0.0f; //TODO
         float longitude = 0.0f; //TODO
         return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
     }
 
+    //TODO we definitely need to change loading city images.
     @NonNull
     private static String loadCityImage(String name) {
-        if (Objects.equals("muenchen", name) || Objects.equals("münchen", name)) {
-            return "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/M%C3%BCnchen_Panorama.JPG/300px-M%C3%BCnchen_Panorama.JPG";
-        }
-        if (Objects.equals("augsburg", name)) {
-            return "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Augsburg_-_Markt.jpg/297px-Augsburg_-_Markt.jpg";
-        }
-        if (Objects.equals("pre arrival", name)) {
-            return "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/EU-Germany.svg/800px-EU-Germany.svg.png";
-        }
-        if (Objects.equals("deutschland", name)) {
-            return "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/300px-Brandenburger_Tor_abends.jpg";
-        }
-        return "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/300px-Brandenburger_Tor_abends.jpg";
+        Map<String, String> locationMap = new HashMap<>();
+        locationMap.put("augsburg", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Augsburg_-_Markt.jpg/297px-Augsburg_-_Markt.jpg");
+        locationMap.put("muenchen", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/M%C3%BCnchen_Panorama.JPG/300px-M%C3%BCnchen_Panorama.JPG");
+        locationMap.put("münchen", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/M%C3%BCnchen_Panorama.JPG/300px-M%C3%BCnchen_Panorama.JPG");
+        locationMap.put("main-taunus-kreis", "http://vmkrcmar21.informatik.tu-muenchen.de/wordpress/main-taunus-kreis/wp-content/uploads/sites/15/2015/09/pix-Landratsamt.jpg");
+        locationMap.put("pre arrival", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/EU-Germany.svg/800px-EU-Germany.svg.png");
+        locationMap.put("deutschland", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/M%C3%BCnchen_Panorama.JPG/300px-M%C3%BCnchen_Panorama.JPG");
+        String cityPath = locationMap.get(name.toLowerCase());
+        return cityPath != null ? cityPath : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/300px-Brandenburger_Tor_abends.jpg";
     }
 
     public float getLatitude() {

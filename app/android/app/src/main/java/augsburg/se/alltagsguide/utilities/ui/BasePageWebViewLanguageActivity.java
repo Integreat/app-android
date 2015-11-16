@@ -129,15 +129,24 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         } else {
             descriptionView.loadUrl("about:blank");
         }
-        descriptionView.loadData(content, "text/html; charset=utf-8", "utf-8");
-        //descriptionView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8", "utf-8", null);
+        // webview bug android versions 2.3.X
+        // http://stackoverflow.com/a/8162828/1484047
+        if ("2.3".equals(Build.VERSION.RELEASE)) {
+            descriptionView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8", "utf-8", null);
+        } else {
+            descriptionView.loadData(content, "text/html; charset=utf-8", "utf-8");
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebView() {
         descriptionView.setWebViewClient(new MyWebViewClient(this));
-        descriptionView.getSettings().setJavaScriptEnabled(true);
-        descriptionView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
+        // javascript broken bug android versions 2.3.X
+        if (!"2.3".equals(Build.VERSION.RELEASE)) {
+            descriptionView.getSettings().setJavaScriptEnabled(true);
+            descriptionView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        }
         descriptionView.getSettings().setDefaultTextEncodingName("utf-8");
 
         setFontSize();
@@ -228,7 +237,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         return super.onOptionsItemSelected(item);
     }
 
-    protected boolean setDisplayHomeAsUp() {
+    protected boolean shouldSetDisplayHomeAsUp() {
         return true;
     }
 

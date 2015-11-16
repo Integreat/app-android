@@ -46,6 +46,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<NavigationAdapter.Na
 
     public void setSelectedIndex(int index) {
         mCurrentPageId = index;
+        notifyDataSetChanged();
     }
 
 

@@ -43,7 +43,7 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
-    protected boolean setDisplayHomeAsUp() {
+    protected boolean shouldSetDisplayHomeAsUp() {
         return true;
     }
 

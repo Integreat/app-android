@@ -186,7 +186,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    protected boolean setDisplayHomeAsUp() {
+    protected boolean shouldSetDisplayHomeAsUp() {
         return false;
     }
 
@@ -227,6 +227,7 @@ public class OverviewActivity extends BaseActivity
         setLanguageButton(data);
     }
 
+
     @SuppressLint("SetTextI18n")
     private void updateLanguageCount() {
         otherLanguageCountTextView.setText("+" + mOtherLanguages.size());
@@ -234,16 +235,20 @@ public class OverviewActivity extends BaseActivity
 
     private void loadLanguage(@NonNull Language language) {
         Page selectedPage = mNavigationAdapter.getSelectedPage();
+        int selectedPageEquivalent = -1;
         if (selectedPage != null) {
             for (AvailableLanguage lang : selectedPage.getAvailableLanguages()) {
                 if (lang.getLoadedLanguage() != null) {
                     if (Objects.equals(lang.getLoadedLanguage().getId(), language.getId())) {
-                        mPrefUtilities.setSelectedPage(lang.getOtherPageId());
+                        selectedPageEquivalent = lang.getOtherPageId();
                         break;
                     }
                 }
             }
         }
+        mPrefUtilities.setSelectedPage(selectedPageEquivalent);
+        mNavigationAdapter.setSelectedIndex(selectedPageEquivalent);
+
         mLanguage = language;
         mPrefUtilities.setLanguage(language);
 
@@ -412,6 +417,11 @@ public class OverviewActivity extends BaseActivity
         });
     }
 
+    @Override
+    public void onSetItemsChanged() {
+        updateDisplayHome();
+    }
+
 
     @Override
     public void onNavigationClicked(@NonNull final Page item) {
@@ -446,6 +456,10 @@ public class OverviewActivity extends BaseActivity
             drawerLayout.closeDrawers();
             return;
         }
+        if (goBackPageOverview()) {
+            return;
+        }
+
         if (getSupportFragmentManager().popBackStackImmediate()) {
             return;
         }
@@ -484,10 +498,16 @@ public class OverviewActivity extends BaseActivity
 
                 updateMenu();
                 break;
+            case android.R.id.home:
+                goBackPageOverview();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean goBackPageOverview() {
+        return mPageOverviewFragment != null && mPageOverviewFragment.goBack();
+    }
 
     private void startWelcome() {
         mPrefUtilities.setLocation(null);
