@@ -12,6 +12,8 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
+
+
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://jitpack.io" }
@@ -30,7 +32,7 @@ android {
         applicationId "augsburg.se.alltagsguide"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 12
+        versionCode 17
         versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

@@ -154,7 +154,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
         String query = "SELECT max(" + CacheHelper.PAGE_MODIFIED + ") FROM " + CacheHelper.TABLE_PAGE + " WHERE " +
                 CacheHelper.PAGE_LANGUAGE + "=" + String.valueOf(mLanguage.getId()) +
                 " AND " + CacheHelper.PAGE_LOCATION + "=" + String.valueOf(mLocation.getId()) +
-                " AND " + CacheHelper.PAGE_STATUS + " NOT IN (" + Helper.quote(PAGE_STATUS_TRASH) + "," + Helper.quote(EventPageResource.PAGE_TYPE_EVENT) + ")";
+                " AND " + CacheHelper.PAGE_TYPE + "=" + Helper.quote(PAGE_TYPE);
         Cursor cursor = mCache.executeRawQuery(query, null);
         if (cursor != null) {
             try {

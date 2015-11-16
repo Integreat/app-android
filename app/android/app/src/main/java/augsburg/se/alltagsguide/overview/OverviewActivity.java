@@ -74,6 +74,9 @@ public class OverviewActivity extends BaseActivity
 
     private static final String LOADING_TYPE_KEY = "FORCED";
 
+    private static final int PAGE_OVERVIEW_INDEX = 0;
+    private static final int EVENT_OVERVIEW_INDEX = 1;
+
     // delay to launch nav drawer item, to allow close animation to play
     private static final long NAVDRAWER_LAUNCH_DELAY = 300;
     private static final String OTHER_LANGUAGES_KEY = "OTHER_LANGUAGE_KEY";
@@ -420,6 +423,7 @@ public class OverviewActivity extends BaseActivity
     @Override
     public void onSetItemsChanged() {
         updateDisplayHome();
+        mViewPager.setCurrentItem(PAGE_OVERVIEW_INDEX);
     }
 
 
@@ -584,14 +588,15 @@ public class OverviewActivity extends BaseActivity
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 1) {
+            if (position == EVENT_OVERVIEW_INDEX) {
                 return EventOverviewFragment.newInstance();
             }
             return PageOverviewFragment.newInstance();
         }
 
+        @Override
         public CharSequence getPageTitle(int position) {
-            if (position == 1) {
+            if (position == EVENT_OVERVIEW_INDEX) {
                 return getResources().getString(R.string.event_list_title);
             }
             return getResources().getString(R.string.information);
@@ -605,14 +610,10 @@ public class OverviewActivity extends BaseActivity
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
-            // save the appropriate reference depending on position
-            switch (position) {
-                case 0:
-                    mPageOverviewFragment = (PageOverviewFragment) createdFragment;
-                    break;
-                case 1:
-                    mEventOverviewFragment = (EventOverviewFragment) createdFragment;
-                    break;
+            if (position == EVENT_OVERVIEW_INDEX) {
+                mEventOverviewFragment = (EventOverviewFragment) createdFragment;
+            } else {
+                mPageOverviewFragment = (PageOverviewFragment) createdFragment;
             }
             return createdFragment;
         }
