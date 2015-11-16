@@ -55,6 +55,10 @@ android {
             applicationId "tuerantuer.app.integreat"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        featureVersion {
+            applicationId "tuerantuer.app.integreat.features"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
     packagingOptions {

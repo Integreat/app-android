@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import augsburg.se.alltagsguide.R;
 
 /**
@@ -33,14 +34,16 @@ public class AppInstructionPageFragment extends ViewPagerAnimationFragment {
 
         tvTitle = (TextView) v.findViewById(R.id.appInstructionFragmentPageTitle);
         tvDescription = (TextView) v.findViewById(R.id.appInstructionFragmentPageDescription);
-        imageIllustration = (ImageView)v.findViewById(R.id.appInstructionFragmentPageImage);
+        imageIllustration = (ImageView) v.findViewById(R.id.appInstructionFragmentPageImage);
 
         invalidate();
         return v;
     }
 
     public void invalidate() {
-        if(tvTitle == null || page == null) return;
+        if (tvTitle == null || page == null) {
+            return;
+        }
         tvTitle.setText(page.getTitle());
         tvDescription.setText(page.getDescription());
         imageIllustration.setImageResource(page.getPictureResource());
@@ -61,14 +64,12 @@ public class AppInstructionPageFragment extends ViewPagerAnimationFragment {
 
     public void setScrollOffset(float scrollOffset) {
         super.setScrollOffset(scrollOffset);
-        if(tvTitle != null) {
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (tvTitle != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 // Animate views on Android >= 3
                 tvTitle.setTranslationX(scrollOffset * px2dp(300));
                 tvDescription.setTranslationX(scrollOffset * px2dp(150));
             }
-
         }
     }
 

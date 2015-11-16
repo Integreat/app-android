@@ -1,44 +1,43 @@
 package augsburg.se.alltagsguide.start;
 
 import android.Manifest;
-import android.content.Intent;
-import android.os.Build;
-import android.support.v4.app.*;
 import android.content.Context;
-import android.support.v4.content.IntentCompat;
-import android.support.v4.content.Loader;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.GPSCoordinate;
 import augsburg.se.alltagsguide.network.LocationLoader;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
-import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 import augsburg.se.alltagsguide.views.CurrentPageIndicatorView;
 import roboguice.activity.RoboActionBarActivity;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Amadeus on 06. Nov. 2015.
  */
-public class AppIntroductionActivity extends RoboActionBarActivity implements ViewPager.OnPageChangeListener, View.OnClickListener, LoaderManager.LoaderCallbacks<List<augsburg.se.alltagsguide.common.Location>>,LocationSelectionFragment.OnLocationSelectedListener {
+public class AppIntroductionActivity extends RoboActionBarActivity implements ViewPager.OnPageChangeListener, View.OnClickListener, LoaderManager.LoaderCallbacks<List<augsburg.se.alltagsguide.common.Location>>, LocationSelectionFragment.OnLocationSelectedListener {
     private static final String PREFERENCE_STARTUP_COUNT = "startup_count";
     private static final String LOADING_TYPE_KEY = "FORCED";
     private static final String INSTANCE_STATE_LOCATIONS = "locations";
@@ -71,17 +70,21 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             Serializable loc = savedInstanceState.getSerializable(INSTANCE_STATE_LOCATIONS);
-            if(loc != null) this.locations = (List<augsburg.se.alltagsguide.common.Location>) loc;
+            if (loc != null) {
+                this.locations = (List<augsburg.se.alltagsguide.common.Location>) loc;
+            }
             Serializable gps = savedInstanceState.getSerializable(INSTANCE_STATE_USER_COORDINATE);
-            if(gps != null) this.userLoction = (GPSCoordinate) gps;
+            if (gps != null) {
+                this.userLoction = (GPSCoordinate) gps;
+            }
         }
 
         prefs = new PrefUtilities(this);
 
         if (prefs.getLocation() != null) {
-            if(prefs.getLanguage() == null) {
+            if (prefs.getLanguage() == null) {
                 // location has already been selected, but language is NULL --> directly start LanguageSelectionActivity
                 Intent languageSelectionIntent = new Intent(this, LanguageSelectionActivity.class);
                 startActivity(languageSelectionIntent);
@@ -103,24 +106,30 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
         }
 
         currentPageIndicator = (CurrentPageIndicatorView) findViewById(R.id.appInstructionActivityPageIndicator);
-        container = (LinearLayout)findViewById(R.id.appInstructionActivityContianer);
-        btnNext = (ImageButton)findViewById(R.id.appInstructionActivityPageNext);
-        btnSkip = (Button)findViewById(R.id.appInstructionActivityPageSkip);
+        container = (LinearLayout) findViewById(R.id.appInstructionActivityContianer);
+        btnNext = (ImageButton) findViewById(R.id.appInstructionActivityPageNext);
+        btnSkip = (Button) findViewById(R.id.appInstructionActivityPageSkip);
         viewPager = (ViewPager) findViewById(R.id.appInstructionActivityViewPager);
         viewPager.addOnPageChangeListener(this);
         btnNext.setOnClickListener(this);
         btnSkip.setOnClickListener(this);
         pagerAdapter = new FragmentPagerAdapter(this.getSupportFragmentManager());
         initInstructionPages(savedInstanceState);
-        if(this.locations == null) refreshLocations(LoadingType.NETWORK_OR_DATABASE);
+        if (this.locations == null) {
+            refreshLocations(LoadingType.NETWORK_OR_DATABASE);
+        }
         viewPager.setAdapter(pagerAdapter);
-        if(savedInstanceState != null) viewPager.setCurrentItem(savedInstanceState.getInt(INSTANCE_STATE_VIEW_PAGER_POSITION), false);
+        if (savedInstanceState != null) {
+            viewPager.setCurrentItem(savedInstanceState.getInt(INSTANCE_STATE_VIEW_PAGER_POSITION), false);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // Don't call super so that the we still have a reference to the fragments after an orientation change
-        if(locations != null) outState.putSerializable(INSTANCE_STATE_LOCATIONS, new ArrayList<augsburg.se.alltagsguide.common.Location>(locations));
+        if (locations != null) {
+            outState.putSerializable(INSTANCE_STATE_LOCATIONS, new ArrayList<>(locations));
+        }
         outState.putSerializable(INSTANCE_STATE_USER_COORDINATE, this.userLoction);
         outState.putInt(INSTANCE_STATE_VIEW_PAGER_POSITION, this.viewPager.getCurrentItem());
         outState.putString(INSTANCE_STATE_SEARCH, this.locationSelectionFragment.getSearchString());
@@ -161,19 +170,22 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
         this.locationSelectionFragment.setUsersLocation(userLoction);
         this.locationSelectionFragment.setAddPadding(true);
         this.locationSelectionFragment.setOnLocationSelectedListener(this);
-        this.locationSelectionFragment.setLocations(this.locations);
+        this.locationSelectionFragment.setLocations(locations);
         this.locationSelectionFragment.setShowTitles(true);
         this.locationSelectionFragment.setShowSearch(true);
-        if(savedInstanceState != null) this.locationSelectionFragment.setSearchString(savedInstanceState.getString(INSTANCE_STATE_SEARCH));
+        if (savedInstanceState != null) {
+            this.locationSelectionFragment.setSearchString(savedInstanceState.getString(INSTANCE_STATE_SEARCH));
+        }
 
-        if(this.locations != null) this.locationSelectionFragment.setLocations(this.locations);
-
+        if (this.locations != null) {
+            this.locationSelectionFragment.setLocations(this.locations);
+        }
 
         fragments = new ArrayList<>();
         fragments.add(fragment1);
         fragments.add(fragment2);
         fragments.add(fragment3);
-        fragments.add(this.locationSelectionFragment);
+        fragments.add(locationSelectionFragment);
         pagerAdapter.setFragments(fragments);
         currentPageIndicator.setPagesCount(fragments.size());
     }
@@ -183,7 +195,9 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
             return false;
         } else {
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            userLoction = GPSCoordinate.fromLocation(location);
+            if (location != null) {
+                userLoction = GPSCoordinate.fromLocation(location);
+            }
             return true;
         }
     }
@@ -212,19 +226,21 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
 
 
         // Change background color depending on scroll position
-        int bg = interpolateColor(positionOffset, COLORS[position], COLORS[position+1]);
+        int bg = interpolateColor(positionOffset, COLORS[position], COLORS[position + 1]);
         container.setBackgroundColor(bg);
 
         // For the animation of views of the fragments, give them their scroll position
         fragments.get(position).setScrollOffset(-positionOffset);
-        if(position+1 < fragments.size()) fragments.get(position+1).setScrollOffset(1-positionOffset);
+        if (position + 1 < fragments.size()) {
+            fragments.get(position + 1).setScrollOffset(1 - positionOffset);
+        }
 
         // If the users scrolls to the last item -> hide skip & next-buttons
-        if(position == fragments.size()-2 && Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            btnSkip.setAlpha(1-positionOffset);
-            btnNext.setAlpha(1-positionOffset);
+        if (position == fragments.size() - 2 && Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            btnSkip.setAlpha(1 - positionOffset);
+            btnNext.setAlpha(1 - positionOffset);
         }
-        if(position == fragments.size()-1) {
+        if (position == fragments.size() - 1) {
             btnSkip.setVisibility(View.INVISIBLE);
             btnNext.setVisibility(View.INVISIBLE);
         } else {
@@ -252,20 +268,20 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
         int endR = (endValue >> 16) & 0xff;
         int endG = (endValue >> 8) & 0xff;
         int endB = endValue & 0xff;
-        return (int)((startA + (int)(fraction * (endA - startA))) << 24) |
-                (int)((startR + (int)(fraction * (endR - startR))) << 16) |
-                (int)((startG + (int)(fraction * (endG - startG))) << 8) |
-                (int)((startB + (int)(fraction * (endB - startB))));
+        return ((startA + (int) (fraction * (endA - startA))) << 24) |
+                ((startR + (int) (fraction * (endR - startR))) << 16) |
+                ((startG + (int) (fraction * (endG - startG))) << 8) |
+                ((startB + (int) (fraction * (endB - startB))));
     }
 
     @Override
     public void onClick(View v) {
-        if(v == btnNext) {
-            if(viewPager.getCurrentItem() < pagerAdapter.getCount()-1) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem()+1, true);
+        if (v == btnNext) {
+            if (viewPager.getCurrentItem() < pagerAdapter.getCount() - 1) {
+                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
             }
-        } else if(v == btnSkip) {
-            viewPager.setCurrentItem(fragments.size()-1, true);
+        } else if (v == btnSkip) {
+            viewPager.setCurrentItem(fragments.size() - 1, true);
         }
     }
 
@@ -277,8 +293,10 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
 
     @Override
     public void onLoadFinished(Loader<List<augsburg.se.alltagsguide.common.Location>> loader, List<augsburg.se.alltagsguide.common.Location> data) {
-        this.locations = data;
-        if(this.locationSelectionFragment != null) this.locationSelectionFragment.setLocations(this.locations);
+        locations = data;
+        if (locationSelectionFragment != null) {
+            locationSelectionFragment.setLocations(this.locations);
+        }
     }
 
     @Override
@@ -289,7 +307,6 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
     @Override
     public void onLocationSelected(augsburg.se.alltagsguide.common.Location location) {
         prefs.setLocation(location);
-
         Intent intent = new Intent(this, LanguageSelectionActivity.class);
         startActivity(intent);
     }
@@ -299,7 +316,6 @@ public class AppIntroductionActivity extends RoboActionBarActivity implements Vi
         refreshLocations(LoadingType.FORCE_NETWORK);
     }
 }
-
 
 
 class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
@@ -325,7 +341,9 @@ class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        if(getFragments() == null) return 0;
+        if (getFragments() == null) {
+            return 0;
+        }
         return getFragments().size();
     }
 }

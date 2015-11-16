@@ -113,7 +113,9 @@ public class LocationSelectionActivity extends BaseActivity implements LocationS
             return false;
         } else {
             android.location.Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            userLocation = GPSCoordinate.fromLocation(location);
+            if (location != null) {
+                userLocation = GPSCoordinate.fromLocation(location);
+            }
             return true;
         }
     }
