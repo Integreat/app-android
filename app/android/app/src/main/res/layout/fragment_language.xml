@@ -20,6 +20,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/primary"
                 tools:context="augsburg.se.alltagsguide.start.LanguageFragment">
 
     <RelativeLayout
@@ -36,7 +37,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:padding="10dp"
-            android:textSize="?attr/font_medium"
+            android:textSize="?attr/font_large"
             tools:text="Augsburg"/>
     </RelativeLayout>
 

@@ -61,7 +61,7 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
     public void onBindViewHolder(LocationViewHolder holder, int position) {
         final Location location = get(position);
         holder.title.setText(location.getName());
-        mPicasso.load(location.getIcon())
+        mPicasso.load(location.getCityImage())
                 .placeholder(R.drawable.icon_location_loading)
                 .error(R.drawable.icon_location_loading_error)
                 .fit()

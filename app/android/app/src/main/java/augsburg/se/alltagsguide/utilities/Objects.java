@@ -54,4 +54,8 @@ public class Objects {
         }
         return builder.toString();
     }
+
+    public static boolean containsIgnoreCase(String stringA, String stringB) {
+        return stringA != null && (stringB == null || stringA.toLowerCase().contains(stringB.toLowerCase()));
+    }
 }

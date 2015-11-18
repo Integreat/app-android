@@ -47,4 +47,5 @@
     <string name="preference_category_general">نمای کلی</string>
     <string name="search_title">جستجو</string>
     <string name="single_columns">ستون</string>
+    <string name="location_search_text">البحث عن مكان</string>
 </resources>

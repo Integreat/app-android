@@ -162,4 +162,8 @@ public class Location implements Serializable, Newer<Location> {
         float longitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LONGITUDE));
         return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
     }
+
+    public String getSearchString() {
+        return mName + " " + mDescription;
+    }
 }

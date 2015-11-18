@@ -15,20 +15,50 @@
   ~ along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="augsburg.se.alltagsguide.start.LocationFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/primary"
+              android:orientation="vertical"
+              tools:context="augsburg.se.alltagsguide.start.LocationFragment">
 
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/appInstructionFragmentPageSearchInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/location_search_text"
+        android:textColorHint="@android:color/white">
+
+        <EditText
+            android:id="@+id/locationSelectionSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawablePadding="16dp"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:textColor="@android:color/white"/>
+
+    </android.support.design.widget.TextInputLayout>
 
     <com.malinskiy.superrecyclerview.SuperRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginStart="10dp"
         app:layout_empty="@layout/locations_empty_view"
         app:recyclerClipToPadding="false"
         app:recyclerPadding="5dp"
         app:scrollbarStyle="insideInset"/>
-</RelativeLayout>
+</LinearLayout>
