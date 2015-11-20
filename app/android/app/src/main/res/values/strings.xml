@@ -1,3 +1,20 @@
+<!--
+  ~ This file is part of Integreat.
+  ~
+  ~ Integreat is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Integreat is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="app_name" translatable="false">Integreat</string>
     <string name="refguide" translatable="false">Integreat %s</string>
@@ -45,4 +62,5 @@
     <string name="location_fragment_subtitle" translatable="false">Where are you?</string>
     <string name="no_other_languages_available_page">No other languages available for this article.</string>
     <string name="no_other_languages_available_location">No other language available.</string>
+    <string name="location_search_text">Search for a location</string>
 </resources>

@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.utilities.ui;
 
 import android.annotation.SuppressLint;
@@ -129,15 +146,24 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         } else {
             descriptionView.loadUrl("about:blank");
         }
-        descriptionView.loadData(content, "text/html; charset=utf-8", "utf-8");
-        //descriptionView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8", "utf-8", null);
+        // webview bug android versions 2.3.X
+        // http://stackoverflow.com/a/8162828/1484047
+        if ("2.3".equals(Build.VERSION.RELEASE)) {
+            descriptionView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8", "utf-8", null);
+        } else {
+            descriptionView.loadData(content, "text/html; charset=utf-8", "utf-8");
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebView() {
         descriptionView.setWebViewClient(new MyWebViewClient(this));
-        descriptionView.getSettings().setJavaScriptEnabled(true);
-        descriptionView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
+        // javascript broken bug android versions 2.3.X
+        if (!"2.3".equals(Build.VERSION.RELEASE)) {
+            descriptionView.getSettings().setJavaScriptEnabled(true);
+            descriptionView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        }
         descriptionView.getSettings().setDefaultTextEncodingName("utf-8");
 
         setFontSize();
@@ -228,7 +254,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         return super.onOptionsItemSelected(item);
     }
 
-    protected boolean setDisplayHomeAsUp() {
+    protected boolean shouldSetDisplayHomeAsUp() {
         return true;
     }
 

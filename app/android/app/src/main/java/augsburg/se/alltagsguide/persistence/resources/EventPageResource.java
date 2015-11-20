@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.persistence.resources;
 
 import android.content.ContentValues;
@@ -181,7 +198,7 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
         String query = "SELECT max(" + CacheHelper.PAGE_MODIFIED + ") FROM " + CacheHelper.TABLE_PAGE + " WHERE " +
                 CacheHelper.PAGE_LANGUAGE + "=" + String.valueOf(mLanguage.getId()) +
                 " AND " + CacheHelper.PAGE_LOCATION + "=" + String.valueOf(mLocation.getId()) +
-                " AND " + CacheHelper.PAGE_STATUS + "=" + Helper.quote(PAGE_TYPE_EVENT);
+                " AND " + CacheHelper.PAGE_TYPE + "=" + Helper.quote(PAGE_TYPE_EVENT);
         Cursor cursor = mCache.executeRawQuery(query, null);
         if (cursor != null) {
             try {

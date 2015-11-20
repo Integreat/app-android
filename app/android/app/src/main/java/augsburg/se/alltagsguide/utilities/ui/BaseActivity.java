@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.utilities.ui;
 
 import android.content.Intent;
@@ -47,13 +64,11 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         super.setContentView(layoutResID);
         mToolbar = (Toolbar) super.findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(setDisplayHomeAsUp());
-        }
+        updateDisplayHome();
         setLastColor();
         updateTextViews();
     }
+
 
     private void updateTextViews() {
         if (toolbarSubTitleTextView != null) {
@@ -68,8 +83,14 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         }
     }
 
+    protected void updateDisplayHome() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(shouldSetDisplayHomeAsUp());
+        }
+    }
 
-    protected boolean setDisplayHomeAsUp() {
+    protected boolean shouldSetDisplayHomeAsUp() {
         return false;
     }
 
@@ -142,9 +163,8 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         oldStatusBarColor = secondaryColor;
     }
 
-    private
     @ColorInt
-    int alpha(@ColorInt int color) {
+    private int alpha(@ColorInt int color) {
         int alpha = Math.round(Color.alpha(color) * 0.85f);
         int red = Color.red(color);
         int green = Color.green(color);
