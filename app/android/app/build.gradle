@@ -36,7 +36,6 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -44,15 +43,36 @@ android {
     dexOptions {
         jumboMode true
     }
+    def versionPropsFile = file('version.properties')
 
-    defaultConfig {
-        applicationId "augsburg.se.alltagsguide"
-        minSdkVersion 9
-        targetSdkVersion 23
-        versionCode 19
-        versionName "1.0.3"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def versionMajor = 1
+        def versionMinor = 0
+        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+        def version_Code = versionProps['VERSION_CODE'].toInteger() + 1
+
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
+        versionProps['VERSION_CODE'] = version_Code.toString()
+
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        defaultConfig {
+            applicationId "augsburg.se.alltagsguide"
+            versionCode version_Code
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}"
+            minSdkVersion 9
+            targetSdkVersion 23
+            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+            setProperty("archivesBaseName", "integreat-app-$versionName")
+        }
+    } else {
+        throw new GradleException("Could not read version.properties!")
     }
+
+
     def location = ''
     buildTypes {
         release {
