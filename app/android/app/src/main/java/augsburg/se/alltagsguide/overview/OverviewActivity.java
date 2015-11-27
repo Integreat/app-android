@@ -213,11 +213,13 @@ public class OverviewActivity extends BaseActivity
 
     private void setLanguageButton(@NonNull List<Language> others) {
         mOtherLanguages = others;
-        mPicasso.load(mLanguage.getIconPath())
-                .placeholder(R.drawable.icon_language_loading)
-                .error(R.drawable.icon_language_loading_error)
-                .fit()
-                .into(circleImageView);
+        if (!"".equals(mLanguage.getIconPath())) {
+            mPicasso.load(mLanguage.getIconPath())
+                    .placeholder(R.drawable.icon_language_loading)
+                    .error(R.drawable.icon_language_loading_error)
+                    .fit()
+                    .into(circleImageView);
+        }
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

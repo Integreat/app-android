@@ -33,6 +33,7 @@ import java.util.List;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
+import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 
 /**
@@ -61,11 +62,15 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
     public void onBindViewHolder(LocationViewHolder holder, int position) {
         final Location location = get(position);
         holder.title.setText(location.getName());
-        mPicasso.load(location.getCityImage())
-                .placeholder(R.drawable.icon_location_loading)
-                .error(R.drawable.icon_location_loading_error)
-                .fit()
-                .into(holder.image);
+        if (!Objects.isNullOrEmpty(location.getCityImage())) {
+            mPicasso.load(location.getCityImage())
+                    .placeholder(R.drawable.icon_location_loading)
+                    .error(R.drawable.icon_location_loading_error)
+                    .fit()
+                    .into(holder.image);
+        } else {
+            mPicasso.load(R.drawable.icon_location_loading);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

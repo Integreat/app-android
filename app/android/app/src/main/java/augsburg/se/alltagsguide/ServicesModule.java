@@ -115,7 +115,7 @@ public class ServicesModule extends AbstractModule {
             public List<Page> getPages(@NonNull @Path("language") Language language, @NonNull @Path("location") Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getPages(language, location, updateTime);
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
@@ -126,7 +126,7 @@ public class ServicesModule extends AbstractModule {
             public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getEventPages(language, location, updateTime);
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
@@ -137,7 +137,7 @@ public class ServicesModule extends AbstractModule {
             public List<Location> getAvailableLocations() {
                 try {
                     return service.getAvailableLocations();
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
@@ -148,7 +148,7 @@ public class ServicesModule extends AbstractModule {
             public List<Language> getAvailableLanguages(@NonNull Location location) {
                 try {
                     return service.getAvailableLanguages(location);
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
