@@ -66,7 +66,7 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
             mPicasso.load(location.getCityImage())
                     .placeholder(R.drawable.icon_location_loading)
                     .error(R.drawable.icon_location_loading_error)
-                    .fit()
+                    .fit().centerCrop()
                     .into(holder.image);
         } else {
             mPicasso.load(R.drawable.icon_location_loading);
