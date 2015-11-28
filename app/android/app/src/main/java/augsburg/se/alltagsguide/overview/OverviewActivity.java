@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -89,6 +90,7 @@ public class OverviewActivity extends BaseActivity
         EventOverviewFragment.OnEventPageFragmentInteractionListener,
         BaseFragment.OnBaseFragmentInteractionListener,
         NavigationAdapter.OnNavigationSelected {
+    private static final String SAVE_INSTANCE_STATE_NAVIGATION_DRAWER_OPEN = "nav_drawer_open";
 
     private static final String LOADING_TYPE_KEY = "FORCED";
 
@@ -156,6 +158,8 @@ public class OverviewActivity extends BaseActivity
 
     private Handler mHandler;
 
+    private boolean openNavDrawerOnStart;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,6 +180,16 @@ public class OverviewActivity extends BaseActivity
         });
         initPager();
         initNavigationDrawer();
+        restoreInstanceState(savedInstanceState);
+    }
+
+    public void restoreInstanceState(Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            if(savedInstanceState.getBoolean(SAVE_INSTANCE_STATE_NAVIGATION_DRAWER_OPEN, false)) {
+                drawerLayout.openDrawer( navigationView);
+                this.openNavDrawerOnStart = true;
+            }
+        }
     }
 
     @Override
@@ -434,7 +448,11 @@ public class OverviewActivity extends BaseActivity
             @Override
             public void run() {
                 mNavigationAdapter.setPages(pages);
-                drawerLayout.closeDrawers();
+                if(!openNavDrawerOnStart) {
+                    drawerLayout.closeDrawers();
+                } else {
+                    openNavDrawerOnStart = false;
+                }
                 stopLoading();
             }
         });
@@ -604,6 +622,7 @@ public class OverviewActivity extends BaseActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(OTHER_LANGUAGES_KEY, new ArrayList<>(mOtherLanguages));
+        outState.putBoolean(SAVE_INSTANCE_STATE_NAVIGATION_DRAWER_OPEN, drawerLayout.isDrawerOpen(GravityCompat.START));
         super.onSaveInstanceState(outState);
     }
 
