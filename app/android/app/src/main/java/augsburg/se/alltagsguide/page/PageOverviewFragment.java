@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.page;
 
 import android.content.Context;
@@ -128,6 +145,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
                 return;
             }
         }
+        refresh(LoadingType.FORCE_DATABASE);
         refresh(LoadingType.NETWORK_OR_DATABASE);
     }
 
@@ -174,12 +192,14 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     public Loader<List<Page>> onCreateLoader(int id, Bundle args) {
         LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        mRecyclerView.getSwipeToRefresh().setRefreshing(true);
         return new PagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Page>> loader, final List<Page> pages) {
         pagesLoaded(pages);
+        mRecyclerView.getSwipeToRefresh().setRefreshing(false);
     }
 
     private void pagesLoaded(List<Page> pages) {
@@ -218,6 +238,7 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);
         }
+        mListener.onSetItemsChanged();
     }
 
 
@@ -250,10 +271,25 @@ public class PageOverviewFragment extends BaseFragment implements SwipeRefreshLa
         super.onSaveInstanceState(outState);
     }
 
+    public boolean goBack() {
+        if (canGoBack()) {
+            mPrefUtilities.setSelectedPage(-1);
+            indexUpdated();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean canGoBack() {
+        return mPrefUtilities.getSelectedPageId() != -1;
+    }
+
     public interface OnPageFragmentInteractionListener {
         void onOpenPage(Page page);
 
         void onPagesLoaded(List<Page> pages);
+
+        void onSetItemsChanged();
     }
 
 }

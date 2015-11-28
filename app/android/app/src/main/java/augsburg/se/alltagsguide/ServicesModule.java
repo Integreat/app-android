@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide;
 
 import android.content.Context;
@@ -98,7 +115,7 @@ public class ServicesModule extends AbstractModule {
             public List<Page> getPages(@NonNull @Path("language") Language language, @NonNull @Path("location") Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getPages(language, location, updateTime);
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
@@ -109,7 +126,7 @@ public class ServicesModule extends AbstractModule {
             public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getEventPages(language, location, updateTime);
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
@@ -120,7 +137,7 @@ public class ServicesModule extends AbstractModule {
             public List<Location> getAvailableLocations() {
                 try {
                     return service.getAvailableLocations();
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }
@@ -131,7 +148,7 @@ public class ServicesModule extends AbstractModule {
             public List<Language> getAvailableLanguages(@NonNull Location location) {
                 try {
                     return service.getAvailableLanguages(location);
-                } catch (RetrofitError e) {
+                } catch (Exception e) {
                     Ln.e(e);
                     return new ArrayList<>();
                 }

@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.serialization;
 
 import android.support.annotation.NonNull;
@@ -28,32 +45,11 @@ public class PageSerializer implements JsonDeserializer<List<Page>> {
     }
 
     private List<Page> parsePages(@NonNull final JsonArray jsonPages) {
-        List<Page> rootPages = getPagesByParentId(null, 0, jsonPages);
-        Stack<Page> pagesLeft = new Stack<>();
-        pagesLeft.addAll(rootPages);
-        while (!pagesLeft.isEmpty()) {
-            Page page = pagesLeft.pop();
-            List<Page> subPages = getPagesByParentId(page, page.getId(), jsonPages);
-            page.addSubPages(subPages);
-            for (Page subPage : subPages) {
-                pagesLeft.push(subPage);
-            }
+        List<Page> pages = new ArrayList<>();
+        for(int i=0;i<jsonPages.size();i++) {
+            pages.add(Page.fromJson(jsonPages.get(i).getAsJsonObject()));
         }
-        return rootPages;
-    }
-
-    @NonNull
-    private List<Page> getPagesByParentId(@Nullable final Page parent, final int parentId, @NonNull final JsonArray jsonPages) {
-        final List<Page> result = new ArrayList<>();
-        for (int i = 0; i < jsonPages.size(); i++) {
-            JsonObject jsonPage = jsonPages.get(i).getAsJsonObject();
-            if (jsonPage.get("parent").getAsInt() == parentId) {
-                Page page = Page.fromJson(jsonPage);
-                page.setParent(parent);
-                result.add(page);
-            }
-        }
-        return result;
+        return pages;
     }
 
     final int INDENTS_PER_LEVEL = 4;

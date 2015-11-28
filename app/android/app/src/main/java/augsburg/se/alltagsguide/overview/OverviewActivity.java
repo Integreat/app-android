@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.overview;
 
 import android.annotation.SuppressLint;
@@ -22,6 +39,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,6 +91,9 @@ public class OverviewActivity extends BaseActivity
         NavigationAdapter.OnNavigationSelected {
 
     private static final String LOADING_TYPE_KEY = "FORCED";
+
+    private static final int PAGE_OVERVIEW_INDEX = 0;
+    private static final int EVENT_OVERVIEW_INDEX = 1;
 
     // delay to launch nav drawer item, to allow close animation to play
     private static final long NAVDRAWER_LAUNCH_DELAY = 300;
@@ -186,17 +207,19 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    protected boolean setDisplayHomeAsUp() {
+    protected boolean shouldSetDisplayHomeAsUp() {
         return false;
     }
 
     private void setLanguageButton(@NonNull List<Language> others) {
         mOtherLanguages = others;
-        mPicasso.load(mLanguage.getIconPath())
-                .placeholder(R.drawable.icon_language_loading)
-                .error(R.drawable.icon_language_loading_error)
-                .fit()
-                .into(circleImageView);
+        if (!"".equals(mLanguage.getIconPath())) {
+            mPicasso.load(mLanguage.getIconPath())
+                    .placeholder(R.drawable.icon_language_loading)
+                    .error(R.drawable.icon_language_loading_error)
+                    .fit()
+                    .into(circleImageView);
+        }
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,6 +230,7 @@ public class OverviewActivity extends BaseActivity
                                     new MaterialDialog.ListCallback() {
                                         @Override
                                         public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                            startLoading();
                                             loadLanguage(mOtherLanguages.get(which));
                                             dialog.cancel();
                                         }
@@ -226,6 +250,7 @@ public class OverviewActivity extends BaseActivity
         setLanguageButton(data);
     }
 
+
     @SuppressLint("SetTextI18n")
     private void updateLanguageCount() {
         otherLanguageCountTextView.setText("+" + mOtherLanguages.size());
@@ -233,20 +258,23 @@ public class OverviewActivity extends BaseActivity
 
     private void loadLanguage(@NonNull Language language) {
         Page selectedPage = mNavigationAdapter.getSelectedPage();
+        int selectedPageEquivalent = -1;
         if (selectedPage != null) {
             for (AvailableLanguage lang : selectedPage.getAvailableLanguages()) {
                 if (lang.getLoadedLanguage() != null) {
                     if (Objects.equals(lang.getLoadedLanguage().getId(), language.getId())) {
-                        mPrefUtilities.setSelectedPage(lang.getOtherPageId());
+                        selectedPageEquivalent = lang.getOtherPageId();
                         break;
                     }
                 }
             }
         }
+        mPrefUtilities.setSelectedPage(selectedPageEquivalent);
+        mNavigationAdapter.setSelectedIndex(selectedPageEquivalent);
+
         mLanguage = language;
         mPrefUtilities.setLanguage(language);
 
-        startLoading();
         if (mPageOverviewFragment != null) {
             mPageOverviewFragment.refresh(LoadingType.NETWORK_OR_DATABASE);
         }
@@ -412,6 +440,12 @@ public class OverviewActivity extends BaseActivity
         });
     }
 
+    @Override
+    public void onSetItemsChanged() {
+        updateDisplayHome();
+        mViewPager.setCurrentItem(PAGE_OVERVIEW_INDEX);
+    }
+
 
     @Override
     public void onNavigationClicked(@NonNull final Page item) {
@@ -446,6 +480,10 @@ public class OverviewActivity extends BaseActivity
             drawerLayout.closeDrawers();
             return;
         }
+        if (goBackPageOverview()) {
+            return;
+        }
+
         if (getSupportFragmentManager().popBackStackImmediate()) {
             return;
         }
@@ -462,6 +500,19 @@ public class OverviewActivity extends BaseActivity
                         OverviewActivity.super.onBackPressed();
                     }
                 }).show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (drawerLayout.isDrawerOpen(navigationView)) {
+                drawerLayout.closeDrawers();
+            } else {
+                drawerLayout.openDrawer(navigationView);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -484,10 +535,16 @@ public class OverviewActivity extends BaseActivity
 
                 updateMenu();
                 break;
+            case android.R.id.home:
+                goBackPageOverview();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean goBackPageOverview() {
+        return mPageOverviewFragment != null && mPageOverviewFragment.goBack();
+    }
 
     private void startLocationSelection() {
         Intent intent = new Intent(this, LocationSelectionActivity.class);
@@ -562,14 +619,15 @@ public class OverviewActivity extends BaseActivity
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 1) {
+            if (position == EVENT_OVERVIEW_INDEX) {
                 return EventOverviewFragment.newInstance();
             }
             return PageOverviewFragment.newInstance();
         }
 
+        @Override
         public CharSequence getPageTitle(int position) {
-            if (position == 1) {
+            if (position == EVENT_OVERVIEW_INDEX) {
                 return getResources().getString(R.string.event_list_title);
             }
             return getResources().getString(R.string.information);
@@ -583,14 +641,10 @@ public class OverviewActivity extends BaseActivity
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Fragment createdFragment = (Fragment) super.instantiateItem(container, position);
-            // save the appropriate reference depending on position
-            switch (position) {
-                case 0:
-                    mPageOverviewFragment = (PageOverviewFragment) createdFragment;
-                    break;
-                case 1:
-                    mEventOverviewFragment = (EventOverviewFragment) createdFragment;
-                    break;
+            if (position == EVENT_OVERVIEW_INDEX) {
+                mEventOverviewFragment = (EventOverviewFragment) createdFragment;
+            } else {
+                mPageOverviewFragment = (PageOverviewFragment) createdFragment;
             }
             return createdFragment;
         }

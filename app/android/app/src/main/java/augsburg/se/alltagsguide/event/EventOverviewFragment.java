@@ -1,3 +1,20 @@
+/*
+ * This file is part of Integreat.
+ *
+ * Integreat is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Integreat is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package augsburg.se.alltagsguide.event;
 
 import android.content.Context;
@@ -5,6 +22,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -12,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.inject.Inject;
+import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,15 +47,16 @@ import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
 import roboguice.inject.InjectView;
 
 /**
- * Created by Daniel-L on 10.10.2015.
+ * Created by Daniel-L
+ * on 10.10.2015
  */
-public class EventOverviewFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<EventPage>> {
+public class EventOverviewFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<EventPage>>, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String EVENT_PAGE_KEY = "EVENT_PAGE_KEY";
     private static final String LOADING_TYPE_KEY = "FORCED";
 
     @InjectView(R.id.recycler_view)
-    private RecyclerView mRecyclerView;
+    private SuperRecyclerView mRecyclerView;
 
     private EventPageAdapter mAdapter;
 
@@ -51,12 +71,14 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     @Override
     public Loader<List<EventPage>> onCreateLoader(int i, Bundle args) {
         LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+        mRecyclerView.getSwipeToRefresh().setRefreshing(true);
         return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override
     public void onLoadFinished(Loader<List<EventPage>> loader, List<EventPage> eventPages) {
         pagesLoaded(eventPages);
+        mRecyclerView.getSwipeToRefresh().setRefreshing(false);
     }
 
     private void pagesLoaded(List<EventPage> eventPages) {
@@ -89,6 +111,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         super.onViewCreated(view, savedInstanceState);
         mLayoutManager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+        mRecyclerView.setRefreshListener(this);
     }
 
     public void refresh(LoadingType type) {
@@ -107,6 +131,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
                 return;
             }
         }
+        refresh(LoadingType.FORCE_DATABASE);
         refresh(LoadingType.NETWORK_OR_DATABASE);
     }
 
@@ -159,6 +184,11 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh(LoadingType.FORCE_NETWORK);
     }
 
     public interface OnEventPageFragmentInteractionListener {
