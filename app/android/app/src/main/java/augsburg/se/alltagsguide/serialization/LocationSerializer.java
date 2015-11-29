@@ -38,6 +38,9 @@ public class LocationSerializer implements JsonDeserializer<List<Location>> {
     @NonNull
     @Override
     public List<Location> deserialize(@NonNull JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (!json.isJsonArray()){
+            return new ArrayList<>();
+        }
         List<Location> locations = parseLocations(json.getAsJsonArray());
         printLocations(locations);
         return locations;

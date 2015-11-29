@@ -41,6 +41,9 @@ public class PageSerializer implements JsonDeserializer<List<Page>> {
 
     @Override
     public List<Page> deserialize(@NonNull JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (!json.isJsonArray()){
+            return new ArrayList<>();
+        }
         return parsePages(json.getAsJsonArray());
     }
 

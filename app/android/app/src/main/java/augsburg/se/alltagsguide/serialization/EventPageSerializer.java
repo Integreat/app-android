@@ -40,6 +40,9 @@ public class EventPageSerializer implements JsonDeserializer<List<EventPage>> {
     @NonNull
     @Override
     public List<EventPage> deserialize(@NonNull JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (!json.isJsonArray()){
+            return new ArrayList<>();
+        }
         return parsePages(json.getAsJsonArray());
     }
 
