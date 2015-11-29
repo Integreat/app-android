@@ -20,6 +20,10 @@ package augsburg.se.alltagsguide.utilities.ui;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
+
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
+import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +33,7 @@ import augsburg.se.alltagsguide.utilities.Newer;
 import roboguice.RoboGuice;
 
 
-public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item extends Newer<Item>> extends RecyclerView.Adapter<VH> {
+public abstract class BaseAdapter<VH extends UltimateRecyclerviewViewHolder, Item extends Newer<Item>> extends UltimateViewAdapter<VH> {
 
     @NonNull private List<Item> mItems;
     @NonNull protected Context mContext;
@@ -42,6 +46,24 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         setItems(items);
     }
 
+    @Override
+    public int getAdapterItemCount() {
+        return mItems.size();
+    }
+
+    @Override
+    public long generateHeaderId(int position) {
+        return -1;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
+    }
 
     private void applyAndAnimateRemovals(@NonNull List<Item> newModels) {
         for (int i = mItems.size() - 1; i >= 0; i--) {
@@ -99,27 +121,16 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         }
     }
 
-    @NonNull
-    public Item removeItem(int position) {
-        final Item model = mItems.remove(position);
-        notifyItemRemoved(position);
-        return model;
+    public void removeItem(int position) {
+        remove(mItems, position);
     }
 
-    public void addItem(int position, Item model) {
-        mItems.add(position, model);
-        notifyItemInserted(position);
+    public void addItem(int position, @NonNull Item model) {
+        insert(mItems, model, position);
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final Item model = mItems.remove(fromPosition);
-        mItems.add(toPosition, model);
-        notifyItemMoved(fromPosition, toPosition);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mItems.size();
+        swapPositions(mItems, fromPosition, toPosition);
     }
 
     @NonNull
@@ -133,5 +144,4 @@ public abstract class BaseAdapter<VH extends RecyclerView.ViewHolder, Item exten
         applyAndAnimateAdditions(items);
         applyAndAnimateMovedItems(items);
     }
-
 }

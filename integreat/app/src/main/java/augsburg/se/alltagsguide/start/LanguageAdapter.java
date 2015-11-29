@@ -19,7 +19,6 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -56,8 +56,14 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
         mListener = listener;
     }
 
+
     @Override
-    public LanguageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LanguageViewHolder getViewHolder(View view) {
+        return new LanguageViewHolder(view);
+    }
+
+    @Override
+    public LanguageViewHolder onCreateViewHolder(ViewGroup parent) {
         return new LanguageViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.language_item_view, parent, false));
     }
 
@@ -85,7 +91,7 @@ public class LanguageAdapter extends BaseAdapter<LanguageAdapter.LanguageViewHol
         });
     }
 
-    public class LanguageViewHolder extends RecyclerView.ViewHolder {
+    public class LanguageViewHolder extends UltimateRecyclerviewViewHolder {
         private TextView title;
         private ImageView image;
 

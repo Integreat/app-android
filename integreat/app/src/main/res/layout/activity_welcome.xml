@@ -21,6 +21,7 @@
                                         xmlns:tools="http://schemas.android.com/tools"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
+                                        android:background="@color/primary_dark"
                                         android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -33,7 +34,6 @@
             style="@style/ToolBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize">
 
             <LinearLayout

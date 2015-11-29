@@ -23,13 +23,10 @@
               android:paddingBottom="1dp"
               android:paddingTop="1dp">
 
-    <com.malinskiy.superrecyclerview.SuperRecyclerView
+    <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_empty="@layout/pages_empty_view"
-        app:recyclerClipToPadding="false"
-        app:recyclerPadding="1dp"
-        app:scrollbarStyle="insideInset"/>
+        app:recyclerviewEmptyView="@layout/pages_empty_view"/>
 
 </LinearLayout>

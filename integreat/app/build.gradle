@@ -141,7 +141,7 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.makeramen:roundedimageview:2.2.0'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.malinskiy:superrecyclerview:1.1.1'
+    compile 'com.marshalchen.ultimaterecyclerview:library:0.3.18'
     compile('com.afollestad.material-dialogs:core:0.8.4.0@aar') {
         transitive = true
     }

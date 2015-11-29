@@ -20,7 +20,6 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/primary"
                 tools:context="augsburg.se.alltagsguide.start.LanguageFragment">
 
     <RelativeLayout
@@ -41,13 +40,10 @@
             tools:text="Augsburg"/>
     </RelativeLayout>
 
-    <com.malinskiy.superrecyclerview.SuperRecyclerView
+    <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation"
-        app:layout_empty="@layout/languages_empty_view"
-        app:recyclerClipToPadding="false"
-        app:recyclerPadding="5dp"
-        app:scrollbarStyle="outsideOverlay"/>
+        app:recyclerviewEmptyView="@layout/languages_empty_view"/>
 </RelativeLayout>

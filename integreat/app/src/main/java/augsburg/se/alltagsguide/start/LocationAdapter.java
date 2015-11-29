@@ -19,7 +19,6 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -54,7 +54,12 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
     }
 
     @Override
-    public LocationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LocationViewHolder getViewHolder(View view) {
+        return new LocationViewHolder(view);
+    }
+
+    @Override
+    public LocationViewHolder onCreateViewHolder(ViewGroup parent) {
         return new LocationViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.location_item_view, parent, false));
     }
 
@@ -80,7 +85,7 @@ public class LocationAdapter extends BaseAdapter<LocationAdapter.LocationViewHol
         });
     }
 
-    public class LocationViewHolder extends RecyclerView.ViewHolder {
+    public class LocationViewHolder extends UltimateRecyclerviewViewHolder {
         private TextView title;
         private ImageView image;
 

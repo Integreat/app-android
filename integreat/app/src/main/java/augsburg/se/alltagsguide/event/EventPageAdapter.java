@@ -20,13 +20,13 @@ package augsburg.se.alltagsguide.event;
 import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.ocpsoft.pretty.time.PrettyTime;
 
 import java.text.SimpleDateFormat;
@@ -42,11 +42,10 @@ import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.Objects;
 
-public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentViewHolder, Page> {
+public class EventPageAdapter extends BaseAdapter<EventPageAdapter.ContentViewHolder, Page> {
 
     @NonNull private EventOverviewFragment.OnEventPageFragmentInteractionListener mListener;
     @ColorInt private int mColor;
-    private static final int WITHOUT_IMAGE = 7;
     @NonNull SimpleDateFormat dateFormatTo;
 
     public EventPageAdapter(@NonNull List<EventPage> pages, @NonNull EventOverviewFragment.OnEventPageFragmentInteractionListener listener, @ColorInt int primaryColor, @NonNull Context context) {
@@ -65,36 +64,18 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return WITHOUT_IMAGE;
+    public ContentViewHolder getViewHolder(View view) {
+        return new ContentViewHolder(view);
     }
 
     @Override
-    public BaseContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case WITHOUT_IMAGE:
-                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_event_item, parent, false));
-            default:
-                return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_event_item, parent, false));
-        }
+    public ContentViewHolder onCreateViewHolder(ViewGroup parent) {
+        return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_event_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(BaseContentViewHolder holder, int position) {
+    public void onBindViewHolder(ContentViewHolder contentHolder, int position) {
         final EventPage page = (EventPage) get(position);
-        if (holder instanceof ContentViewHolder) {
-            onBindContentViewHolder((ContentViewHolder) holder, page);
-        } else if (holder instanceof ContentWithImageViewHolder) {
-            onBindTitleViewHolder((ContentWithImageViewHolder) holder, page);
-        }
-    }
-
-    private void onBindTitleViewHolder(ContentWithImageViewHolder titleHolder, EventPage page) {
-        titleHolder.title.setText(page.getTitle());
-    }
-
-
-    private void onBindContentViewHolder(ContentViewHolder contentHolder, final EventPage page) {
         contentHolder.title.setText(page.getTitle());
         String desc = page.getDescription();
         contentHolder.date.setText(dateFormatTo.format(page.getModified()));
@@ -132,23 +113,7 @@ public class EventPageAdapter extends BaseAdapter<EventPageAdapter.BaseContentVi
         }
     }
 
-
-    public class BaseContentViewHolder extends RecyclerView.ViewHolder {
-        public BaseContentViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    public class ContentWithImageViewHolder extends BaseContentViewHolder {
-        TextView title;
-
-        public ContentWithImageViewHolder(View itemView) {
-            super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-        }
-    }
-
-    public class ContentViewHolder extends BaseContentViewHolder {
+    public class ContentViewHolder extends UltimateRecyclerviewViewHolder {
         TextView title;
         TextView description;
         TextView date;

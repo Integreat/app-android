@@ -20,8 +20,8 @@ package augsburg.se.alltagsguide.start;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,7 +31,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     private LanguageAdapter mAdapter;
 
     @InjectView(R.id.recycler_view)
-    private SuperRecyclerView mRecyclerView;
+    private UltimateRecyclerView mRecyclerView;
 
     @InjectView(R.id.city_name)
     private TextView cityTextView;
@@ -99,8 +99,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
 
         int rows = getResources().getInteger(R.integer.grid_rows_welcome);
         mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
-        mRecyclerView.getEmptyView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.primary));
-        mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refresh(LoadingType.FORCE_NETWORK);
@@ -144,7 +143,12 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Language>> loader, List<Language> languages) {
+    public void onLoadFinished(Loader<List<Language>> loader, @NonNull List<Language> languages) {
+        if (languages.isEmpty()){
+            mRecyclerView.showEmptyView();
+        }else{
+            mRecyclerView.hideEmptyView();
+        }
         if (mAdapter == null) {
             mAdapter = new LanguageAdapter(languages, new LanguageAdapter.LanguageClickListener() {
                 @Override
@@ -161,7 +165,7 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mRecyclerView.getSwipeToRefresh().setRefreshing(false);
+                mRecyclerView.setRefreshing(false);
             }
         }, 500);
     }

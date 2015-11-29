@@ -21,7 +21,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -33,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.google.inject.Inject;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +53,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     private LocationAdapter mAdapter;
 
     @InjectView(R.id.recycler_view)
-    private SuperRecyclerView mRecyclerView;
+    private UltimateRecyclerView mRecyclerView;
 
     @InjectView(R.id.locationSelectionSearch)
     private EditText mSearchView;
@@ -95,8 +94,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
 
         int rows = getResources().getInteger(R.integer.grid_rows_welcome);
         mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
-        mRecyclerView.getEmptyView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.primary));
-        mRecyclerView.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refresh(LoadingType.FORCE_NETWORK);
@@ -148,13 +146,18 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mRecyclerView.getSwipeToRefresh().setRefreshing(false);
+                mRecyclerView.setRefreshing(false);
             }
         }, 500);
     }
 
     private void updateAdapter() {
         List<Location> filtered = filterLocations();
+        if (filtered.isEmpty()){
+            mRecyclerView.showEmptyView();
+        }else{
+            mRecyclerView.hideEmptyView();
+        }
         if (mAdapter == null) {
             mAdapter = new LocationAdapter(filtered, new LocationAdapter.LocationClickListener() {
                 @Override

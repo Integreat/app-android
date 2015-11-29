@@ -20,7 +20,6 @@ package augsburg.se.alltagsguide.page;
 import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
@@ -47,8 +47,6 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
 
     private PageOverviewFragment.OnPageFragmentInteractionListener mListener;
     @ColorInt private int mColor;
-    private static final int ENTRY = 7;
-    private static final int TITLE = 42;
 
     @NonNull private SimpleDateFormat dateFormatTo;
     @Inject private Picasso mPicasso;
@@ -64,17 +62,18 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
     }
 
     @Override
-    public ContentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ContentViewHolder getViewHolder(View view) {
+        return new ContentViewHolder(view);
+    }
+
+    @Override
+    public ContentViewHolder onCreateViewHolder(ViewGroup parent) {
         return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(ContentViewHolder holder, int position) {
+    public void onBindViewHolder(ContentViewHolder contentHolder, int position) {
         final Page page = get(position);
-        onBindContentViewHolder(holder, page);
-    }
-
-    private void onBindContentViewHolder(ContentViewHolder contentHolder, final Page page) {
         contentHolder.title.setText(page.getTitle());
         contentHolder.title.setTextColor(mColor);
         String desc = page.getDescription();
@@ -102,7 +101,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
         }
     }
 
-    public class ContentViewHolder extends RecyclerView.ViewHolder {
+    public class ContentViewHolder extends UltimateRecyclerviewViewHolder {
         TextView title;
         TextView description;
         ImageView image;

@@ -23,14 +23,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.inject.Inject;
-import com.malinskiy.superrecyclerview.SuperRecyclerView;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     private static final String LOADING_TYPE_KEY = "FORCED";
 
     @InjectView(R.id.recycler_view)
-    private SuperRecyclerView mRecyclerView;
+    private UltimateRecyclerView mRecyclerView;
 
     private EventPageAdapter mAdapter;
 
@@ -71,14 +70,14 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     @Override
     public Loader<List<EventPage>> onCreateLoader(int i, Bundle args) {
         LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
-        mRecyclerView.getSwipeToRefresh().setRefreshing(true);
+        mRecyclerView.setRefreshing(true);
         return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override
     public void onLoadFinished(Loader<List<EventPage>> loader, List<EventPage> eventPages) {
         pagesLoaded(eventPages);
-        mRecyclerView.getSwipeToRefresh().setRefreshing(false);
+        mRecyclerView.setRefreshing(false);
     }
 
     private void pagesLoaded(List<EventPage> eventPages) {
@@ -111,8 +110,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         super.onViewCreated(view, savedInstanceState);
         mLayoutManager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.getEmptyView().setBackgroundColor(mPrefUtilities.getCurrentColor());
-        mRecyclerView.setRefreshListener(this);
+        mRecyclerView.setDefaultOnRefreshListener(this);
+        mRecyclerView.setBackgroundColor(mPrefUtilities.getCurrentColor());
     }
 
     public void refresh(LoadingType type) {
@@ -139,7 +138,8 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event_pages, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_event_pages, container, false);
+        return rootView;
     }
 
 
@@ -176,6 +176,12 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     }
 
     private void setOrInitPageAdapter(@NonNull List<EventPage> eventPages) {
+        if (eventPages.isEmpty()){
+            mRecyclerView.showEmptyView();
+            eventPages = new ArrayList<>();
+        }else{
+            mRecyclerView.hideEmptyView();
+        }
         if (mAdapter == null) {
             mAdapter = new EventPageAdapter(eventPages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
         } else {
