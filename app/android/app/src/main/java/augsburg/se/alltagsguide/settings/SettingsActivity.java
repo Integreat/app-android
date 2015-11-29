@@ -60,6 +60,14 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, OverviewActivity.class);
+        intent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     protected boolean shouldSetDisplayHomeAsUp() {
         return true;
     }
