@@ -60,6 +60,8 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
     @NonNull private DatabaseCache mCache;
     @NonNull private PrefUtilities mPreferences;
 
+    private static final long OFFSET_EVENT_VISIBLE = 1000 * 60 * 60 * 24 * 3; //Three days offset
+
     /**
      * Creation factory
      */
@@ -112,6 +114,7 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
         builder.appendWhere(" AND " + CacheHelper.PAGE_LOCATION + " = " + String.valueOf(mLocation.getId()));
         builder.appendWhere(" AND " + CacheHelper.PAGE_STATUS + " != " + Helper.quote(PageResource.PAGE_STATUS_TRASH));
         builder.appendWhere(" AND " + CacheHelper.PAGE_TYPE + " = " + Helper.quote(EventPageResource.PAGE_TYPE_EVENT));
+        builder.appendWhere(" AND " + CacheHelper.EVENT_END + " > " + String.valueOf(new Date().getTime() - OFFSET_EVENT_VISIBLE));
         return builder;
     }
 
