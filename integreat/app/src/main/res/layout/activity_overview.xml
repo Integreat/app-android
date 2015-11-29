@@ -140,6 +140,8 @@
                     android:background="#fff"
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp"
+                    android:textSize="?attr/font_large"
+                    android:textStyle="bold"
                     android:textColor="#fff"/>
         </android.support.v4.view.ViewPager>
     </LinearLayout>
