@@ -33,15 +33,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;

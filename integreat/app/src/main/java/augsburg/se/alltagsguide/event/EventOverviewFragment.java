@@ -19,20 +19,11 @@ package augsburg.se.alltagsguide.event;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.inject.Inject;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,57 +31,37 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.EventPage;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.EventPagesLoader;
+import augsburg.se.alltagsguide.utilities.BaseListFragment;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
-import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
-import roboguice.inject.InjectView;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 
 /**
  * Created by Daniel-L
  * on 10.10.2015
  */
-public class EventOverviewFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<EventPage>>, SwipeRefreshLayout.OnRefreshListener {
-
-    private static final String EVENT_PAGE_KEY = "EVENT_PAGE_KEY";
-    private static final String LOADING_TYPE_KEY = "FORCED";
-
-    @InjectView(R.id.recycler_view)
-    private UltimateRecyclerView mRecyclerView;
-
+public class EventOverviewFragment extends BaseListFragment<EventPage> {
     private EventPageAdapter mAdapter;
 
-    @Inject
-    private PrefUtilities mPrefUtilities;
-
     private OnEventPageFragmentInteractionListener mListener;
-    private StaggeredGridLayoutManager mLayoutManager;
 
-    @NonNull private List<EventPage> mEventPages = new ArrayList<>();
-
-    @Override
-    public Loader<List<EventPage>> onCreateLoader(int i, Bundle args) {
-        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
-        mRecyclerView.setRefreshing(true);
+    public Loader<List<EventPage>> getLoader(LoadingType loadingType) {
         return new EventPagesLoader(getActivity(), mPrefUtilities.getLocation(), mPrefUtilities.getLanguage(), loadingType);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<EventPage>> loader, List<EventPage> eventPages) {
-        pagesLoaded(eventPages);
-        mRecyclerView.setRefreshing(false);
+    public void loaded() {
+        mListener.onEventPagesLoaded(mList);
     }
-
-    private void pagesLoaded(List<EventPage> eventPages) {
-        mEventPages = eventPages;
-        setOrInitPageAdapter(eventPages);
-        mListener.onEventPagesLoaded(eventPages);
-    }
-
 
     @Override
-    public void onLoaderReset(Loader<List<EventPage>> loader) {
-
+    public BaseAdapter getOrCreateAdapter(List<EventPage> items) {
+        if (mAdapter == null) {
+            mAdapter = new EventPageAdapter(items, mListener, mPrefUtilities.getCurrentColor(), getActivity());
+        } else {
+            mAdapter.setItems(new ArrayList<Page>(items));
+        }
+        return mAdapter;
     }
 
     public static EventOverviewFragment newInstance() {
@@ -101,46 +72,10 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         // Required empty public constructor
     }
 
-
-    private int getSpanCount() {
-        return getResources().getInteger(R.integer.grid_rows_page);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mLayoutManager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setDefaultOnRefreshListener(this);
-        mRecyclerView.setBackgroundColor(mPrefUtilities.getCurrentColor());
-    }
-
-    public void refresh(LoadingType type) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(LOADING_TYPE_KEY, type);
-        getLoaderManager().restartLoader(0, bundle, this);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            Serializable serializable = savedInstanceState.getSerializable(EVENT_PAGE_KEY);
-            if (serializable != null) {
-                pagesLoaded((ArrayList<EventPage>) serializable);
-                return;
-            }
-        }
-        refresh(LoadingType.FORCE_DATABASE);
-        refresh(LoadingType.NETWORK_OR_DATABASE);
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_event_pages, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.fragment_event_pages, container, false);
     }
 
 
@@ -163,10 +98,10 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
 
     public void filterByText(String filterText) {
         if (Objects.isNullOrEmpty(filterText)) {
-            setOrInitPageAdapter(mEventPages);
+            setOrInitPageAdapter(mList);
         } else {
             List<EventPage> pages = new ArrayList<>();
-            for (EventPage page : mEventPages) {
+            for (EventPage page : mList) {
                 String relevantContent = page.getSearchableString();
                 if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
                     pages.add(page);
@@ -176,46 +111,9 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
         }
     }
 
-    private void setOrInitPageAdapter(@NonNull List<EventPage> eventPages) {
-        if (eventPages.isEmpty()){
-            mRecyclerView.showEmptyView();
-            eventPages = new ArrayList<>();
-        }else{
-            mRecyclerView.hideEmptyView();
-        }
-        if (mAdapter == null) {
-            mAdapter = new EventPageAdapter(eventPages, mListener, mPrefUtilities.getCurrentColor(), getActivity());
-        } else {
-            mAdapter.setItems(new ArrayList<Page>(eventPages));
-        }
-        if (mRecyclerView.getAdapter() == null) {
-            mRecyclerView.setAdapter(mAdapter);
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        refresh(LoadingType.FORCE_NETWORK);
-    }
-
     public interface OnEventPageFragmentInteractionListener {
         void onOpenEventPage(EventPage page);
 
         void onEventPagesLoaded(List<EventPage> pages);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(EVENT_PAGE_KEY, new ArrayList<>(mEventPages));
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void networkStateSwitchedToOnline() {
-        if (mEventPages.isEmpty()) {
-            mRecyclerView.setRefreshing(true);
-            refresh(LoadingType.NETWORK_OR_DATABASE);
-        }
-        Log.d("EventPageOverview", "Network state switched");
     }
 }

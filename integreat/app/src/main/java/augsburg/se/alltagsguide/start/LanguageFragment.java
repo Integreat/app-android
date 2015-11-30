@@ -19,20 +19,11 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.google.inject.Inject;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.List;
 
@@ -40,29 +31,20 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.LanguageLoader;
+import augsburg.se.alltagsguide.utilities.BaseListFragment;
 import augsburg.se.alltagsguide.utilities.LoadingType;
-import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import roboguice.inject.InjectView;
 
 
-public class LanguageFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Language>> {
+public class LanguageFragment extends BaseListFragment<Language> {
     private static final String ARG_LOCATION = "location";
-    private static final String LOADING_TYPE_KEY = "FORCED";
     private Location mLocation;
     private OnLanguageFragmentInteractionListener mListener;
     private LanguageAdapter mAdapter;
 
-    @InjectView(R.id.recycler_view)
-    private UltimateRecyclerView mRecyclerView;
-
     @InjectView(R.id.city_name)
     private TextView cityTextView;
-
-    private List<Language> mLanguages;
-
-    @Inject
-    private PrefUtilities mPrefUtilities;
 
     public static LanguageFragment newInstance(Location location) {
         LanguageFragment fragment = new LanguageFragment();
@@ -99,28 +81,8 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
         setTitle(getString(R.string.language_fragment_title));
         setSubTitle(getString(R.string.language_fragment_subtitle));
         cityTextView.setText(mLocation.getName());
-
-        int rows = getResources().getInteger(R.integer.grid_rows_welcome);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
-        mRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh(LoadingType.FORCE_NETWORK);
-            }
-        });
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        refresh(LoadingType.NETWORK_OR_DATABASE);
-    }
-
-    public void refresh(LoadingType type) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(LOADING_TYPE_KEY, type);
-        getLoaderManager().restartLoader(0, bundle, this);
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -140,38 +102,18 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public Loader<List<Language>> onCreateLoader(int i, Bundle args) {
-        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+    public int getRows() {
+        return getResources().getInteger(R.integer.grid_rows_welcome);
+    }
+
+    @Override
+    public Loader<List<Language>> getLoader(LoadingType loadingType) {
         return new LanguageLoader(getActivity(), mLocation, loadingType);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Language>> loader, @NonNull List<Language> languages) {
-        mLanguages = languages;
-        if (mLanguages.isEmpty()) {
-            mRecyclerView.showEmptyView();
-        } else {
-            mRecyclerView.hideEmptyView();
-        }
-        if (mAdapter == null) {
-            mAdapter = new LanguageAdapter(mLanguages, new LanguageAdapter.LanguageClickListener() {
-                @Override
-                public void onLanguageClick(Language language) {
-                    mListener.onLanguageSelected(mLocation, language);
-                }
-            }, getActivity());
-        } else {
-            mAdapter.setItems(mLanguages);
-        }
-        if (mRecyclerView.getAdapter() == null) {
-            mRecyclerView.setAdapter(mAdapter);
-        }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRecyclerView.setRefreshing(false);
-            }
-        }, 500);
+    public void loaded() {
+
     }
 
     @Override
@@ -183,11 +125,17 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public void networkStateSwitchedToOnline() {
-        if (mLanguages.isEmpty()) {
-            mRecyclerView.setRefreshing(true);
-            refresh(LoadingType.NETWORK_OR_DATABASE);
+    public BaseAdapter getOrCreateAdapter(List<Language> items) {
+        if (mAdapter == null) {
+            mAdapter = new LanguageAdapter(items, new LanguageAdapter.LanguageClickListener() {
+                @Override
+                public void onLanguageClick(Language language) {
+                    mListener.onLanguageSelected(mLocation, language);
+                }
+            }, getActivity());
+        } else {
+            mAdapter.setItems(items);
         }
-        Log.d("LanguageFragment", "Network state switched");
+        return mAdapter;
     }
 }

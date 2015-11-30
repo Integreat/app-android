@@ -19,11 +19,8 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.LoaderManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -31,8 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.google.inject.Inject;
-import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,30 +35,20 @@ import java.util.List;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.LocationLoader;
+import augsburg.se.alltagsguide.utilities.BaseListFragment;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
-import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
-import de.greenrobot.event.EventBus;
+import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import roboguice.inject.InjectView;
 
 
-public class LocationFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<Location>>, TextWatcher {
-    private static final String LOADING_TYPE_KEY = "FORCED";
+public class LocationFragment extends BaseListFragment<Location> implements TextWatcher {
     private OnLocationFragmentInteractionListener mListener;
     private LocationAdapter mAdapter;
-
-    @InjectView(R.id.recycler_view)
-    private UltimateRecyclerView mRecyclerView;
 
     @InjectView(R.id.locationSelectionSearch)
     private EditText mSearchView;
 
-    @Inject
-    private PrefUtilities mPrefUtilities;
-
-
-    private List<Location> mLocations;
     private String mFilterText;
 
     public static LocationFragment newInstance() {
@@ -94,27 +79,12 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
         setTitle(getString(R.string.location_fragment_title));
         setSubTitle(getString(R.string.location_fragment_subtitle));
 
-        int rows = getResources().getInteger(R.integer.grid_rows_welcome);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), rows));
-        mRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh(LoadingType.FORCE_NETWORK);
-            }
-        });
         mSearchView.addTextChangedListener(this);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        refresh(LoadingType.NETWORK_OR_DATABASE);
-    }
-
-    public void refresh(LoadingType type) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(LOADING_TYPE_KEY, type);
-        getLoaderManager().restartLoader(0, bundle, this);
+    public int getRows() {
+        return getResources().getInteger(R.integer.grid_rows_welcome);
     }
 
     @Override
@@ -135,44 +105,13 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public Loader<List<Location>> onCreateLoader(int i, Bundle args) {
-        LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
+    public Loader<List<Location>> getLoader(LoadingType loadingType) {
         return new LocationLoader(getActivity(), loadingType);
     }
 
-
     @Override
-    public void onLoadFinished(Loader<List<Location>> loader, List<Location> locations) {
-        mLocations = locations;
-        updateAdapter();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRecyclerView.setRefreshing(false);
-            }
-        }, 500);
-    }
+    public void loaded() {
 
-    private void updateAdapter() {
-        List<Location> filtered = filterLocations();
-        if (filtered.isEmpty()){
-            mRecyclerView.showEmptyView();
-        }else{
-            mRecyclerView.hideEmptyView();
-        }
-        if (mAdapter == null) {
-            mAdapter = new LocationAdapter(filtered, new LocationAdapter.LocationClickListener() {
-                @Override
-                public void onLocationClick(Location location) {
-                    mListener.onLocationSelected(location);
-                }
-            }, getActivity());
-        } else {
-            mAdapter.setItems(filtered);
-        }
-        if (mRecyclerView.getAdapter() == null) {
-            mRecyclerView.setAdapter(mAdapter);
-        }
     }
 
     @Override
@@ -186,7 +125,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         mFilterText = s.toString();
-        updateAdapter();
+        setOrInitPageAdapter(mList);
     }
 
     @Override
@@ -197,15 +136,20 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
         void onLocationSelected(Location location);
     }
 
-    private List<Location> filterLocations() {
+    @Override
+    protected void setOrInitPageAdapter(@NonNull List<Location> elements) {
+        super.setOrInitPageAdapter(filterLocations(elements));
+    }
+
+    private List<Location> filterLocations(List<Location> elements) {
         List<Location> filteredLocations = new ArrayList<>();
-        if (mLocations == null) {
+        if (elements == null) {
             return filteredLocations;
         }
         if (Objects.isNullOrEmpty(mFilterText)) {
-            return mLocations;
+            return elements;
         }
-        for (Location location : mLocations) {
+        for (Location location : elements) {
             if (Objects.containsIgnoreCase(location.getSearchString(), mFilterText)) {
                 filteredLocations.add(location);
             }
@@ -214,10 +158,17 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
-    public void networkStateSwitchedToOnline() {
-        if (mLocations.isEmpty()) {
-            mRecyclerView.setRefreshing(true);
-            refresh(LoadingType.NETWORK_OR_DATABASE);
+    public BaseAdapter getOrCreateAdapter(List<Location> items) {
+        if (mAdapter == null) {
+            mAdapter = new LocationAdapter(items, new LocationAdapter.LocationClickListener() {
+                @Override
+                public void onLocationClick(Location location) {
+                    mListener.onLocationSelected(location);
+                }
+            }, getActivity());
+        } else {
+            mAdapter.setItems(items);
         }
+        return mAdapter;
     }
 }
