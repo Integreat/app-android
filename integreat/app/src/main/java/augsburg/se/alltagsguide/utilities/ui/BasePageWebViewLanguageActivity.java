@@ -18,10 +18,6 @@
 package augsburg.se.alltagsguide.utilities.ui;
 
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -31,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -71,6 +66,8 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
 
     @InjectView(R.id.current_language)
     protected CircleImageView circleImageView;
+
+    private MyWebViewClient myWebViewClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,19 +143,22 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         } else {
             descriptionView.loadUrl("about:blank");
         }
+
         // webview bug android versions 2.3.X
         // http://stackoverflow.com/a/8162828/1484047
         if ("2.3".equals(Build.VERSION.RELEASE)) {
             descriptionView.loadDataWithBaseURL(null, content, "text/html; charset=utf-8", "utf-8", null);
         } else {
-            descriptionView.loadData(content, "text/html; charset=utf-8", "utf-8");
+            myWebViewClient.setContent(content);
+            descriptionView.loadUrl("file:///android_asset/integreat.html");
+            //descriptionView.loadData(content, "text/html; charset=utf-8", "utf-8");
         }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebView() {
-        descriptionView.setWebViewClient(new MyWebViewClient(this));
-
+        myWebViewClient = new MyWebViewClient(this);
+        descriptionView.setWebViewClient(myWebViewClient);
         // javascript broken bug android versions 2.3.X
         if (!"2.3".equals(Build.VERSION.RELEASE)) {
             descriptionView.getSettings().setJavaScriptEnabled(true);
@@ -209,39 +209,8 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         }
     }
 
-    // wraps a div with table-responsive as class around the table
-    private String formatContent(String content) {
-        return content.replaceAll("<table", "<div class='table-responsive'><table class='table'")
-                .replaceAll("</table>", "</table></div>");
-    }
-
-    private String convertContent(String content) throws IOException {
-        InputStream htmlStream = getResources().openRawResource(R.raw.index);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        byte buf[] = new byte[1024];
-        int len;
-        try {
-            while ((len = htmlStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.close();
-            htmlStream.close();
-        } catch (IOException e) {
-            Ln.e(e);
-        }
-        String htmlBase = outputStream.toString();
-        htmlBase = htmlBase.replace("{content}", formatContent(content));
-        Ln.d(htmlBase);
-        return htmlBase;
-    }
-
     protected void loadWebViewData() {
-        try {
-            loadWebViewData(convertContent(mPage.getContent()));
-        } catch (IOException e) {
-            Ln.e(e);
-        }
+        loadWebViewData(mPage.getContent());
     }
 
     @Override
@@ -300,5 +269,4 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         outState.putSerializable(PAGE_STATE, mPage);
         super.onSaveInstanceState(outState);
     }
-
 }

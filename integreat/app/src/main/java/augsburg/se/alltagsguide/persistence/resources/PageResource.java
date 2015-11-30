@@ -48,8 +48,10 @@ import augsburg.se.alltagsguide.utilities.PrefUtilities;
  */
 public class PageResource implements PersistableNetworkResource<Page> {
     public static final String PAGE_STATUS_TRASH = "trash";
-    public static final String PAGE_TYPE = "page";
 
+    public String getType(){
+        return "page";
+    }
     /**
      * Creation factory
      */
@@ -57,12 +59,12 @@ public class PageResource implements PersistableNetworkResource<Page> {
         PageResource under(Language lang, Location loc);
     }
 
-    @NonNull private final Language mLanguage;
-    @NonNull private final Location mLocation;
-    @NonNull private NetworkService mNetwork;
-    @NonNull private DatabaseCache mCache;
-    @NonNull private AvailableLanguageResource mAvailableLanguageResource;
-    @NonNull private PrefUtilities mPreferences;
+    @NonNull protected final Language mLanguage;
+    @NonNull protected final Location mLocation;
+    @NonNull protected NetworkService mNetwork;
+    @NonNull protected DatabaseCache mCache;
+    @NonNull protected AvailableLanguageResource mAvailableLanguageResource;
+    @NonNull protected PrefUtilities mPreferences;
 
     @Inject
     public PageResource(@NonNull @Assisted Language language,
@@ -89,7 +91,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
         builder.appendWhere(CacheHelper.PAGE_LANGUAGE + " = " + String.valueOf(mLanguage.getId()));
         builder.appendWhere(" AND " + CacheHelper.PAGE_LOCATION + " = " + String.valueOf(mLocation.getId()));
         builder.appendWhere(" AND " + CacheHelper.PAGE_STATUS + " != " + Helper.quote(PAGE_STATUS_TRASH));
-        builder.appendWhere(" AND " + CacheHelper.PAGE_TYPE + " = " + Helper.quote(PAGE_TYPE));
+        builder.appendWhere(" AND " + CacheHelper.PAGE_TYPE + " = " + Helper.quote(getType()));
         return builder;
     }
 
@@ -171,7 +173,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
         String query = "SELECT max(" + CacheHelper.PAGE_MODIFIED + ") FROM " + CacheHelper.TABLE_PAGE + " WHERE " +
                 CacheHelper.PAGE_LANGUAGE + "=" + String.valueOf(mLanguage.getId()) +
                 " AND " + CacheHelper.PAGE_LOCATION + "=" + String.valueOf(mLocation.getId()) +
-                " AND " + CacheHelper.PAGE_TYPE + "=" + Helper.quote(PAGE_TYPE);
+                " AND " + CacheHelper.PAGE_TYPE + "=" + Helper.quote(getType());
         Cursor cursor = mCache.executeRawQuery(query, null);
         if (cursor != null) {
             try {

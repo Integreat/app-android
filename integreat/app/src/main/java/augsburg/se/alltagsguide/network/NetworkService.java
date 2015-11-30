@@ -60,4 +60,10 @@ public interface NetworkService {
 
     @GET("/{location}")
     void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback);
+
+
+    @GET("/{location}/{language}/wp-json/extensions/v0/modified_content/disclaimer")
+    @NonNull
+    List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time);
+
 }

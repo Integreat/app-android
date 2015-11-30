@@ -36,6 +36,8 @@ import roboguice.util.Ln;
 public class MyWebViewClient extends WebViewClient {
     private final WeakReference<Activity> mActivityRef;
 
+    private String mContent ="<b> Hello World </b>";
+
     public MyWebViewClient(Activity activity) {
         mActivityRef = new WeakReference<>(activity);
     }
@@ -78,5 +80,15 @@ public class MyWebViewClient extends WebViewClient {
         intent.putExtra(Intent.EXTRA_CC, cc);
         intent.setType("message/rfc822");
         return intent;
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {super.onPageFinished(view, url);
+        view.loadUrl("javascript:replace('replaceContent','" + mContent + "')");
+        view.loadUrl("javascript:reorderTables()");
+    }
+
+    public void setContent(String content) {
+        mContent = content;
     }
 }

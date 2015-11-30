@@ -24,10 +24,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import augsburg.se.alltagsguide.R;
+import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
+import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 
-public class SettingsActivity extends BaseActivity {
+public class SettingsActivity extends BaseActivity implements PrefFragment.OnPreferenceListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,4 +74,10 @@ public class SettingsActivity extends BaseActivity {
         return true;
     }
 
+    @Override
+    public void onOpenPage(Page page) {
+        Intent intent = new Intent(SettingsActivity.this, PageActivity.class);
+        intent.putExtra(PageActivity.ARG_INFO, page);
+        startActivity(intent);
+    }
 }

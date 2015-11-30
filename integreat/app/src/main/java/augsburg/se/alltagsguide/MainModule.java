@@ -36,6 +36,7 @@ import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.DatabaseInfo;
 import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
+import augsburg.se.alltagsguide.persistence.resources.DisclaimerResource;
 import augsburg.se.alltagsguide.persistence.resources.EventCategoryResource;
 import augsburg.se.alltagsguide.persistence.resources.EventPageResource;
 import augsburg.se.alltagsguide.persistence.resources.EventTagResource;
@@ -79,6 +80,8 @@ public class MainModule extends AbstractModule {
                 .build(EventCategoryResource.Factory.class));
         install(new FactoryModuleBuilder()
                 .build(AvailableLanguageResource.Factory.class));
+        install(new FactoryModuleBuilder()
+                .build(DisclaimerResource.Factory.class));
     }
 
     @Provides

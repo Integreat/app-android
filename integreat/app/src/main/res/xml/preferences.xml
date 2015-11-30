@@ -16,7 +16,7 @@
   ~ along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="@string/preference_category_general">
         <ListPreference
             android:defaultValue="Small"
@@ -25,5 +25,8 @@
             android:key="font_style"
             android:summary="@string/font_size_pref_summary"
             android:title="@string/font_size_pref_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title = "Disclaimer" android:key="disclaimer">
+
     </PreferenceCategory>
 </PreferenceScreen>

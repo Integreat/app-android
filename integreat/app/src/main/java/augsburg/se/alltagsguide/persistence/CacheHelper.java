@@ -335,6 +335,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(@NonNull final SQLiteDatabase db, final int oldVersion,
                           final int newVersion) {
+        //TODO we need to take care now in case we upgrade the db
         dropAllTables(db);
         resetPreferences();
         onCreate(db);

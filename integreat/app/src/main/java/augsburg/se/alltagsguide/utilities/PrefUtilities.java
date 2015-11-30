@@ -237,6 +237,9 @@ public class PrefUtilities {
     private String makePageKey(Language language, Location location) {
         return String.format("page_key(%d)(%d)", language.getId(), location.getId());
     }
+    private String makePageDisclaimerKey(Language language, Location location) {
+        return String.format("disclaimer_key(%d)(%d)", language.getId(), location.getId());
+    }
 
     public void setLastEventPageUpdateTime(Language language, Location location) {
         save(preferences.edit().putLong(makeEventPageKey(language, location), new Date().getTime()));
@@ -260,5 +263,13 @@ public class PrefUtilities {
 
     public void setLastPageUpdateTime(Language language, Location location) {
         save(preferences.edit().putLong(makePageKey(language, location), new Date().getTime()));
+    }
+
+    public long lastPageDisclaimerUpdateTime(Language language, Location location) {
+        return preferences.getLong(makePageDisclaimerKey(language, location), 0);
+    }
+
+    public void setLastPageDisclaimerUpdateTime(Language language, Location location) {
+        save(preferences.edit().putLong(makePageDisclaimerKey(language, location), new Date().getTime()));
     }
 }

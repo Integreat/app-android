@@ -163,6 +163,17 @@ public class ServicesModule extends AbstractModule {
             public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
                 service.unsubscribePush(location, regId, callback);
             }
+
+            @NonNull
+            @Override
+            public List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
+                try {
+                    return service.getDisclaimers(language, location, time);
+                } catch (Exception e) {
+                    Ln.e(e);
+                    return new ArrayList<>();
+                }
+            }
         };
     }
 

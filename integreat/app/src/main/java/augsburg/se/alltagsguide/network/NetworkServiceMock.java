@@ -101,6 +101,12 @@ public class NetworkServiceMock implements NetworkService {
         sendDelayed(callback, "Yes", TIME_TO_SLEEP);
     }
 
+    @NonNull
+    @Override
+    public List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
+        return getPages(language, location, time);
+    }
+
     /**
      * Sends the response to the success-listener.
      *
