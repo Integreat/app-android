@@ -18,11 +18,9 @@
 package augsburg.se.alltagsguide.page;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,11 +36,11 @@ import augsburg.se.alltagsguide.utilities.BaseListFragment;
 import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
-import augsburg.se.alltagsguide.utilities.PrefUtilities;
 
 public class PageOverviewFragment extends BaseListFragment<Page> {
 
     private PageAdapter mPageAdapter;
+    private String mFilterText;
 
     private OnPageFragmentInteractionListener mListener;
 
@@ -129,10 +127,6 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
         return pages;
     }
 
-    @Override
-    public void setOrInitPageAdapter(@NonNull List<Page> pages) {
-        super.setOrInitPageAdapter(restoreVisiblePages(pages));
-    }
 
     @Override
     public BaseAdapter getOrCreateAdapter(List<Page> items) {
@@ -144,22 +138,33 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
         return mPageAdapter;
     }
 
-    public void filterByText(String filterText) {
-        if (Objects.isNullOrEmpty(filterText)) {
-            setOrInitPageAdapter(restoreVisiblePages(mList));
+    @Override
+    protected void setOrInitPageAdapter(@NonNull List<Page> elements) {
+        filter(elements);
+    }
+
+
+    public void filter(List<Page> elements) {
+        if (Objects.isNullOrEmpty(mFilterText)) {
+            super.setOrInitPageAdapter(restoreVisiblePages(elements));
         } else {
             List<Page> pages = new ArrayList<>();
-            for (Page page : mList) {
+            for (Page page : elements) {
                 String relevantContent = page.getTitle();
                 if (page.getContent() != null) {
                     relevantContent += page.getContent();
                 }
-                if (relevantContent.toLowerCase().contains(filterText.toLowerCase())) {
+                if (relevantContent.toLowerCase().contains(mFilterText.toLowerCase())) {
                     pages.add(page);
                 }
             }
             super.setOrInitPageAdapter(pages);
         }
+    }
+
+    public void filterByText(String filterText) {
+        mFilterText = filterText;
+        filter(mList);
     }
 
     public boolean goBack() {
