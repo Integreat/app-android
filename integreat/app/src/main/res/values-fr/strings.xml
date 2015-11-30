@@ -17,7 +17,7 @@
   -->
 
 <resources>
-    <string name="action_settings">Paramètres</string>
+    <string name="action_settings">Paramètres / Désistement</string>
     <string name="change_language_location">Changer de lieu</string>
     <string name="close_drawer">fermeture</string>
     <string name="dialog_answer_no">Non</string>

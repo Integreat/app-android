@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="action_settings">Einstellungen</string>
+    <string name="action_settings">Einstellungen / Disclaimer</string>
 
     <string name="single_columns">Eine Spalte</string>
     <string name="multiple_columns">Mehrere Spalten</string>

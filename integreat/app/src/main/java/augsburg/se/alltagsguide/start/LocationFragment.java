@@ -44,6 +44,7 @@ import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import de.greenrobot.event.EventBus;
 import roboguice.inject.InjectView;
 
 
@@ -60,6 +61,7 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
 
     @Inject
     private PrefUtilities mPrefUtilities;
+
 
     private List<Location> mLocations;
     private String mFilterText;
@@ -209,5 +211,13 @@ public class LocationFragment extends BaseFragment implements LoaderManager.Load
             }
         }
         return filteredLocations;
+    }
+
+    @Override
+    public void networkStateSwitchedToOnline() {
+        if (mLocations.isEmpty()) {
+            mRecyclerView.setRefreshing(true);
+            refresh(LoadingType.NETWORK_OR_DATABASE);
+        }
     }
 }

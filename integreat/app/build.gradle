@@ -142,6 +142,7 @@ dependencies {
     compile 'com.makeramen:roundedimageview:2.2.0'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.marshalchen.ultimaterecyclerview:library:0.3.18'
+    compile 'de.greenrobot:eventbus:2.4.0'
     compile('com.afollestad.material-dialogs:core:0.8.4.0@aar') {
         transitive = true
     }

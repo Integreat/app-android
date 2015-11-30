@@ -46,6 +46,7 @@ import augsburg.se.alltagsguide.serialization.EventPageSerializer;
 import augsburg.se.alltagsguide.serialization.LanguageSerializer;
 import augsburg.se.alltagsguide.serialization.LocationSerializer;
 import augsburg.se.alltagsguide.serialization.PageSerializer;
+import de.greenrobot.event.EventBus;
 import retrofit.converter.GsonConverter;
 
 /**
@@ -82,6 +83,7 @@ public class MainModule extends AbstractModule {
                 .build(AvailableLanguageResource.Factory.class));
         install(new FactoryModuleBuilder()
                 .build(DisclaimerResource.Factory.class));
+        bind(EventBus.class).toInstance(EventBus.getDefault());
     }
 
     @Provides
@@ -90,7 +92,7 @@ public class MainModule extends AbstractModule {
     }
 
     @Provides
-    Gson gson(){
+    Gson gson() {
         return new GsonBuilder()
                 .registerTypeAdapter(new TypeToken<List<Page>>() {
                 }.getType(), new PageSerializer())

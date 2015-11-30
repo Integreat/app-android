@@ -18,7 +18,7 @@
 
 <resources>
     <string name="change_language_location">تغییر محل</string>
-    <string name="action_settings">تنظیمات</string>
+    <string name="action_settings">تنظیمات / سلب مسئولیت</string>
     <string name="close_drawer">بسته شدن</string>
     <string name="dialog_answer_no">هیچ</string>
     <string name="dialog_answer_yes">آره</string>

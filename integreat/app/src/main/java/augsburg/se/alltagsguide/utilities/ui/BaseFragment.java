@@ -25,15 +25,32 @@ import android.view.View;
 import com.google.inject.Inject;
 
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
+import augsburg.se.alltagsguide.utilities.broadcast.NetworkChangeEvent;
+import de.greenrobot.event.EventBus;
 import roboguice.fragment.RoboFragment;
 
 
 public class BaseFragment extends RoboFragment {
 
     @Inject
+    private EventBus mEventBus;
+
+    @Inject
     protected PrefUtilities mPrefUtilities;
 
     private OnBaseFragmentInteractionListener mListener;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mEventBus.register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        mEventBus.unregister(this);
+        super.onDestroy();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -78,5 +95,14 @@ public class BaseFragment extends RoboFragment {
         void setSubTitle(String title);
     }
 
+    public void onEvent(NetworkChangeEvent event){
+        if (event.isOnline()){
+            networkStateSwitchedToOnline();
+        }
+    }
+
+    public void networkStateSwitchedToOnline(){
+        //Should be overriden by classes who are interested.
+    }
 
 }

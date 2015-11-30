@@ -25,9 +25,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.inject.Inject;
 
@@ -38,7 +35,6 @@ import java.util.List;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.DisclaimersLoader;
-import augsburg.se.alltagsguide.network.PagesLoader;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.RoboGuice;

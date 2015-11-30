@@ -25,6 +25,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,8 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
 
     @InjectView(R.id.city_name)
     private TextView cityTextView;
+
+    private List<Language> mLanguages;
 
     @Inject
     private PrefUtilities mPrefUtilities;
@@ -144,20 +147,21 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<List<Language>> loader, @NonNull List<Language> languages) {
-        if (languages.isEmpty()){
+        mLanguages = languages;
+        if (mLanguages.isEmpty()) {
             mRecyclerView.showEmptyView();
-        }else{
+        } else {
             mRecyclerView.hideEmptyView();
         }
         if (mAdapter == null) {
-            mAdapter = new LanguageAdapter(languages, new LanguageAdapter.LanguageClickListener() {
+            mAdapter = new LanguageAdapter(mLanguages, new LanguageAdapter.LanguageClickListener() {
                 @Override
                 public void onLanguageClick(Language language) {
                     mListener.onLanguageSelected(mLocation, language);
                 }
             }, getActivity());
         } else {
-            mAdapter.setItems(languages);
+            mAdapter.setItems(mLanguages);
         }
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(mAdapter);
@@ -178,4 +182,12 @@ public class LanguageFragment extends BaseFragment implements LoaderManager.Load
         void onLanguageSelected(Location location, Language language);
     }
 
+    @Override
+    public void networkStateSwitchedToOnline() {
+        if (mLanguages.isEmpty()) {
+            mRecyclerView.setRefreshing(true);
+            refresh(LoadingType.NETWORK_OR_DATABASE);
+        }
+        Log.d("LanguageFragment", "Network state switched");
+    }
 }

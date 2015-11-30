@@ -21,6 +21,7 @@
     package="augsburg.se.alltagsguide">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".BaseApplication"
@@ -64,6 +65,13 @@
             android:name=".event.EventActivity"
             android:label="@string/title_activity_event"
             android:theme="@style/AppTheme"/>
+
+        <receiver android:name=".utilities.broadcast.NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

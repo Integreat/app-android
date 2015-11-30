@@ -24,6 +24,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -207,5 +208,14 @@ public class EventOverviewFragment extends BaseFragment implements LoaderManager
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(EVENT_PAGE_KEY, new ArrayList<>(mEventPages));
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void networkStateSwitchedToOnline() {
+        if (mEventPages.isEmpty()) {
+            mRecyclerView.setRefreshing(true);
+            refresh(LoadingType.NETWORK_OR_DATABASE);
+        }
+        Log.d("EventPageOverview", "Network state switched");
     }
 }
