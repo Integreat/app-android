@@ -158,7 +158,7 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
                     pages.add(page);
                 }
             }
-            setOrInitPageAdapter(pages);
+            super.setOrInitPageAdapter(pages);
         }
     }
 

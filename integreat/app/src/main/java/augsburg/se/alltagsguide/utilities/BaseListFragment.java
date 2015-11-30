@@ -127,7 +127,7 @@ public abstract class BaseListFragment<T> extends BaseFragment implements Loader
         } else {
             mRecyclerView.hideEmptyView();
         }
-        BaseAdapter adapter = getOrCreateAdapter(mList);
+        BaseAdapter adapter = getOrCreateAdapter(elements);
         if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(adapter);
         }
