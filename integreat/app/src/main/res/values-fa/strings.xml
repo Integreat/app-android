@@ -48,4 +48,5 @@
     <string name="search_title">جستجو</string>
     <string name="single_columns">ستون</string>
     <string name="location_search_text">البحث عن مكان</string>
+    <string name="no_events_found">در حال حاضر هیچ رویدادی به ما شناخته شده است.</string>
 </resources>

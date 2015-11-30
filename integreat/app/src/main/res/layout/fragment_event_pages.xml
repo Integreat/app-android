@@ -27,6 +27,6 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:recyclerviewEmptyView="@layout/pages_empty_view"/>
+        app:recyclerviewEmptyView="@layout/events_empty_view"/>
 
 </LinearLayout>

@@ -33,7 +33,7 @@
     <string name="font_size_pref_title">Schriftgröße</string>
     <string name="font_size_xlarge">Sehr groß</string>
     <string name="font_size_xsmall">Sehr klein</string>
-    <string name="no_entries_found">Keine Einträge gefunden</string>
+    <string name="no_entries_found">Derzeit gibt es keine Einträge.</string>
     <string name="dialog_exit">Schließen?</string>
     <string name="dialog_sure_exit">Möchten Sie die Anwendung wirklich beenden?</string>
     <string name="dialog_answer_no">Nein</string>
@@ -51,4 +51,5 @@
     <string name="no_other_languages_available_page">Es ist keine andere Sprache für diesen Beitrag verfügbar.</string>
     <string name="no_other_languages_available_location">Es ist keine andere Sprache verfügbar.</string>
     <string name="location_search_text">Suche nach einem Ort</string>
+    <string name="no_events_found">Derzeit sind uns keine Veranstaltungen bekannt.</string>
 </resources>

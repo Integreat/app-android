@@ -32,7 +32,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:adjustViewBounds="false"
-            android:src="@drawable/icon_location_loading_error" />
+            android:src="@drawable/no_pages_found" />
 
         <TextView
             android:id="@+id/name"
