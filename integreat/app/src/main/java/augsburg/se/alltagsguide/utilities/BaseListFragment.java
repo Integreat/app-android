@@ -123,7 +123,6 @@ public abstract class BaseListFragment<T> extends BaseFragment implements Loader
     protected void setOrInitPageAdapter(@NonNull List<T> elements) {
         if (elements.isEmpty()) {
             mRecyclerView.showEmptyView();
-            mList = new ArrayList<>();
         } else {
             mRecyclerView.hideEmptyView();
         }

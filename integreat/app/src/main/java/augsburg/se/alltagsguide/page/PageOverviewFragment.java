@@ -140,13 +140,13 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
 
     @Override
     protected void setOrInitPageAdapter(@NonNull List<Page> elements) {
-        filter(elements);
+        super.setOrInitPageAdapter(filter(elements));
     }
 
 
-    public void filter(List<Page> elements) {
+    public List<Page> filter(List<Page> elements) {
         if (Objects.isNullOrEmpty(mFilterText)) {
-            super.setOrInitPageAdapter(restoreVisiblePages(elements));
+            return restoreVisiblePages(elements);
         } else {
             List<Page> pages = new ArrayList<>();
             for (Page page : elements) {
@@ -158,13 +158,13 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
                     pages.add(page);
                 }
             }
-            super.setOrInitPageAdapter(pages);
+            return pages;
         }
     }
 
     public void filterByText(String filterText) {
         mFilterText = filterText;
-        filter(mList);
+        setOrInitPageAdapter(mList);
     }
 
     public boolean goBack() {
