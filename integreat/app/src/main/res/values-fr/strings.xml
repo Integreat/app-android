@@ -49,4 +49,6 @@
     <string name="single_columns">Une colonne</string>
     <string name="location_search_text">Rechercher un lieu</string>
     <string name="no_events_found">Aucun événement nous sont connus.</string>
+    <string name="auto_translated">This text is auto translated.</string>
+    <string name="auto_translated_snackbar_close">Dismiss</string>
 </resources>

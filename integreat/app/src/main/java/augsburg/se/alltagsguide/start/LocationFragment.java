@@ -37,7 +37,6 @@ import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.LocationLoader;
 import augsburg.se.alltagsguide.utilities.BaseListFragment;
 import augsburg.se.alltagsguide.utilities.LoadingType;
-import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import roboguice.inject.InjectView;
 
@@ -146,11 +145,8 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
         if (elements == null) {
             return filteredLocations;
         }
-        if (Objects.isNullOrEmpty(mFilterText)) {
-            return elements;
-        }
         for (Location location : elements) {
-            if (Objects.containsIgnoreCase(location.getSearchString(), mFilterText)) {
+            if (location.isVisibleWithFilter(mFilterText)) {
                 filteredLocations.add(location);
             }
         }

@@ -42,6 +42,7 @@ import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
  */
 public class EventOverviewFragment extends BaseListFragment<EventPage> {
     private EventPageAdapter mAdapter;
+    private String mFilterText;
 
     private OnEventPageFragmentInteractionListener mListener;
 

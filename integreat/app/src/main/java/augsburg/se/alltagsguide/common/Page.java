@@ -20,6 +20,7 @@ package augsburg.se.alltagsguide.common;
 import android.support.annotation.NonNull;
 import android.text.Html;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
@@ -56,8 +57,9 @@ public class Page implements Serializable, Newer<Page> {
 
     private List<AvailableLanguage> mAvailableLanguages;
     private Language mLanguage;
+    private boolean mAutoTranslated;
 
-    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, List<AvailableLanguage> availableLanguages) {
+    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, boolean autoTranslated, List<AvailableLanguage> availableLanguages) {
         mId = id;
         mTitle = title;
         mType = type;
@@ -69,6 +71,7 @@ public class Page implements Serializable, Newer<Page> {
         mOrder = order;
         mThumbnail = thumbnail;
         mAuthor = author;
+        mAutoTranslated = autoTranslated;
         mAvailableLanguages = availableLanguages;
         mAvailablePages = new ArrayList<>();
         mSubPages = new ArrayList<>();
@@ -111,7 +114,16 @@ public class Page implements Serializable, Newer<Page> {
         String thumbnail = jsonPage.get("thumbnail").isJsonNull() ? "" : jsonPage.get("thumbnail").getAsString();
         Author author = Author.fromJson(jsonPage.get("author").getAsJsonObject());
         List<AvailableLanguage> languages = AvailableLanguage.fromJson(jsonPage.get("available_languages"));
-        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, languages);
+
+
+        boolean autoTranslated = false;
+        if (jsonPage.has("automatic_translation")) {
+            JsonElement elem = jsonPage.get("automatic_translation");
+            if (elem != null && !elem.isJsonNull()) {
+                autoTranslated = elem.getAsBoolean();
+            }
+        }
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, languages);
     }
 
     public void setParent(Page parent) {
@@ -135,14 +147,6 @@ public class Page implements Serializable, Newer<Page> {
         return "" + (char) mOrder;
     }
 
-
-    public int getContentCount() {
-        int count = hasContent() ? 1 : 0;
-        for (Page page : mSubPages) {
-            count += page.getContentCount();
-        }
-        return count;
-    }
 
     public int getParentId() {
         return mParentId;
@@ -273,4 +277,7 @@ public class Page implements Serializable, Newer<Page> {
         return mModified;
     }
 
+    public boolean isAutoTranslated() {
+        return mAutoTranslated;
+    }
 }

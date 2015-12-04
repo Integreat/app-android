@@ -49,9 +49,10 @@ import augsburg.se.alltagsguide.utilities.PrefUtilities;
 public class PageResource implements PersistableNetworkResource<Page> {
     public static final String PAGE_STATUS_TRASH = "trash";
 
-    public String getType(){
+    public String getType() {
         return "page";
     }
+
     /**
      * Creation factory
      */
@@ -123,9 +124,10 @@ public class PageResource implements PersistableNetworkResource<Page> {
         int parentId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_PARENT_ID));
         int order = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ORDER));
         String thumbnail = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_THUMBNAIL));
+        boolean autoTranslated = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AUTO_TRANSLATED)) == 1;
 
         Author author = Author.fromCursor(cursor);
-        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, new ArrayList<AvailableLanguage>());
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>());
     }
 
     @Override
@@ -155,6 +157,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
                 pageValues.put(CacheHelper.PAGE_LOCATION, mLocation.getId());
                 pageValues.put(CacheHelper.PAGE_LANGUAGE, mLanguage.getId());
                 pageValues.put(CacheHelper.PAGE_AUTHOR, page.getAuthor().getLogin());
+                pageValues.put(CacheHelper.PAGE_AUTO_TRANSLATED, page.isAutoTranslated() ? 1 : 0);
                 db.replace(CacheHelper.TABLE_PAGE, null, pageValues);
 
                 authorValues.clear();

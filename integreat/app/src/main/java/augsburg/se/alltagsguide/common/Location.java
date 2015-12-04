@@ -21,15 +21,14 @@ package augsburg.se.alltagsguide.common;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import augsburg.se.alltagsguide.persistence.CacheHelper;
-import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Newer;
 import augsburg.se.alltagsguide.utilities.Objects;
 
@@ -44,8 +43,9 @@ public class Location implements Serializable, Newer<Location> {
     private String mCityImage;
     private float mLatitude;
     private float mLongitude;
+    private boolean mDebug;
 
-    public Location(int id, @NonNull String name, String icon, @NonNull String path, String description, boolean global, int color, String cityImage, float latitude, float longitude) {
+    public Location(int id, @NonNull String name, String icon, @NonNull String path, String description, boolean global, int color, String cityImage, float latitude, float longitude, boolean debug) {
         mId = id;
         mName = name;
         mIcon = icon;
@@ -56,6 +56,7 @@ public class Location implements Serializable, Newer<Location> {
         mCityImage = cityImage;
         mLatitude = latitude;
         mLongitude = longitude;
+        mDebug = debug;
     }
 
     @Override
@@ -84,7 +85,14 @@ public class Location implements Serializable, Newer<Location> {
         }
         float latitude = 0.0f; //TODO
         float longitude = 0.0f; //TODO
-        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
+        boolean debug = false;
+        if (jsonPage.has("debug")) {
+            JsonElement elem = jsonPage.get("debug");
+            if (elem != null && !elem.isJsonNull()) {
+                debug = elem.getAsBoolean();
+            }
+        }
+        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude, debug);
     }
 
     public float getLatitude() {
@@ -110,6 +118,10 @@ public class Location implements Serializable, Newer<Location> {
 
     public boolean isGlobal() {
         return mGlobal;
+    }
+
+    public boolean isDebug() {
+        return mDebug;
     }
 
     public String getIcon() {
@@ -151,10 +163,14 @@ public class Location implements Serializable, Newer<Location> {
         String cityImage = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_CITY_IMAGE));
         float latitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LATITUDE));
         float longitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LONGITUDE));
-        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude);
+        boolean debug = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_DEBUG)) == 1;
+        return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude, debug);
     }
 
-    public String getSearchString() {
-        return mName + " " + mDescription;
+    public boolean isVisibleWithFilter(@Nullable String searchString) {
+        if (mDebug) {
+            return "wirschaffendas".equals(searchString);
+        }
+        return Objects.isNullOrEmpty(searchString) || Objects.containsIgnoreCase(mName + " " + mDescription, searchString);
     }
 }

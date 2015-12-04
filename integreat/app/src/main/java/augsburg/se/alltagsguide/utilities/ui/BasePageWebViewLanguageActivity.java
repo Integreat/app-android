@@ -48,6 +48,7 @@ import roboguice.util.Ln;
 public abstract class BasePageWebViewLanguageActivity<T extends Page> extends BaseActivity implements LoaderManager.LoaderCallbacks<T> {
     protected static final String ARG_LANGUAGE = "language";
     protected static final String PAGE_STATE = "page";
+    protected static final String TRANSLATED_DISMISSED = "snackbar_dismissed";
     public static final String ARG_INFO = "info";
     protected T mPage;
 
@@ -65,11 +66,15 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
 
     private MyWebViewClient myWebViewClient;
 
+    private boolean mTranslatedDismissed = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initWebView();
-        setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
+        if (savedInstanceState == null) {
+            setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -86,7 +91,9 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         }
     }
 
+    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        mTranslatedDismissed = savedInstanceState.getBoolean(TRANSLATED_DISMISSED);
         Serializable savedInstance = savedInstanceState.getSerializable(PAGE_STATE);
         setPageFromSerializable(savedInstance);
     }
@@ -129,6 +136,19 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         loadWebViewData();
         setupLanguagesButton();
         setMorePageDetails(t);
+        
+        if (mPage.isAutoTranslated() && !mTranslatedDismissed) {
+            final Snackbar snackBar = Snackbar.make(mToolbar, R.string.auto_translated, Snackbar.LENGTH_INDEFINITE);
+            snackBar.getView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+            snackBar.setAction(R.string.auto_translated_snackbar_close, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackBar.dismiss();
+                    mTranslatedDismissed = true;
+                }
+            });
+            snackBar.show();
+        }
     }
 
     protected abstract void setMorePageDetails(T t);
@@ -263,6 +283,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(PAGE_STATE, mPage);
+        outState.putBoolean(TRANSLATED_DISMISSED, mTranslatedDismissed);
         super.onSaveInstanceState(outState);
     }
 }

@@ -70,7 +70,7 @@ public class NetworkServiceMock implements NetworkService {
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Muenchen_Kleines_Stadtwappen.svg/818px-Muenchen_Kleines_Stadtwappen.svg.png"};
 
         for (int i = 0; i < locationNames.length; i++) {
-            locations.add(new Location(i, locationNames[i], locationPictures[i], locationNames[i], locationUrl[i], false, locationColors[i], null, 0f, 0f));
+            locations.add(new Location(i, locationNames[i], locationPictures[i], locationNames[i], locationUrl[i], false, locationColors[i], null, 0f, 0f, false));
         }
         return sendDelayed(locations);
     }

@@ -47,6 +47,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String PAGE_LOCATION = "p_location"; //11
     public static final String PAGE_LANGUAGE = "p_language"; //12
     public static final String PAGE_AUTHOR = "p_author"; //13
+    public static final String PAGE_AUTO_TRANSLATED = "p_auto_translated"; //14
 
     public static final String TABLE_PAGE_AVAILABLE_LANGUAGE = "pages_languages";
     public static final String PAGE_AVAIL_PAGE_ID = "pa_id"; // 1
@@ -125,6 +126,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String LOCATION_CITY_IMAGE = "lo_city_image"; //8
     public static final String LOCATION_LATITUDE = "lo_latitude"; //9
     public static final String LOCATION_LONGITUDE = "lo_longitude"; //10
+    public static final String LOCATION_DEBUG = "lo_debug"; //10
 
     @NonNull private PrefUtilities mPrefUtilities;
 
@@ -298,7 +300,8 @@ public class CacheHelper extends SQLiteOpenHelper {
                 LOCATION_COLOR + " INTEGER," +
                 LOCATION_CITY_IMAGE + " TEXT," +
                 LOCATION_LATITUDE + " FLOAT," +
-                LOCATION_LONGITUDE + " FLOAT" +
+                LOCATION_LONGITUDE + " FLOAT," +
+                LOCATION_DEBUG + " INTEGER" +
                 ");";
         Ln.d(locationQuery);
         db.execSQL(locationQuery);
@@ -319,6 +322,7 @@ public class CacheHelper extends SQLiteOpenHelper {
                 PAGE_AUTHOR + " TEXT," +
                 PAGE_LOCATION + " INTEGER," +
                 PAGE_LANGUAGE + " INTEGER," +
+                PAGE_AUTO_TRANSLATED + " INTEGER," +
                 "PRIMARY KEY(" + PAGE_ID + "," + PAGE_LOCATION + "," + PAGE_LANGUAGE + ")" +
                 ");";
         Ln.d(pageQuery);
@@ -335,10 +339,14 @@ public class CacheHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(@NonNull final SQLiteDatabase db, final int oldVersion,
                           final int newVersion) {
-        //TODO we need to take care now in case we upgrade the db
-        dropAllTables(db);
-        resetPreferences();
-        onCreate(db);
+        if (oldVersion < newVersion) {
+            // database version is updated
+            if (oldVersion <= 32) {
+                //32 -> 33 added boolean-column
+                db.execSQL("ALTER TABLE " + TABLE_LOCATION + " ADD " + LOCATION_DEBUG + " INTEGER;");
+                db.execSQL("ALTER TABLE " + TABLE_PAGE + " ADD " + PAGE_AUTO_TRANSLATED + " INTEGER DEFAULT 0;");
+            }
+        }
     }
 
     private void resetPreferences() {
