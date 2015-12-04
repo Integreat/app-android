@@ -3,8 +3,10 @@ package augsburg.se.alltagsguide.utilities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -42,8 +44,13 @@ public abstract class BaseListFragment<T> extends BaseFragment implements Loader
         mLayoutManager = new StaggeredGridLayoutManager(getRows(), StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setDefaultOnRefreshListener(this);
-        mRecyclerView.setBackgroundColor(mPrefUtilities.getCurrentColor());
+        mRecyclerView.setBackgroundColor(getBackgroundColor());
         addListener();
+    }
+
+    @ColorInt
+    protected int getBackgroundColor() {
+        return mPrefUtilities.getCurrentColor();
     }
 
 

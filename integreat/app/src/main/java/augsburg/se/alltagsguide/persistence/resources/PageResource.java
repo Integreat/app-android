@@ -136,7 +136,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
             return;
         }
 
-        ContentValues pageValues = new ContentValues(13);
+        ContentValues pageValues = new ContentValues(14);
         ContentValues authorValues = new ContentValues(3);
         for (Page mPage : mPages) {
             List<Page> pages = new ArrayList<>();

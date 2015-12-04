@@ -99,7 +99,6 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
                 .replace(R.id.container, LanguageFragment.newInstance(location))
                 .addToBackStack(null)
                 .commit();
-        //int color = mColorManager.getColor(location.getColor());
         mPrefUtilities.saveCurrentColor(location.getColor());
     }
 

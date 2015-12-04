@@ -19,7 +19,9 @@ package augsburg.se.alltagsguide.start;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -70,6 +72,12 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_location, container, false);
+    }
+
+    @Override
+    @ColorInt
+    protected int getBackgroundColor() {
+        return ContextCompat.getColor(getActivity(), R.color.primary);
     }
 
     @Override

@@ -76,7 +76,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
         }
         db.delete(CacheHelper.TABLE_LOCATION, null, null);
 
-        ContentValues values = new ContentValues(10);
+        ContentValues values = new ContentValues(11);
         for (Location location : locations) {
             values.clear();
             values.put(CacheHelper.LOCATION_ID, location.getId()); //1
@@ -89,7 +89,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
             values.put(CacheHelper.LOCATION_CITY_IMAGE, location.getCityImage()); //8
             values.put(CacheHelper.LOCATION_LATITUDE, location.getLatitude()); //9
             values.put(CacheHelper.LOCATION_LONGITUDE, location.getLongitude()); //10
-            values.put(CacheHelper.LOCATION_DEBUG, location.isDebug() ? 1 : 0); //10
+            values.put(CacheHelper.LOCATION_DEBUG, location.isDebug() ? 1 : 0); //11
 
             db.replace(CacheHelper.TABLE_LOCATION, null, values);
         }
