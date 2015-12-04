@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -184,9 +185,9 @@ public class OverviewActivity extends BaseActivity
     }
 
     public void restoreInstanceState(Bundle savedInstanceState) {
-        if(savedInstanceState != null) {
-            if(savedInstanceState.getBoolean(SAVE_INSTANCE_STATE_NAVIGATION_DRAWER_OPEN, false)) {
-                drawerLayout.openDrawer( navigationView);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(SAVE_INSTANCE_STATE_NAVIGATION_DRAWER_OPEN, false)) {
+                drawerLayout.openDrawer(navigationView);
                 this.openNavDrawerOnStart = true;
             }
         }
@@ -199,6 +200,8 @@ public class OverviewActivity extends BaseActivity
 
     private void initPager() {
         mViewPager.setAdapter(new InformationFragmentPagerAdapter());
+        mViewPager.setPageMargin(5);
+        mViewPager.setPageMarginDrawable(new ColorDrawable(mPrefUtilities.getCurrentColor()));
     }
 
     @Override
@@ -448,7 +451,7 @@ public class OverviewActivity extends BaseActivity
             @Override
             public void run() {
                 mNavigationAdapter.setPages(pages);
-                if(!openNavDrawerOnStart) {
+                if (!openNavDrawerOnStart) {
                     drawerLayout.closeDrawers();
                 } else {
                     openNavDrawerOnStart = false;

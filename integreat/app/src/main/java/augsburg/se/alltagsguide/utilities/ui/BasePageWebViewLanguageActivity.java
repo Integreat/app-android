@@ -18,6 +18,7 @@
 package augsburg.se.alltagsguide.utilities.ui;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -136,7 +137,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         loadWebViewData();
         setupLanguagesButton();
         setMorePageDetails(t);
-        
+
         if (mPage.isAutoTranslated() && !mTranslatedDismissed) {
             final Snackbar snackBar = Snackbar.make(mToolbar, R.string.auto_translated, Snackbar.LENGTH_INDEFINITE);
             snackBar.getView().setBackgroundColor(mPrefUtilities.getCurrentColor());

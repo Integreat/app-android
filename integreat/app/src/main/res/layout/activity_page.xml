@@ -131,13 +131,13 @@
             android:layout_height="0dp"
             android:layout_margin="4dp"
             android:layout_weight="1"
-            app:cardCornerRadius="4dp">
+            app:cardCornerRadius="2dp">
 
             <ScrollView
                 android:layout_width="match_parent"
+                android:background="@android:color/white"
                 android:layout_height="match_parent"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp">
+                android:padding="7dp">
 
                 <WebView
                     android:id="@+id/description"
