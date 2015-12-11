@@ -1,36 +1,52 @@
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="jquery-2.1.4.min.js"></script>
-    <link href="style.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript">
-function replace(id, newContent) {
-    document.getElementById(id).innerHTML = newContent;
-}
 
-function reorderTables() {
-    $("table").each(function() {
-        var e = $(this),
-            t = e.find("thead th"),
-            n = e.find("tbody tr").clone(),
-            a = $('<table class="generated_for_mobile">  <tbody>  </tbody></table>'),
-            d = a.find("tbody");
-        n.each(function(e) {
-            var n = $(this).find("td"),
-                a = e % 2 ? "even" : "odd";
-            n.each(function(e) {
-                var n = $('<tr class="' + a + '"></tr>').appendTo(d);
-                n.append(t.clone().get(e)), n.append($(this))
+<head>
+    <meta id="Viewport" name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <script src="jquery-2.1.4.min.js"></script>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(function() {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+                var ww = ($(window).width() < window.screen.width) ? $(window).width() : window.screen.width; //get proper width
+                var mw = 480; // min width of site
+                var ratio = ww / mw; //calculate ratio
+                if (ww < mw) { //smaller than minimum size
+                    $('#Viewport').attr('content', 'initial-scale=' + ratio + ', maximum-scale=' + ratio + ', minimum-scale=' + ratio + ', user-scalable=yes, width=' + ww);
+                } else { //regular size
+                    $('#Viewport').attr('content', 'initial-scale=1.0, maximum-scale=2, minimum-scale=1.0, user-scalable=yes, width=' + ww);
+                }
+            }
+        });
+
+        function replace(id, newContent) {
+            document.getElementById(id).innerHTML = newContent;
+        }
+
+        function reorderTables() {
+            $("table").each(function() {
+                var e = $(this),
+                    t = e.find("thead th"),
+                    n = e.find("tbody tr").clone(),
+                    a = $('<table class="generated_for_mobile">  <tbody>  </tbody></table>'),
+                    d = a.find("tbody");
+                n.each(function(e) {
+                    var n = $(this).find("td"),
+                        a = e % 2 ? "even" : "odd";
+                    n.each(function(e) {
+                        var n = $('<tr class="' + a + '"></tr>').appendTo(d);
+                        n.append(t.clone().get(e)), n.append($(this))
+                    })
+                    n.last().addClass("separator")
+                }), $(this).replaceWith(a)
             })
-            n.last().addClass("separator")
-        }), $(this).replaceWith(a)
-    })
-};
+        };
     </script>
 </head>
+
 <body>
 <div class="container" id="replaceContent">
 
 </div>
 </body>
+
 </html>
