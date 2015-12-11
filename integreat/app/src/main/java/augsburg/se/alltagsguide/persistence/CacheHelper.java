@@ -126,7 +126,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String LOCATION_CITY_IMAGE = "lo_city_image"; //8
     public static final String LOCATION_LATITUDE = "lo_latitude"; //9
     public static final String LOCATION_LONGITUDE = "lo_longitude"; //10
-    public static final String LOCATION_DEBUG = "lo_debug"; //10
+    public static final String LOCATION_LIVE = "lo_debug"; //10
 
     @NonNull private PrefUtilities mPrefUtilities;
 
@@ -301,7 +301,7 @@ public class CacheHelper extends SQLiteOpenHelper {
                 LOCATION_CITY_IMAGE + " TEXT," +
                 LOCATION_LATITUDE + " FLOAT," +
                 LOCATION_LONGITUDE + " FLOAT," +
-                LOCATION_DEBUG + " INTEGER" +
+                LOCATION_LIVE + " INTEGER" +
                 ");";
         Ln.d(locationQuery);
         db.execSQL(locationQuery);
@@ -343,7 +343,7 @@ public class CacheHelper extends SQLiteOpenHelper {
             // database version is updated
             if (oldVersion <= 32) {
                 //32 -> 33 added boolean-column
-                db.execSQL("ALTER TABLE " + TABLE_LOCATION + " ADD " + LOCATION_DEBUG + " INTEGER;");
+                db.execSQL("ALTER TABLE " + TABLE_LOCATION + " ADD " + LOCATION_LIVE + " INTEGER;");
                 db.execSQL("ALTER TABLE " + TABLE_PAGE + " ADD " + PAGE_AUTO_TRANSLATED + " INTEGER DEFAULT 0;");
             }
         }

@@ -47,7 +47,7 @@ public interface NetworkService {
     @NonNull
     List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time);
 
-    @GET("/wordpress/wp-json/extensions/v0/multisites/")
+    @GET("/wordpress/wp-json/extensions/v1/multisites/")
     @NonNull
     List<Location> getAvailableLocations();
 

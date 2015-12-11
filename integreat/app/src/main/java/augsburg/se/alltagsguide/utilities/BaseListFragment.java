@@ -44,6 +44,7 @@ public abstract class BaseListFragment<T> extends BaseFragment implements Loader
         mLayoutManager = new StaggeredGridLayoutManager(getRows(), StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setDefaultOnRefreshListener(this);
+        mRecyclerView.setDefaultSwipeToRefreshColorScheme(mPrefUtilities.getCurrentColor());
         mRecyclerView.setBackgroundColor(getBackgroundColor());
         addListener();
     }
@@ -71,7 +72,12 @@ public abstract class BaseListFragment<T> extends BaseFragment implements Loader
     @Override
     public Loader<List<T>> onCreateLoader(int i, Bundle args) {
         LoadingType loadingType = (LoadingType) args.getSerializable(LOADING_TYPE_KEY);
-        mRecyclerView.setRefreshing(true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.setRefreshing(true);
+            }
+        }, 50);
         return getLoader(loadingType);
     }
 

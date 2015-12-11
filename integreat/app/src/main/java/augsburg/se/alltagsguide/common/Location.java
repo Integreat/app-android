@@ -43,9 +43,9 @@ public class Location implements Serializable, Newer<Location> {
     private String mCityImage;
     private float mLatitude;
     private float mLongitude;
-    private boolean mDebug;
+    private boolean mLive;
 
-    public Location(int id, @NonNull String name, String icon, @NonNull String path, String description, boolean global, int color, String cityImage, float latitude, float longitude, boolean debug) {
+    public Location(int id, @NonNull String name, String icon, @NonNull String path, String description, boolean global, int color, String cityImage, float latitude, float longitude, boolean live) {
         mId = id;
         mName = name;
         mIcon = icon;
@@ -56,7 +56,7 @@ public class Location implements Serializable, Newer<Location> {
         mCityImage = cityImage;
         mLatitude = latitude;
         mLongitude = longitude;
-        mDebug = debug;
+        mLive = live;
     }
 
     @Override
@@ -77,7 +77,10 @@ public class Location implements Serializable, Newer<Location> {
         String icon = jsonPage.get("icon").isJsonNull() ? null : jsonPage.get("icon").getAsString();
         String path = jsonPage.get("path").getAsString();
         String description = jsonPage.get("description").getAsString();
-        boolean global = jsonPage.get("global").getAsBoolean();
+        boolean global = false;
+        if (jsonPage.has("global")) {
+            global = !jsonPage.get("global").isJsonNull() && jsonPage.get("global").getAsBoolean();
+        }
         int color = jsonPage.get("color").isJsonNull() ? Color.parseColor("#00BCD4") : Color.parseColor(jsonPage.get("color").getAsString());
         String cityImage = jsonPage.get("cover_image").isJsonNull() ? "" : jsonPage.get("cover_image").getAsString();
         if (cityImage == null || "".equals(cityImage)) {
@@ -86,8 +89,8 @@ public class Location implements Serializable, Newer<Location> {
         float latitude = 0.0f; //TODO
         float longitude = 0.0f; //TODO
         boolean debug = false;
-        if (jsonPage.has("debug")) {
-            JsonElement elem = jsonPage.get("debug");
+        if (jsonPage.has("live")) {
+            JsonElement elem = jsonPage.get("live");
             if (elem != null && !elem.isJsonNull()) {
                 debug = elem.getAsBoolean();
             }
@@ -120,8 +123,8 @@ public class Location implements Serializable, Newer<Location> {
         return mGlobal;
     }
 
-    public boolean isDebug() {
-        return mDebug;
+    public boolean isLive() {
+        return mLive;
     }
 
     public String getIcon() {
@@ -163,12 +166,12 @@ public class Location implements Serializable, Newer<Location> {
         String cityImage = cursor.getString(cursor.getColumnIndex(CacheHelper.LOCATION_CITY_IMAGE));
         float latitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LATITUDE));
         float longitude = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LONGITUDE));
-        boolean debug = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_DEBUG)) == 1;
+        boolean debug = cursor.getFloat(cursor.getColumnIndex(CacheHelper.LOCATION_LIVE)) == 1;
         return new Location(id, name, icon, path, description, global, color, cityImage, latitude, longitude, debug);
     }
 
     public boolean isVisibleWithFilter(@Nullable String searchString) {
-        if (mDebug) {
+        if (!isLive()) {
             return "wirschaffendas".equals(searchString);
         }
         return Objects.isNullOrEmpty(searchString) || Objects.containsIgnoreCase(mName + " " + mDescription, searchString);
