@@ -56,6 +56,8 @@ public class PrefUtilities {
     private static final String FONT_STYLE = "font_style";
     private static final String CURRENT_PAGE = "current_page";
 
+    private static final String NAV_DRAWER_LEARNED = "nav_drawer_learned";
+
     /**
      * The Constant PROPERTY_REGISTERED_TS.
      */
@@ -92,6 +94,14 @@ public class PrefUtilities {
         } catch (JsonSyntaxException e) {
             return null;
         }
+    }
+
+    public void setNavDrawerLearned() {
+        save(preferences.edit().putBoolean(NAV_DRAWER_LEARNED, true));
+    }
+
+    public boolean hasNavDrawerLearned() {
+        return preferences.getBoolean(NAV_DRAWER_LEARNED, false);
     }
 
 
@@ -237,6 +247,7 @@ public class PrefUtilities {
     private String makePageKey(Language language, Location location) {
         return String.format("page_key(%d)(%d)", language.getId(), location.getId());
     }
+
     private String makePageDisclaimerKey(Language language, Location location) {
         return String.format("disclaimer_key(%d)(%d)", language.getId(), location.getId());
     }
