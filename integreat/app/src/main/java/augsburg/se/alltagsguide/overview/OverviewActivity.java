@@ -52,6 +52,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
@@ -76,7 +77,6 @@ import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 import augsburg.se.alltagsguide.utilities.ui.BaseFragment;
-import augsburg.se.alltagsguide.utilities.ui.EmptyRecyclerView;
 import augsburg.se.alltagsguide.utilities.ui.LanguageItemAdapter;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.ContentView;
@@ -104,26 +104,11 @@ public class OverviewActivity extends BaseActivity
 
     private NavigationAdapter mNavigationAdapter;
 
-    @InjectView(R.id.emptyNavView)
-    private View mEmptyView;
-
     @InjectView(R.id.recycler_view_nav)
-    private EmptyRecyclerView mRecyclerView;
+    private UltimateRecyclerView mRecyclerView;
 
     @InjectView(R.id.navigation)
     private NavigationView navigationView;
-
-    @InjectView(R.id.header_image_view)
-    private ImageView navigationHeaderImageView;
-
-    @InjectView(R.id.header)
-    private View navigationHeaderView;
-
-    @InjectView(R.id.locationName)
-    private TextView locationNameTextView;
-
-    @InjectView(R.id.locationDescription)
-    private TextView locationDescriptionTextView;
 
     @InjectView(R.id.settings)
     private View settingsView;
@@ -308,25 +293,40 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void initNavigationDrawer() {
-        locationNameTextView.setText(mLocation.getName());
-        locationDescriptionTextView.setText(mLocation.getDescription());
-
-        String iconPath = mLocation.getCityImage();
-        Ln.d("Icon path for city image is: " + iconPath);
-        if (!Objects.isNullOrEmpty(mLocation.getCityImage())) {
-            mPicasso.load(mLocation.getCityImage())
-                    .error(R.drawable.brandenburger_tor)
-                    .placeholder(R.drawable.brandenburger_tor)
-                    .into(navigationHeaderImageView);
-        } else {
-            Ln.e("ImagePath should never be null!");
-        }
-
-        mRecyclerView.setEmptyView(mEmptyView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mNavigationAdapter = new NavigationAdapter(this, mPrefUtilities.getCurrentColor(), this, mPrefUtilities.getSelectedPageId());
         mRecyclerView.setAdapter(mNavigationAdapter);
 
+        View navigationHeader = getLayoutInflater().inflate(R.layout.navigation_header_view, mRecyclerView.mRecyclerView, false);
+        navigationHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPrefUtilities.setSelectedPage(-1);
+                if (mNavigationAdapter != null) {
+                    mNavigationAdapter.setSelectedIndex(-1);
+                    mNavigationAdapter.notifyDataSetChanged();
+                }
+                mPageOverviewFragment.indexUpdated();
+                drawerLayout.closeDrawers();
+            }
+        });
+        mRecyclerView.setParallaxHeader(navigationHeader);
+
+        ImageView headerImageView = (ImageView) navigationHeader.findViewById(R.id.header_image_view);
+        if (!Objects.isNullOrEmpty(mLocation.getCityImage())) {
+            mPicasso.load(mLocation.getCityImage())
+                    .error(R.drawable.brandenburger_tor)
+                    .placeholder(R.drawable.brandenburger_tor)
+                    .into(headerImageView);
+        } else {
+            Ln.e("ImagePath should never be null!");
+        }
+
+        TextView locationNameTextView = (TextView) navigationHeader.findViewById(R.id.locationName);
+        locationNameTextView.setText(mLocation.getName());
+
+        TextView locationDescriptionTextView = (TextView) navigationHeader.findViewById(R.id.locationDescription);
+        locationDescriptionTextView.setText(mLocation.getDescription());
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer) {
 
@@ -342,19 +342,6 @@ public class OverviewActivity extends BaseActivity
         };
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-
-        navigationHeaderView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPrefUtilities.setSelectedPage(-1);
-                if (mNavigationAdapter != null) {
-                    mNavigationAdapter.setSelectedIndex(-1);
-                    mNavigationAdapter.notifyDataSetChanged();
-                }
-                mPageOverviewFragment.indexUpdated();
-                drawerLayout.closeDrawers();
-            }
-        });
     }
 
     SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener = null;

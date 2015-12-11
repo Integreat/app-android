@@ -22,6 +22,7 @@ function reorderTables() {
                 var n = $('<tr class="' + a + '"></tr>').appendTo(d);
                 n.append(t.clone().get(e)), n.append($(this))
             })
+            n.last().addClass("separator")
         }), $(this).replaceWith(a)
     })
 };

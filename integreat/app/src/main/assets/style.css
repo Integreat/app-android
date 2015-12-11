@@ -1,3 +1,22 @@
+table.generated_for_mobile {
+    border-spacing:0; /* Removes the cell spacing via CSS */
+    border-collapse: collapse;  /* Optional - if you don't want to have double border where cells touch */
+    width:100%
+}
+
+.odd {
+    background-color: lightgrey;
+}
+
+tr td {
+    border-right: 1px solid grey;
+    border-left: 1px solid grey;
+}
+
+.separator {
+    border-bottom: 1px solid grey;
+}
+
 html, body {
     height: 100 % ;
     width: 100 % ;

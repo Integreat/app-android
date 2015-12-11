@@ -33,10 +33,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
-import com.nineoldandroids.animation.ValueAnimator;
 
 import augsburg.se.alltagsguide.R;
-import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.activity.RoboActionBarActivity;
@@ -67,6 +65,7 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         updateDisplayHome();
         setLastColor();
         updateTextViews();
+        setStatusBarColor();
     }
 
 
@@ -111,7 +110,6 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
     }
 
     protected void changeColor(@ColorInt int primaryColor) {
-        int secondaryColor = ColorManager.shiftColor(primaryColor);
         ColorDrawable colorDrawableActivity = new ColorDrawable(primaryColor);
         ColorDrawable colorDrawableTabs = new ColorDrawable(primaryColor);
         ActionBar ab = getSupportActionBar();
@@ -127,60 +125,19 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
                 tdActivity.startTransition(DURATION);
                 tdTabs.startTransition(DURATION);
             }
-            animateStatusBar(secondaryColor);
         }
         oldBackgroundActivity = colorDrawableActivity;
         oldBackgroundTabs = colorDrawableTabs;
         mPrefUtilities.saveCurrentColor(primaryColor);
     }
 
-    private void animateStatusBar(@ColorInt final int secondaryColor) {
-        final Window window = getWindow();
+    private void setStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (oldStatusBarColor == null) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.setStatusBarColor(alpha(secondaryColor));
-            } else {
-                // animation here
-                ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
-                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        // Use animation position to blend colors.
-                        float position = animation.getAnimatedFraction();
-
-                        // Apply blended color to the status bar.
-                        int blended = blendColors(oldStatusBarColor, secondaryColor, position);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            window.setStatusBarColor(alpha(blended));
-                        }
-                    }
-                });
-                anim.setDuration(DURATION).start();
-            }
+            final Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(Color.parseColor("#20000000"));
         }
-        oldStatusBarColor = secondaryColor;
-    }
-
-    @ColorInt
-    private int alpha(@ColorInt int color) {
-        int alpha = Math.round(Color.alpha(color) * 0.85f);
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-        return Color.argb(alpha, red, green, blue);
-    }
-
-    @ColorInt
-    private int blendColors(@ColorInt int from, @ColorInt int to, float ratio) {
-        final float inverseRatio = 1f - ratio;
-
-        final float r = Color.red(to) * ratio + Color.red(from) * inverseRatio;
-        final float g = Color.green(to) * ratio + Color.green(from) * inverseRatio;
-        final float b = Color.blue(to) * ratio + Color.blue(from) * inverseRatio;
-
-        return Color.rgb((int) r, (int) g, (int) b);
     }
 
     @Override
