@@ -36,7 +36,7 @@ import roboguice.util.Ln;
 public class MyWebViewClient extends WebViewClient {
     private final WeakReference<Activity> mActivityRef;
 
-    private String mContent ="<b> Hello World </b>";
+    private String mContent = "<b> Hello World </b>";
 
     public MyWebViewClient(Activity activity) {
         mActivityRef = new WeakReference<>(activity);
@@ -66,6 +66,11 @@ public class MyWebViewClient extends WebViewClient {
                 view.reload();
                 return true;
             }
+        } else if (url.startsWith("http://") || url.startsWith("https://")) {
+            Intent extBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            extBrowserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mActivityRef.get().startActivity(extBrowserIntent);
+            return true;
         } else {
             view.loadUrl(url);
         }
@@ -74,7 +79,7 @@ public class MyWebViewClient extends WebViewClient {
 
     private Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
         intent.putExtra(Intent.EXTRA_TEXT, body);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_CC, cc);
@@ -83,7 +88,8 @@ public class MyWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onPageFinished(WebView view, String url) {super.onPageFinished(view, url);
+    public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
         view.loadUrl("javascript:replace('replaceContent','" + mContent + "')");
         view.loadUrl("javascript:reorderTables()");
     }
