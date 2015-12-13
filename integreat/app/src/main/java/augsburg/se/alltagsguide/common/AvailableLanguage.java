@@ -63,14 +63,16 @@ public class AvailableLanguage implements Serializable {
     @NonNull
     public static List<AvailableLanguage> fromJson(@NonNull JsonElement elem) {
         List<AvailableLanguage> languages = new ArrayList<>();
-        if (!elem.isJsonArray()){
-            return languages;
-        }
-        Map<String, Integer> languagesMap = new Gson().fromJson(elem, new TypeToken<Map<String, Integer>>() {
-        }.getType());
-        Log.d("AvailableLanguages", "LanguagesMapSize is: " + languagesMap.size());
-        for (Map.Entry<String, Integer> entry : languagesMap.entrySet()) {
-            languages.add(new AvailableLanguage(entry.getKey(), entry.getValue()));
+        try {
+            Map<String, Integer> languagesMap = new Gson().fromJson(elem, new TypeToken<Map<String, Integer>>() {
+            }.getType());
+            Log.d("AvailableLanguages", "LanguagesMapSize is: " + languagesMap.size());
+            for (Map.Entry<String, Integer> entry : languagesMap.entrySet()) {
+                languages.add(new AvailableLanguage(entry.getKey(), entry.getValue()));
+            }
+        } catch (Exception e) {
+            //ignore
+            Log.e("AvailableLanguage", "fromJson throw an exception");
         }
         return languages;
     }

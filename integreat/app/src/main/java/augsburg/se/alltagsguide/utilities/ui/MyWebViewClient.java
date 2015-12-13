@@ -26,8 +26,11 @@ import android.net.Uri;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.lang.ref.WeakReference;
 
+import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.util.Ln;
 
 /**
@@ -36,7 +39,7 @@ import roboguice.util.Ln;
 public class MyWebViewClient extends WebViewClient {
     private final WeakReference<Activity> mActivityRef;
 
-    private String mContent = "<b> Hello World </b>";
+    private String mContent = "";
 
     public MyWebViewClient(Activity activity) {
         mActivityRef = new WeakReference<>(activity);
@@ -90,11 +93,20 @@ public class MyWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        view.loadUrl("javascript:replace('replaceContent','" + mContent + "')");
-        view.loadUrl("javascript:reorderTables()");
+        String replaceJavascriptString = "javascript:replace('replaceContent','" + escapeString(mContent) + "');";
+        view.loadUrl(replaceJavascriptString);
+        view.loadUrl("javascript:reorderTables();");
     }
 
     public void setContent(String content) {
         mContent = content;
+    }
+
+    public String escapeString(String string) {
+        if (Objects.isNullOrEmpty(string)) {
+            return "";
+        }
+
+        return string.replace("'", "\\'");
     }
 }

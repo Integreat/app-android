@@ -18,7 +18,6 @@
 package augsburg.se.alltagsguide.utilities.ui;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;

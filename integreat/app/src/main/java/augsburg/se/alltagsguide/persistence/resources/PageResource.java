@@ -181,11 +181,6 @@ public class PageResource implements PersistableNetworkResource<Page> {
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
-                    if (BuildConfig.DEBUG) {
-                        if (cursor.getColumnCount() != 1) {
-                            throw new IllegalStateException("Cursor column count should be 1");
-                        }
-                    }
                     time = cursor.getLong(0);
                 }
             } finally {

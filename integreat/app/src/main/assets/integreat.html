@@ -1,9 +1,10 @@
 <html>
 
 <head>
-    <meta id="Viewport" name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta id="Viewport" name="viewport"
+          content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <script src="jquery-2.1.4.min.js"></script>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="style.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
         $(function() {
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
@@ -34,12 +35,14 @@
                         a = e % 2 ? "even" : "odd";
                     n.each(function(e) {
                         var n = $('<tr class="' + a + '"></tr>').appendTo(d);
-                        n.append(t.clone().get(e)), n.append($(this))
-                    })
-                    n.last().addClass("separator")
-                }), $(this).replaceWith(a)
-            })
-        };
+                        n.append(t.clone().get(e));
+                        n.append($(this));
+                    });
+                    n.last().addClass("separator");
+                });
+                $(this).replaceWith(a);
+            });
+        }
     </script>
 </head>
 
