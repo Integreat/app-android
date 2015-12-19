@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Integreat.
+  ~
+  ~ Integreat is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Integreat is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="change_language_location">تغییر محل</string>
+    <string name="action_settings">تنظیمات</string>
+    <string name="close_drawer">بسته شدن</string>
+    <string name="dialog_answer_no">هیچ</string>
+    <string name="dialog_answer_yes">آره</string>
+    <string name="dialog_choose_language_title">انتخاب زبان</string>
+    <string name="dialog_content_loading_language">محتوای بارگیری شده است.</string>
+    <string name="dialog_exit">بستن؟</string>
+    <string name="dialog_sure_exit">آیا مطمئن هستید که میخواهید خارج شوید؟</string>
+    <string name="dialog_title_loading_language">…در حال بارگذاری</string>
+    <string name="event_list_title">رویدادهای</string>
+    <string name="font_size_large">بزرگ</string>
+    <string name="font_size_medium">متوسط</string>
+    <string name="font_size_pref_summary">تنظیم اندازه فونت</string>
+    <string name="font_size_pref_title">اندازه فونت</string>
+    <string name="font_size_small">خرده</string>
+    <string name="font_size_xlarge">بسیار بزرگ</string>
+    <string name="font_size_xsmall">بسیار کوچک</string>
+    <string name="information">اطلاعات</string>
+    <string name="multiple_columns">چند ستون</string>
+    <string name="no_entries_found">هیچ نوشته ای پیدا نشد.</string>
+    <string name="no_languages_found">هیچ زبان یافت شده است. به نظر می رسد مانند محل شما انتخاب کرده اید هنوز در دسترس نیست. لطفا آن را بعدا دوباره امتحان کنید</string>
+    <string name="no_locations_found">هیچ محلی یافت شده است. به نظر می رسد که اگر برنامه در حال حاضر در دسترس نیست. لطفا بعدا دوباره امتحان کنید.</string>
+    <string name="no_other_languages_available_location">هیچ زبان دیگر در دسترس وجود دارد.</string>
+    <string name="no_other_languages_available_page">هیچ زبان دیگر برای این پست وجود دارد.</string>
+    <string name="open_drawer">افتتاح</string>
+    <string name="page_more">بیشتر</string>
+    <string name="preference_category_general">نمای کلی</string>
+    <string name="search_title">جستجو</string>
+    <string name="single_columns">ستون</string>
+    <string name="location_search_text">البحث عن مكان</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Integreat.
+  ~
+  ~ Integreat is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Integreat is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <declare-styleable name="FontStyle">
+        <attr name="font_xsmall" format="dimension" />
+        <attr name="font_small" format="dimension" />
+        <attr name="font_medium" format="dimension" />
+        <attr name="font_large" format="dimension" />
+        <attr name="font_xlarge" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="CurrentPageIndicatorView">
+        <attr name="page_count" format="integer" />
+        <attr name="selected_item" format="integer" />
+        <attr name="item_spacing" format="dimension" />
+        <attr name="radius" format="dimension" />
+        <attr name="selected_color" format="color" />
+        <attr name="not_selected_color" format="color" />
+    </declare-styleable>
+</resources>

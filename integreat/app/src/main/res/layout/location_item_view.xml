@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="7dp"
+                                    android:id="@+id/container"
+                                    android:foreground="?attr/selectableItemBackground"
+                                    app:cardCornerRadius="6dp">
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="110dp">
+
+        <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/icon_location_loading"/>
+
+        <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:gravity="center"
+                android:padding="4dp"
+                android:background="#55000000"
+                android:textColor="@android:color/white"
+                tools:text="Augsburg"/>
+        <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:id="@+id/progressBar" android:layout_gravity="center"/>
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:src="@drawable/ic_done_black_48dp"
+                android:id="@+id/selectedItem" android:layout_gravity="center"/>
+        <!--android:textSize="?attr/font_xlarge"-->
+    </FrameLayout>
+</android.support.v7.widget.CardView>

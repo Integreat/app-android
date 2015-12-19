@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_height="match_parent"
+             android:layout_width="match_parent">
+    <ImageView
+            android:id="@+id/appInstructionFragmentPageImage" android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"/>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|left|start"
+            android:scaleType="center"
+            android:id="@+id/appInstructionFragmentPageContainer">
+
+
+        <TextView
+                style="@style/AppInstructionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to Integreat"
+                android:id="@+id/appInstructionFragmentPageTitle"/>
+        <TextView
+                style="@style/AppInstructionDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/appInstructionFragmentPageDescription"/>
+    </LinearLayout>
+</FrameLayout>

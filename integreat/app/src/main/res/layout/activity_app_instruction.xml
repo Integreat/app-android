@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/appInstructionActivityContianer"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+            android:id="@+id/appInstructionActivityViewPager"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"/>
+
+    <View android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:background="#55000000"/>
+
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:gravity="center_vertical">
+
+
+        <Button style="@style/AppInstructionPageBorderlessButton"
+                android:id="@+id/appInstructionActivityPageSkip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical|end"
+                android:text="@string/skip"/>
+
+        <augsburg.se.alltagsguide.views.CurrentPageIndicatorView android:id="@+id/appInstructionActivityPageIndicator"
+                                                                 android:layout_width="wrap_content"
+                                                                 android:layout_height="wrap_content"
+                                                                 android:layout_gravity="center"/>
+
+
+        <ImageButton
+                style="@style/AppInstructionPageBorderlessButton"
+                android:id="@+id/appInstructionActivityPageNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical|end"
+                android:src="@drawable/ic_navigate_next_black_24dp"/>
+
+
+    </FrameLayout>
+
+</LinearLayout>

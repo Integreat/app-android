@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            style="@style/AppInstructionTitle"
+            android:paddingTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/language_fragment_title"
+            android:id="@+id/appInstructionFragmentPageTitle"/>
+    <TextView
+            style="@style/AppInstructionDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/language_fragment_subtitle"
+            android:id="@+id/appInstructionFragmentPageDescription"/>
+
+    <com.malinskiy.superrecyclerview.SuperRecyclerView
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="1" android:id="@+id/languageSelectionResultList"
+            android:layout_gravity="center_horizontal"
+            app:layout_empty="@layout/locations_empty_view"/>
+</LinearLayout>
