@@ -17,3 +17,4 @@ android:
 before_script:
   - cd integreat
   - chmod +x gradlew
+  - ./gradlew test --debug
