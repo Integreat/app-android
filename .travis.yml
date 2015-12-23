@@ -14,9 +14,9 @@ android:
     # system images
     - sys-img-armeabi-v7a-android-23
     - sys-img-x86-android-23
-# before_script:
-  # - cd integreat
-  # - chmod +x gradlew
+ before_script:
+ - cd integreat
+ # - chmod +x gradlew
   # - ./gradlew test --debug
 
-install: gradle build
+install: gradle clean build
