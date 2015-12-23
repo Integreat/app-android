@@ -16,6 +16,7 @@ android:
     - sys-img-x86-android-23
   before_script:
     - cd integreat
+    - cd app
  # - chmod +x gradlew
   # - ./gradlew test --debug
 
