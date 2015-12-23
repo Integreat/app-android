@@ -15,6 +15,12 @@ android:
     - sys-img-armeabi-v7a-android-23
     - sys-img-x86-android-23
 before_script:
-  - cd integreat
-  - chmod +x gradlew
-  - ./gradlew test --debug
+  # - cd integreat
+  # - chmod +x gradlew
+  # - ./gradlew test --debug
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - adb wait-for-device
+  - adb shell input keyevent 82 &
+
+script: ./gradlew connectedAndroidTest
