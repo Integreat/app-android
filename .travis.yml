@@ -19,4 +19,4 @@ android:
   # - chmod +x gradlew
   # - ./gradlew test --debug
 
-install: gradle clean build
+install: gradle build
