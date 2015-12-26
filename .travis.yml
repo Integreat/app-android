@@ -1,24 +1,13 @@
 language: android
 android:
   components:
-    # latest revision of Android SDK Tools
     - platform-tools
     - tools
-
-    # BuildTools
-    - build-tools-23.0.1
-
-    # SDK
+    - build-tools-23.0.2
     - android-23
+    - extra
 
-    # system images
-    - sys-img-armeabi-v7a-android-23
-    - sys-img-x86-android-23
-  before_script:
-    - cd integreat
-    - cd app
- # - chmod +x gradlew
-  # - ./gradlew test --debug
-
-  script: 
-    - gradle clean build
+before_script:
+  - cd integreat
+  - chmod +x gradlew
+  - ./gradlew test --debug
