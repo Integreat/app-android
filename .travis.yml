@@ -12,9 +12,10 @@ notifications:
   email: false
 
 sudo: false
-
+ 
 before_script:
-  - cd integreat
+  - cd integreat 
+  - chmod +x gradlew
   
 script:
   - ./gradlew clean build
