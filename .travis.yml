@@ -1,20 +1,21 @@
 language: android
 android:
-  components:
-    # latest revision of Android SDK Tools
-    - platform-tools
-    - tools
+   components:
+   - platform-tools
+   - android-23
+   - build-tools-23.0.1
+   - extra
 
-    # BuildTools
-    - build-tools-19.1.0
+jdk: oraclejdk7
 
-    # SDK
-    - android-19
+notifications:
+  email: false
 
-    # system images
-    - sys-img-armeabi-v7a-android-19
-    - sys-img-x86-android-17
+sudo: false
+ 
 before_script:
-  - cd integreat
+  - cd integreat 
   - chmod +x gradlew
-  - ./gradlew test --debug
+  
+script:
+  - ./gradlew clean build
