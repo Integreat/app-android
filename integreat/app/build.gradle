@@ -43,6 +43,10 @@ android {
     dexOptions {
         jumboMode true
     }
+    lintOptions {
+        abortOnError false
+   }
+
     def versionPropsFile = file('version.properties')
 
     if (versionPropsFile.canRead()) {
