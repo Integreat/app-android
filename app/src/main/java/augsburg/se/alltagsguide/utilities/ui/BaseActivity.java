@@ -44,7 +44,6 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
     private static final int DURATION = 400;
     private Drawable oldBackgroundActivity = null;
     private Drawable oldBackgroundTabs = null;
-    private Integer oldStatusBarColor = null;
     protected Toolbar mToolbar;
 
     @InjectView(R.id.toolbar_title)
@@ -62,12 +61,22 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         super.setContentView(layoutResID);
         mToolbar = (Toolbar) super.findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        mToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+
         updateDisplayHome();
         setLastColor();
         updateTextViews();
-        setStatusBarColor();
     }
 
+    public int getStatusBarHeight(){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                return getResources().getDimensionPixelSize(resourceId);
+            }
+        }
+        return 0;
+    }
 
     private void updateTextViews() {
         if (toolbarSubTitleTextView != null) {
@@ -129,15 +138,6 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         oldBackgroundActivity = colorDrawableActivity;
         oldBackgroundTabs = colorDrawableTabs;
         mPrefUtilities.saveCurrentColor(primaryColor);
-    }
-
-    private void setStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(Color.parseColor("#20000000"));
-        }
     }
 
     @Override
