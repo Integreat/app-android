@@ -149,8 +149,15 @@ public class OverviewActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocation = mPrefUtilities.getLocation();
+        if (mPrefUtilities.getLocation() == null){
+            throw new IllegalStateException("Location is null");
+        }
+        if (mPrefUtilities.getLanguage() == null){
+            throw new IllegalStateException("Language is null");
+        }
         mLanguage = mPrefUtilities.getLanguage();
+        mLocation = mPrefUtilities.getLocation();
+
         mHandler = new Handler();
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override

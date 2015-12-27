@@ -141,6 +141,12 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
     @Override
     protected void setOrInitPageAdapter(@NonNull List<Page> elements) {
         super.setOrInitPageAdapter(filter(elements));
+        updateViewMode();
+    }
+
+    private void updateViewMode() {
+        //TODO
+        mPageAdapter.setViewMode(PageAdapter.ViewMode.CARD);
     }
 
 
@@ -186,6 +192,12 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
         void onPagesLoaded(List<Page> pages);
 
         void onSetItemsChanged();
+    }
+
+
+    public int getRows(){
+        return 2; // TODO based on  ViewMode {CARD, INFO}
+        //return getResources().getInteger(R.integer.grid_rows_page);
     }
 
 }

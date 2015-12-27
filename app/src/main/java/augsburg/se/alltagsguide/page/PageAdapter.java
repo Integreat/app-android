@@ -43,51 +43,68 @@ import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.ui.BaseAdapter;
 import augsburg.se.alltagsguide.utilities.ui.BitmapColorTransformation;
 
-public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page> {
+public class PageAdapter extends BaseAdapter<PageAdapter.PageViewHolder, Page> {
 
     private PageOverviewFragment.OnPageFragmentInteractionListener mListener;
-    @ColorInt private int mColor;
-
-    @NonNull private SimpleDateFormat dateFormatTo;
-    @Inject private Picasso mPicasso;
+    @ColorInt
+    private int mColor;
+    @Inject
+    private Picasso mPicasso;
     private Transformation mTransformation;
+
+    public enum ViewMode {CARD, INFO}
+
+    private ViewMode viewMode = ViewMode.CARD;
 
     public PageAdapter(@NonNull List<Page> pages, PageOverviewFragment.OnPageFragmentInteractionListener listener, @ColorInt int primaryColor, @NonNull Context context) {
         super(pages, context);
         mListener = listener;
         mColor = primaryColor;
         mContext = context;
-        dateFormatTo = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY);
         mTransformation = new BitmapColorTransformation(mColor);
     }
 
-    @Override
-    public ContentViewHolder getViewHolder(View view) {
-        return new ContentViewHolder(view);
+    public void setViewMode(ViewMode mode){
+        if (viewMode != mode){
+            viewMode = mode;
+            notifyDataSetChanged(); //update everything
+        }
     }
 
     @Override
-    public ContentViewHolder onCreateViewHolder(ViewGroup parent) {
-        return new ContentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
+    public PageViewHolder getViewHolder(View view) {
+        if (viewMode == ViewMode.CARD) {
+            return new ParentPageViewHolder(view);
+        }
+        return new SubPageViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ContentViewHolder contentHolder, int position) {
+    public PageViewHolder onCreateViewHolder(ViewGroup parent) {
+        if (viewMode == ViewMode.CARD) {
+            return new ParentPageViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.parent_page_item, parent, false));
+        }
+        return new SubPageViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.page_item, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(PageViewHolder contentHolder, int position) {
         final Page page = get(position);
+        String desc = page.getDescription();
+        if (viewMode == ViewMode.INFO) {
+            SubPageViewHolder viewHolder = (SubPageViewHolder) contentHolder;
+            viewHolder.description.setText(Html.fromHtml(desc));
+            viewHolder.description.setVisibility(Objects.isNullOrEmpty(desc) ? View.GONE : View.VISIBLE);
+        }
+
         contentHolder.title.setText(page.getTitle());
         contentHolder.title.setTextColor(mColor);
-        String desc = page.getDescription();
-        contentHolder.date.setText(dateFormatTo.format(page.getModified()));
-        contentHolder.description.setText(Html.fromHtml(desc));
-        contentHolder.description.setVisibility(Objects.isNullOrEmpty(desc) ? View.GONE : View.VISIBLE);
         contentHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onOpenPage(page);
             }
         });
-        //contentHolder.more.setTextColor(mColor);
-        contentHolder.date.setTextColor(mColor);
 
         if (!Objects.isNullOrEmpty(page.getThumbnail())) {
             RequestCreator creator = mPicasso.load(page.getThumbnail());
@@ -101,20 +118,29 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
         }
     }
 
-    public class ContentViewHolder extends UltimateRecyclerviewViewHolder {
-        TextView title;
-        TextView description;
-        ImageView image;
-        //TextView more;
-        TextView date;
+    public abstract class PageViewHolder extends UltimateRecyclerviewViewHolder {
+        public TextView title;
+        public ImageView image;
 
-        public ContentViewHolder(View itemView) {
+        public PageViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
-            description = (TextView) itemView.findViewById(R.id.description);
             image = (ImageView) itemView.findViewById(R.id.image);
-            //more = (TextView) itemView.findViewById(R.id.more);
-            date = (TextView) itemView.findViewById(R.id.date);
+        }
+    }
+
+    public class ParentPageViewHolder extends PageViewHolder {
+        public ParentPageViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public class SubPageViewHolder extends PageViewHolder {
+        public TextView description;
+
+        public SubPageViewHolder(View itemView) {
+            super(itemView);
+            description = (TextView) itemView.findViewById(R.id.description);
         }
     }
 }
