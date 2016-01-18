@@ -44,6 +44,7 @@
             android:gravity="start"
             android:textColor="#fff"
             android:textSize="?attr/font_small"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:visibility="visible"/>
     </RelativeLayout>
 </RelativeLayout>
