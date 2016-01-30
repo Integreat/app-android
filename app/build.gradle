@@ -50,7 +50,7 @@ android {
         defaultConfig {
             applicationId "augsburg.se.alltagsguide"
             versionCode 1
-            versionName 1.0.0
+            versionName "buddy"
             minSdkVersion 9
             targetSdkVersion 23
             testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
