@@ -47,9 +47,17 @@ android {
         abortOnError false
    }
 
-    def versionPropsFile = file('version.properties')
-
-    if (versionPropsFile.canRead()) {
+        defaultConfig {
+            applicationId "augsburg.se.alltagsguide"
+            versionCode 1
+            versionName 1.0.0
+            minSdkVersion 9
+            targetSdkVersion 23
+            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+            //setProperty("archivesBaseName", "integreat-app-$versionName")
+        }
+     /* def versionPropsFile = file('version.properties')
+        if (versionPropsFile.canRead()) {
         def Properties versionProps = new Properties()
 
         versionProps.load(new FileInputStream(versionPropsFile))
@@ -74,7 +82,7 @@ android {
         }
     } else {
         throw new GradleException("Could not read version.properties!")
-    }
+    }*/
 
 
     def location = ''
@@ -82,14 +90,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "pre_build_location", location
+            //resValue "string", "pre_build_location", location
         }
 
 
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "pre_build_location", location
+            //resValue "string", "pre_build_location", location
         }
     }
 
