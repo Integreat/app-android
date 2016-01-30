@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Integreat/app.svg?branch=master)](https://travis-ci.org/Integreat/app)
+[![Build Status](https://travis-ci.org/Integreat/app-android.svg?branch=master)](https://travis-ci.org/Integreat/app-android)
 [![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=56ac36b536e4870100da4adb&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/56ac36b536e4870100da4adb/build/latest)
 
 # Integreat
