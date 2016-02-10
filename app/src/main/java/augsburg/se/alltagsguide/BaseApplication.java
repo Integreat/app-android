@@ -22,6 +22,8 @@ import android.app.Instrumentation;
 import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.google.inject.Injector;
 
 import io.fabric.sdk.android.Fabric;
@@ -35,7 +37,7 @@ public class BaseApplication extends Application {
      * The injector which can inject objects later on
      */
     private static Injector injector;
-
+    private Tracker mTracker;
     public BaseApplication() {
         super();
     }
@@ -52,6 +54,19 @@ public class BaseApplication extends Application {
         RoboGuice.setUseAnnotationDatabases(false);
         injector = RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
                 RoboGuice.newDefaultRoboModule(this), new MainModule());
+    }
+
+    /**
+     * Gets the default {@link Tracker} for this {@link Application}.
+     * @return tracker
+     */
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker("UA-73579165-1");
+        }
+        return mTracker;
     }
 
     /**

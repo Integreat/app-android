@@ -23,6 +23,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.ColorInt;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.ActionBar;
@@ -32,15 +34,18 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.inject.Inject;
 
+import augsburg.se.alltagsguide.BaseApplication;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.utilities.Objects;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-public class BaseActivity extends RoboActionBarActivity implements BaseFragment.OnBaseFragmentInteractionListener {
+public class BaseActivity extends RoboActionBarActivity implements BaseFragment.OnBaseFragmentInteractionListener, BaseFragment.Analytics {
     private static final int DURATION = 400;
     private Drawable oldBackgroundActivity = null;
     private Drawable oldBackgroundTabs = null;
@@ -55,6 +60,37 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
     @Inject
     protected PrefUtilities mPrefUtilities;
 
+    protected Tracker mTracker;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BaseApplication application = (BaseApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendScreen(getScreenName());
+    }
+
+    protected String getScreenName() {
+        return "Activity~";
+    }
+
+    public void sendScreen(String name){
+        mTracker.setScreenName(name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    public void sendEvent(String category, String action) {
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .build());
+    }
+
     @Override
     public void setContentView(int layoutResID) {
         getTheme().applyStyle(mPrefUtilities.getFontStyle().getResId(), true);
@@ -68,7 +104,7 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         updateTextViews();
     }
 
-    public int getStatusBarHeight(){
+    public int getStatusBarHeight() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
             if (resourceId > 0) {

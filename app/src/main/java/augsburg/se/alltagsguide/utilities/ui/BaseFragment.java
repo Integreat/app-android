@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.inject.Inject;
 
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
@@ -39,6 +40,7 @@ public class BaseFragment extends RoboFragment {
     protected PrefUtilities mPrefUtilities;
 
     private OnBaseFragmentInteractionListener mListener;
+    private Analytics mAnalytics;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,17 +55,22 @@ public class BaseFragment extends RoboFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mAnalytics.sendScreen(getScreenName());
+    }
+
+    protected String getScreenName() {
+        return "Fragment~";
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Context context = getActivity();
         if (!(context instanceof AppCompatActivity)) {
             throw new IllegalStateException("Activity needs to be AppCompatActivity");
         }
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -74,6 +81,12 @@ public class BaseFragment extends RoboFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnLanguageFragmentInteractionListener");
+        }
+        try {
+            mAnalytics = (Analytics) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement Analytics");
         }
     }
 
@@ -105,4 +118,9 @@ public class BaseFragment extends RoboFragment {
         //Should be overriden by classes who are interested.
     }
 
+    public interface Analytics {
+        void sendScreen(String name);
+
+        void sendEvent(String category, String action);
+    }
 }

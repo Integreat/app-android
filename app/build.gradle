@@ -28,7 +28,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-
+apply plugin: 'com.google.gms.google-services'
 
 
 repositories {
@@ -158,6 +158,9 @@ dependencies {
     compile('com.afollestad.material-dialogs:core:0.8.4.0@aar') {
         transitive = true
     }
+
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+
     // Espresso
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.1') {
         exclude module: 'support-annotations'
