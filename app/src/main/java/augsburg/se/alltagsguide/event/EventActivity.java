@@ -147,4 +147,9 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
         }
         return new EventPageLoader(this, mPrefUtilities.getLocation(), language.getLoadedLanguage(), language.getOtherPageId());
     }
+
+    @Override
+    protected String getScreenName() {
+        return super.getScreenName() + "EventActivity";
+    }
 }

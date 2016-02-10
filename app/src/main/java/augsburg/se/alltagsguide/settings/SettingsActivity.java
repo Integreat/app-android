@@ -29,7 +29,7 @@ import augsburg.se.alltagsguide.overview.OverviewActivity;
 import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.utilities.ui.BaseActivity;
 
-public class SettingsActivity extends BaseActivity implements PrefFragment.OnPreferenceListener{
+public class SettingsActivity extends BaseActivity implements PrefFragment.OnPreferenceListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,5 +79,10 @@ public class SettingsActivity extends BaseActivity implements PrefFragment.OnPre
         Intent intent = new Intent(SettingsActivity.this, PageActivity.class);
         intent.putExtra(PageActivity.ARG_INFO, page);
         startActivity(intent);
+    }
+
+    @Override
+    protected String getScreenName() {
+        return super.getScreenName() + "SettingsActivity";
     }
 }

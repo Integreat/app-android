@@ -60,6 +60,10 @@ public class BaseFragment extends RoboFragment {
         mAnalytics.sendScreen(getScreenName());
     }
 
+    public void sendEvent(String category, String name){
+        mAnalytics.sendEvent(category, name);
+    };
+
     protected String getScreenName() {
         return "Fragment~";
     }

@@ -81,6 +81,11 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
     }
 
     @Override
+    protected String getScreenName() {
+        return super.getScreenName() + "LocationFragment";
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(getString(R.string.location_fragment_title));

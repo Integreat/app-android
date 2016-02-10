@@ -62,6 +62,11 @@ public class LanguageFragment extends BaseListFragment<Language> {
     }
 
     @Override
+    protected String getScreenName() {
+        return super.getScreenName() + "LanguageFragment";
+    }
+
+    @Override
     @ColorInt
     protected int getBackgroundColor() {
         return ContextCompat.getColor(getActivity(), R.color.primary);
@@ -72,6 +77,10 @@ public class LanguageFragment extends BaseListFragment<Language> {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mLocation = (Location) getArguments().getSerializable(ARG_LOCATION);
+            if (mLocation == null) {
+                throw new IllegalStateException("Location should not be null");
+            }
+            sendEvent("Location", mLocation.getName());
         } else {
             throw new IllegalStateException("Location should not be null");
         }
