@@ -19,10 +19,13 @@ package augsburg.se.alltagsguide;
 
 import android.app.Application;
 import android.app.Instrumentation;
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.google.inject.Injector;
 
@@ -38,6 +41,7 @@ public class BaseApplication extends Application {
      */
     private static Injector injector;
     private Tracker mTracker;
+
     public BaseApplication() {
         super();
     }
@@ -54,10 +58,13 @@ public class BaseApplication extends Application {
         RoboGuice.setUseAnnotationDatabases(false);
         injector = RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
                 RoboGuice.newDefaultRoboModule(this), new MainModule());
+        GoogleAnalytics.getInstance(this).getLogger()
+                .setLogLevel(Logger.LogLevel.VERBOSE);
     }
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
+     *
      * @return tracker
      */
     synchronized public Tracker getDefaultTracker() {
@@ -76,5 +83,10 @@ public class BaseApplication extends Application {
      */
     public static void inject(@NonNull Object object) {
         injector.injectMembers(object);
+    }
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

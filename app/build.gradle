@@ -54,6 +54,7 @@ android {
             minSdkVersion 9
             targetSdkVersion 23
             testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+            multiDexEnabled true
             //setProperty("archivesBaseName", "integreat-app-$versionName")
         }
      /* def versionPropsFile = file('version.properties')
@@ -119,6 +120,8 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
     }
 }
 
@@ -159,7 +162,7 @@ dependencies {
         transitive = true
     }
 
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
 
     // Espresso
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.1') {
