@@ -151,6 +151,9 @@ public class OverviewActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
+        if (mLanguage == null || mLocation == null){
+            startWelcome();
+        }
         mHandler = new Handler();
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override

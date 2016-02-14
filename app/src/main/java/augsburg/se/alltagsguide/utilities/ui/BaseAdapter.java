@@ -130,6 +130,11 @@ public abstract class BaseAdapter<VH extends UltimateRecyclerviewViewHolder, Ite
     }
 
     public void moveItem(int fromPosition, int toPosition) {
+        int size = mItems.size();
+        if (fromPosition < 0 || fromPosition >= size || toPosition < 0 || toPosition >= size) {
+            //avoid out of bounds exception which shouldnt occur in the first place
+            return;
+        }
         swapPositions(mItems, fromPosition, toPosition);
     }
 
