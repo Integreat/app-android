@@ -65,7 +65,6 @@ public class EventPage extends Page implements Newer<Page> {
         return new EventPage(page, event, location, tags, categories);
     }
 
-
     @Override
     public int compareTo(@NonNull Page o) {
         EventPage other = (EventPage) o;
