@@ -72,6 +72,7 @@ public class BaseApplication extends Application {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
             mTracker = analytics.newTracker("UA-73579165-1");
+            mTracker.setAnonymizeIp(true);
         }
         return mTracker;
     }
