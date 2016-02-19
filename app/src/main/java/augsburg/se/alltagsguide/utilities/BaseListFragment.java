@@ -118,8 +118,8 @@ public abstract class BaseListFragment<T> extends BaseFragment implements Loader
             }
         }, 500);
         mList = list;
-        setOrInitPageAdapter(mList);
         loaded();
+        setOrInitPageAdapter(mList);
     }
 
     public abstract void loaded();

@@ -57,6 +57,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import augsburg.se.alltagsguide.R;
@@ -151,7 +152,7 @@ public class OverviewActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
-        if (mLanguage == null || mLocation == null){
+        if (mLanguage == null || mLocation == null) {
             startWelcome();
         }
         mHandler = new Handler();
@@ -301,18 +302,6 @@ public class OverviewActivity extends BaseActivity
         mRecyclerView.setAdapter(mNavigationAdapter);
 
         View navigationHeader = getLayoutInflater().inflate(R.layout.navigation_header_view, mRecyclerView.mRecyclerView, false);
-        navigationHeader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPrefUtilities.setSelectedPage(-1);
-                if (mNavigationAdapter != null) {
-                    mNavigationAdapter.setSelectedIndex(-1);
-                    mNavigationAdapter.notifyDataSetChanged();
-                }
-                mPageOverviewFragment.indexUpdated();
-                drawerLayout.closeDrawers();
-            }
-        });
         mRecyclerView.setParallaxHeader(navigationHeader);
 
         ImageView headerImageView = (ImageView) navigationHeader.findViewById(R.id.header_image_view);
@@ -361,6 +350,9 @@ public class OverviewActivity extends BaseActivity
             }
         };
         mPrefUtilities.addListener(mPreferenceListener);
+        if (!mPrefUtilities.initialStart()) {
+            openNavDrawer();
+        }
     }
 
 
@@ -434,6 +426,18 @@ public class OverviewActivity extends BaseActivity
         startActivity(intent);
     }
 
+    private void openNavDrawer() {
+        if (!mPrefUtilities.hasNavDrawerLearned()) {
+            drawerLayout.openDrawer(GravityCompat.START);
+            mPrefUtilities.setNavDrawerLearned();
+        } else {
+            if (!openNavDrawerOnStart) {
+                drawerLayout.closeDrawers();
+            } else {
+                openNavDrawerOnStart = false;
+            }
+        }
+    }
 
     @Override
     public void onPagesLoaded(@NonNull final List<Page> pages) {
@@ -441,19 +445,14 @@ public class OverviewActivity extends BaseActivity
             @Override
             public void run() {
                 mNavigationAdapter.setPages(pages);
-                if (!mPrefUtilities.hasNavDrawerLearned()) {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                    mPrefUtilities.setNavDrawerLearned();
-                    openNavDrawerOnStart = true;
-                } else {
-                    if (!openNavDrawerOnStart) {
-                        drawerLayout.closeDrawers();
-                    } else {
-                        openNavDrawerOnStart = false;
-                    }
-                }
-
                 stopLoading();
+                if (mPrefUtilities.initialStart() && !pages.isEmpty()) {
+                    mPrefUtilities.setHadInitialStart();
+                    Collections.sort(pages);
+                    onOpenPage(pages.get(0));
+                } else {
+                    openNavDrawer();
+                }
             }
         });
     }
@@ -462,6 +461,12 @@ public class OverviewActivity extends BaseActivity
     public void onSetItemsChanged() {
         updateDisplayHome();
         mViewPager.setCurrentItem(PAGE_OVERVIEW_INDEX);
+    }
+
+    @Override
+    public void onPageIndexChanged(int index) {
+        //PageOverview has called onPageIndexChanged -> let Navigation know
+        mNavigationAdapter.setSelectedIndex(index);
     }
 
 

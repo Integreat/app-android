@@ -57,6 +57,7 @@ public class PrefUtilities {
     private static final String CURRENT_PAGE = "current_page";
 
     private static final String NAV_DRAWER_LEARNED = "nav_drawer_learned";
+    private static final String FIRST_START_PAGE_VIEW = "first_start_page_view";
 
     /**
      * The Constant PROPERTY_REGISTERED_TS.
@@ -282,5 +283,13 @@ public class PrefUtilities {
 
     public void setLastPageDisclaimerUpdateTime(Language language, Location location) {
         save(preferences.edit().putLong(makePageDisclaimerKey(language, location), new Date().getTime()));
+    }
+
+    public void setHadInitialStart() {
+        save(preferences.edit().putBoolean(FIRST_START_PAGE_VIEW, false));
+    }
+
+    public boolean initialStart() {
+        return preferences.getBoolean(FIRST_START_PAGE_VIEW, true);
     }
 }

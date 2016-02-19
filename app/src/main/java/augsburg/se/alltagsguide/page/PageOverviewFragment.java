@@ -113,11 +113,37 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
     }
 
     private List<Page> restoreVisiblePages(List<Page> pages) {
-        int selectedPageId = mPrefUtilities.getSelectedPageId();
-        if (selectedPageId >= 0) {
+        int currentPageId = mPrefUtilities.getSelectedPageId();
+        boolean selectCurrentPage = currentPageId != -1;
+        Page foundPage = null;
+        if (selectCurrentPage) {
+            //check if page exists
+            for (Page page : pages) {
+                if (page.getId() == currentPageId) {
+                    foundPage = page;
+                    break;
+                }
+            }
+        }
+        if (foundPage == null || foundPage.getSubPages().isEmpty()) {
+            //select first page with children
+            for (Page page : pages) {
+                foundPage = page;
+                if (!page.getSubPages().isEmpty()) {
+                    break;
+                }
+            }
+        }
+        if (foundPage != null) {
+            currentPageId = foundPage.getId();
+        }
+
+        if (currentPageId >= 0) {
+            mPrefUtilities.setSelectedPage(currentPageId);
+            mListener.onPageIndexChanged(currentPageId);
             List<Page> hierarchyPages = Page.filterParents(pages);
             for (Page page : hierarchyPages) {
-                if (Objects.equals(selectedPageId, page.getId())) {
+                if (Objects.equals(currentPageId, page.getId())) {
                     setCategoryTitle(page);
                     return page.getSubPagesRecursively();
                 }
@@ -186,6 +212,8 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
         void onPagesLoaded(List<Page> pages);
 
         void onSetItemsChanged();
+
+        void onPageIndexChanged(int index);
     }
 
 }
