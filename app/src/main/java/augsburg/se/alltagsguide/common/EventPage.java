@@ -65,11 +65,10 @@ public class EventPage extends Page implements Newer<Page> {
         return new EventPage(page, event, location, tags, categories);
     }
 
-
     @Override
     public int compareTo(@NonNull Page o) {
         EventPage other = (EventPage) o;
-        return Long.valueOf(other.getEvent().getStartTime()).compareTo(getEvent().getStartTime());
+        return Long.valueOf(getEvent().getStartTime()).compareTo(other.getEvent().getStartTime());
     }
 
     @NonNull

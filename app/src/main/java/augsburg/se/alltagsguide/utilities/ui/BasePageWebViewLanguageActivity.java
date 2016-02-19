@@ -18,10 +18,12 @@
 package augsburg.se.alltagsguide.utilities.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +40,8 @@ import java.io.Serializable;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.overview.OverviewActivity;
+import augsburg.se.alltagsguide.start.WelcomeActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
@@ -83,7 +87,10 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
             if (serializable != null) {
                 setPage((T) serializable);
             } else {
-                throw new IllegalStateException("Serializable Page was null");
+                Intent intent = new Intent(BasePageWebViewLanguageActivity.this, OverviewActivity.class);
+                intent.addFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
             }
         } catch (ClassCastException e) {
             Ln.e(e);
