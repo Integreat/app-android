@@ -159,7 +159,7 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
             return filteredLocations;
         }
         for (Location location : elements) {
-            if (location.isVisibleWithFilter(mFilterText)) {
+            if (location != null && location.isVisibleWithFilter(mFilterText)) {
                 filteredLocations.add(location);
             }
         }
