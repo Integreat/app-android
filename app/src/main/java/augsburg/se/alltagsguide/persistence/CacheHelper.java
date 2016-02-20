@@ -370,4 +370,10 @@ public class CacheHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENT_CATEGORY);
     }
 
+    public void clearData() {
+        SQLiteDatabase database = getWritableDatabase();
+        dropAllTables(database);
+        resetPreferences();
+        onCreate(database);
+    }
 }
