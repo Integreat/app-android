@@ -26,8 +26,8 @@
             android:summary="@string/font_size_pref_summary"
             android:title="@string/font_size_pref_title" />
         <Preference
-            android:title="Clear cache"
-            android:summary="Removes all data and brings you back to the start menu"
+            android:title="@string/clear_cache_pref_title"
+            android:summary="@string/clear_cache_pref_summary"
             android:key="clear_cache"/>
     </PreferenceCategory>
 </PreferenceScreen>
