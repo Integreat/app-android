@@ -26,6 +26,8 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.inject.Inject;
 
 import java.io.Serializable;
@@ -35,6 +37,8 @@ import java.util.List;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.DisclaimersLoader;
+import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import roboguice.RoboGuice;
@@ -49,6 +53,10 @@ public class PrefFragment extends PreferenceFragmentCompat  implements
 
     @Inject
     protected PrefUtilities mPrefUtilities;
+
+    @Inject
+    protected CacheHelper mCacheHelper;
+
     @NonNull private List<Page> mPages = new ArrayList<>();
 
     public OnPreferenceListener mListener;
@@ -80,6 +88,26 @@ public class PrefFragment extends PreferenceFragmentCompat  implements
                 return;
             }
         }
+        Preference clearCachePreference = findPreference("clear_cache");
+        clearCachePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new MaterialDialog.Builder(getActivity())
+                        .title("Remove data")
+                        .content("Are you sure that you want to remove the data? In order to use the app again you would require to have a network connection.")
+                        .positiveText("Yes. Remove data.")
+                        .negativeText("No. Go back to Preferences")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                mCacheHelper.clearData();
+                                mListener.cacheCleared();
+                            }
+                        })
+                        .show();
+                return false;
+            }
+        });
         refresh(LoadingType.FORCE_DATABASE);
         refresh(LoadingType.NETWORK_OR_DATABASE);
     }
@@ -139,5 +167,6 @@ public class PrefFragment extends PreferenceFragmentCompat  implements
 
     public interface OnPreferenceListener {
         void onOpenPage(Page page);
+        void cacheCleared();
     }
 }
