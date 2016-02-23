@@ -29,4 +29,9 @@
     <PreferenceCategory android:title = "Disclaimer" android:key="disclaimer">
 
     </PreferenceCategory>
+    <PreferenceCategory android:title = "@string/preferences_licenses" android:key="licenses">
+        <Preference
+            android:title="@string/preferences_icons_title"
+            android:summary="@string/preferences_icons_summary"/>
+    </PreferenceCategory>
 </PreferenceScreen>

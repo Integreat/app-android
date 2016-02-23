@@ -66,4 +66,7 @@
     <string name="no_events_found">There are currently no events.</string>
     <string name="auto_translated">This text is auto translated.</string>
     <string name="auto_translated_snackbar_close">Dismiss</string>
+    <string name="preferences_licenses">Copyright</string>
+    <string name="preferences_icons_summary">… designed by Freepik (www.flaticon.com)</string>
+    <string name="preferences_icons_title">Icons</string>
 </resources>
