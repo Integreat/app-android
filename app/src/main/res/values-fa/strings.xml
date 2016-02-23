@@ -55,6 +55,6 @@
     <string name="clear_cache_pref_title">پاک کردن کش</string>
     <string name="refguide" translatable="false"></string>
     <string name="preferences_licenses">حق چاپ</string>
-    <string name="preferences_icons_title">آیکن</string>
     <string name="preferences_icons_summary">Freepik (www.flaticon.com)</string>
+    <string name="preferences_icons_title">آیکن</string>
 </resources>

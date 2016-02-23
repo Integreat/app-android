@@ -30,4 +30,9 @@
             android:summary="@string/clear_cache_pref_summary"
             android:key="clear_cache"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title = "@string/preferences_licenses" android:key="licenses">
+        <Preference
+            android:title="@string/preferences_icons_title"
+            android:summary="@string/preferences_icons_summary"/>
+    </PreferenceCategory>
 </PreferenceScreen>
