@@ -51,4 +51,9 @@
     <string name="no_events_found">Aucun événement nous sont connus.</string>
     <string name="auto_translated">This text is auto translated.</string>
     <string name="auto_translated_snackbar_close">Dismiss</string>
+    <string name="clear_cache_pref_summary">Supprime toutes les données et vous ramène au menu de démarrage</string>
+    <string name="clear_cache_pref_title">Vider le cache</string>
+    <string name="preferences_licenses">droits d\'auteur</string>
+    <string name="preferences_icons_title">icônes</string>
+    <string name="preferences_icons_summary">Conçu par Freepik (www.flaticon.com)</string>
 </resources>
