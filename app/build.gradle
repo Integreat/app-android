@@ -38,7 +38,9 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
-    dexOptions {
+    dexOptions {    
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !travisBuild
         jumboMode true
     }
     lintOptions {
