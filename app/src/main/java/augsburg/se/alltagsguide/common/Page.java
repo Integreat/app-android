@@ -26,10 +26,12 @@ import com.google.gson.JsonObject;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import augsburg.se.alltagsguide.utilities.FileHelper;
 import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Newer;
 import augsburg.se.alltagsguide.utilities.Objects;
@@ -279,5 +281,9 @@ public class Page implements Serializable, Newer<Page> {
 
     public boolean isAutoTranslated() {
         return mAutoTranslated;
+    }
+
+    public List<String> getPdfs() {
+        return FileHelper.extractUrls(getContent());
     }
 }
