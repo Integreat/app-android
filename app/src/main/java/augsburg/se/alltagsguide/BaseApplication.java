@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.inject.Injector;
+import com.liulishuo.filedownloader.FileDownloader;
 
 import io.fabric.sdk.android.Fabric;
 import roboguice.RoboGuice;
@@ -52,6 +53,7 @@ public class BaseApplication extends Application {
         RoboGuice.setUseAnnotationDatabases(false);
         injector = RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
                 RoboGuice.newDefaultRoboModule(this), new MainModule());
+        FileDownloader.init(this);
     }
 
     /**

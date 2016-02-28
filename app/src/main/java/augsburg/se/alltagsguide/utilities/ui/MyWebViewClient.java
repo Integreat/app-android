@@ -19,17 +19,17 @@ package augsburg.se.alltagsguide.utilities.ui;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
+import java.io.File;
 import java.lang.ref.WeakReference;
 
+import augsburg.se.alltagsguide.utilities.FileHelper;
 import augsburg.se.alltagsguide.utilities.Objects;
 import roboguice.util.Ln;
 
@@ -49,7 +49,16 @@ public class MyWebViewClient extends WebViewClient {
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         final Activity activity = mActivityRef.get();
         if (url.toLowerCase().contains(".pdf")) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            Log.i("MyWebViewClient", "Clicked: " + url);
+            Uri uri;
+            File file = FileHelper.getPDFFileLink(mActivityRef.get(), url);
+            if (file.exists()) {
+                Log.i("MyWebViewClient", "Open file: " + file.getAbsolutePath());
+                uri = Uri.fromFile(file);
+            } else {
+                uri = Uri.parse(url);
+            }
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             try {
                 activity.startActivity(intent);
                 return true;
@@ -64,7 +73,7 @@ public class MyWebViewClient extends WebViewClient {
         if (url.startsWith("mailto:")) {
             if (activity != null) {
                 MailTo mt = MailTo.parse(url);
-                Intent i = newEmailIntent(activity, mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
+                Intent i = newEmailIntent(mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
                 activity.startActivity(i);
                 view.reload();
                 return true;
@@ -80,7 +89,7 @@ public class MyWebViewClient extends WebViewClient {
         return super.shouldOverrideUrlLoading(view, url);
     }
 
-    private Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {
+    private Intent newEmailIntent(String address, String subject, String body, String cc) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
         intent.putExtra(Intent.EXTRA_TEXT, body);

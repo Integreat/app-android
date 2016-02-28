@@ -19,8 +19,11 @@ package augsburg.se.alltagsguide.network;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.inject.Inject;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -33,6 +36,7 @@ import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.persistence.resources.PageResource;
 import augsburg.se.alltagsguide.utilities.BasicLoader;
+import augsburg.se.alltagsguide.utilities.FileHelper;
 import augsburg.se.alltagsguide.utilities.LoadingType;
 import roboguice.util.Ln;
 
@@ -68,6 +72,38 @@ public class PagesLoader extends BasicLoader<List<Page>> {
     public List<Page> load() {
         try {
             List<Page> pages = get(pagesFactory.under(mLanguage, mLocation));
+            FileHelper.downloadPDfs(pages, new FileDownloadListener() {
+                @Override
+                protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                }
+
+                @Override
+                protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                }
+
+                @Override
+                protected void blockComplete(BaseDownloadTask task) {
+
+                }
+
+                @Override
+                protected void completed(BaseDownloadTask task) {
+                    Log.i("PagesLoader", "Downloaded: " + task.getUrl() + " to: " + task.getPath());
+                }
+
+                @Override
+                protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                }
+
+                @Override
+                protected void error(BaseDownloadTask task, Throwable e) {
+                }
+
+                @Override
+                protected void warn(BaseDownloadTask task) {
+
+                }
+            }, getContext());
             List<AvailableLanguage> languages = dbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
             Page.recreateRelations(pages, languages, mLanguage);
             return pages;
