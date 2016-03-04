@@ -28,6 +28,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.google.inject.Injector;
+import com.liulishuo.filedownloader.FileDownloader;
 
 import io.fabric.sdk.android.Fabric;
 import roboguice.RoboGuice;
@@ -60,6 +61,7 @@ public class BaseApplication extends Application {
                 RoboGuice.newDefaultRoboModule(this), new MainModule());
         GoogleAnalytics.getInstance(this).getLogger()
                 .setLogLevel(Logger.LogLevel.VERBOSE);
+        FileDownloader.init(this);
     }
 
     /**
@@ -86,8 +88,12 @@ public class BaseApplication extends Application {
         injector.injectMembers(object);
     }
 
+
+    @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
+
 }

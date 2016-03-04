@@ -51,4 +51,10 @@
     <string name="no_events_found">در حال حاضر هیچ رویدادی به ما شناخته شده است.</string>
     <string name="auto_translated">This text is auto translated.</string>
     <string name="auto_translated_snackbar_close">Dismiss</string>
+    <string name="clear_cache_pref_summary">حذف تمام داده ها و به ارمغان می آورد شما را به منوی شروع</string>
+    <string name="clear_cache_pref_title">پاک کردن کش</string>
+    <string name="refguide" translatable="false"></string>
+    <string name="preferences_licenses">حق چاپ</string>
+    <string name="preferences_icons_summary">Freepik (www.flaticon.com)</string>
+    <string name="preferences_icons_title">آیکن</string>
 </resources>

@@ -54,4 +54,9 @@
     <string name="no_events_found">Derzeit sind uns keine Veranstaltungen bekannt.</string>
     <string name="auto_translated">This text is auto translated.</string>
     <string name="auto_translated_snackbar_close">Dismiss</string>
+    <string name="clear_cache_pref_summary">Entfernt alle Daten und öffnet das Startmenü</string>
+    <string name="clear_cache_pref_title">Alle Daten entfernen</string>
+    <string name="preferences_licenses">Copyright</string>
+    <string name="preferences_icons_summary">… entworfen von Freepik (www.flaticon.com)</string>
+    <string name="preferences_icons_title">Icons</string>
 </resources>
