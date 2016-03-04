@@ -4,7 +4,7 @@ android:
    - tools
    - platform-tools
    - android-23
-   - build-tools
+   - build-tools-23.0.2
    - extra
 
 jdk: oraclejdk7
@@ -13,7 +13,10 @@ notifications:
   email: false
 
 sudo: false
- 
+
+before_install:
+  - echo yes | android update sdk --all --filter build-tools-23.0.2 --no-ui --force > /dev/null
+  
 before_script:
   - chmod +x gradlew
   
