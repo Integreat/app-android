@@ -154,6 +154,7 @@ public class OverviewActivity extends BaseActivity
         if (mLanguage == null || mLocation == null){
             startWelcome();
         }
+        sendEvent("Overview", mLocation.getName() + "/" + mLanguage.getShortName());
         mHandler = new Handler();
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,6 +263,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void loadLanguage(@NonNull Language language) {
+        sendEvent("Overview", mLocation.getName() + "/" + language.getShortName());
         Page selectedPage = mNavigationAdapter.getSelectedPage();
         int selectedPageEquivalent = -1;
         if (selectedPage != null) {
@@ -580,7 +582,6 @@ public class OverviewActivity extends BaseActivity
         startActivity(intent);
     }
 
-
     @Override
     public void onEventPagesLoaded(@NonNull final List<EventPage> pages) {
     }
@@ -669,5 +670,12 @@ public class OverviewActivity extends BaseActivity
             }
             return createdFragment;
         }
+    }
+
+    @Override
+    protected String getScreenName() {
+        return String.format("Overview(%s|%s)",
+                mLocation != null ? mLocation.getName() : "",
+                mLanguage != null ? mLanguage.getName() : "");
     }
 }

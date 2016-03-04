@@ -81,6 +81,11 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
     }
 
     @Override
+    protected String getScreenName() {
+        return "Location-Overview";
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(getString(R.string.location_fragment_title));
@@ -154,7 +159,7 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
             return filteredLocations;
         }
         for (Location location : elements) {
-            if (location.isVisibleWithFilter(mFilterText)) {
+            if (location != null && location.isVisibleWithFilter(mFilterText)) {
                 filteredLocations.add(location);
             }
         }

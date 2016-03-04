@@ -67,6 +67,11 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
     }
 
     @Override
+    protected String getScreenName() {
+        return "Welcome";
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_welcome, menu);
         return true;

@@ -44,4 +44,14 @@ public class PageActivity extends BasePageWebViewLanguageActivity<Page> {
         return new PageLoader(this, mPrefUtilities.getLocation(), language.getLoadedLanguage(), language.getOtherPageId());
     }
 
+    @Override
+    protected String getScreenName() {
+        if (mPage == null || mPage.getLanguage() == null || mPage.getLanguage().getLocation() == null){
+            return "PageActivity";
+        }
+        return String.format("Page(%s|%s|%s)",
+                mPage.getLanguage().getLocation().getName(),
+                mPage.getLanguage().getName(),
+                mPage.getId());
+    }
 }
