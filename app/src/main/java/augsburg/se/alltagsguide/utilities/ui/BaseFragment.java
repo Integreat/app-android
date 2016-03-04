@@ -57,12 +57,16 @@ public class BaseFragment extends RoboFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mAnalytics.sendScreen(getScreenName());
+        if (mAnalytics != null) {
+            mAnalytics.sendScreen(getScreenName());
+        }
     }
 
-    public void sendEvent(String category, String name){
-        mAnalytics.sendEvent(category, name);
-    };
+    public void sendEvent(String category, String name) {
+        if (mAnalytics != null) {
+            mAnalytics.sendEvent(category, name);
+        }
+    }
 
     protected String getScreenName() {
         return "Fragment~";
@@ -112,13 +116,13 @@ public class BaseFragment extends RoboFragment {
         void setSubTitle(String title);
     }
 
-    public void onEvent(NetworkChangeEvent event){
-        if (event.isOnline()){
+    public void onEvent(NetworkChangeEvent event) {
+        if (event.isOnline()) {
             networkStateSwitchedToOnline();
         }
     }
 
-    public void networkStateSwitchedToOnline(){
+    public void networkStateSwitchedToOnline() {
         //Should be overriden by classes who are interested.
     }
 

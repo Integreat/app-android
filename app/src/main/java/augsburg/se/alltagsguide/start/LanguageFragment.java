@@ -83,12 +83,16 @@ public class LanguageFragment extends BaseListFragment<Language> {
             if (mLocation == null) {
                 throw new IllegalStateException("Location should not be null");
             }
-            sendEvent("Location", mLocation.getName());
         } else {
             throw new IllegalStateException("Location should not be null");
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        sendEvent("Location", mLocation.getName());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

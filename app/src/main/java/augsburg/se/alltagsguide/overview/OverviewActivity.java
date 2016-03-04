@@ -154,7 +154,6 @@ public class OverviewActivity extends BaseActivity
         if (mLanguage == null || mLocation == null){
             startWelcome();
         }
-        sendEvent("Overview", mLocation.getName() + "/" + mLanguage.getShortName());
         mHandler = new Handler();
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +171,7 @@ public class OverviewActivity extends BaseActivity
         initNavigationDrawer();
         restoreInstanceState(savedInstanceState);
     }
+
 
     public void restoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -363,6 +363,7 @@ public class OverviewActivity extends BaseActivity
             }
         };
         mPrefUtilities.addListener(mPreferenceListener);
+        sendEvent("Overview", mLocation.getName() + "/" + mLanguage.getShortName());
     }
 
 

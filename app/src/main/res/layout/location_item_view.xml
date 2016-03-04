@@ -29,21 +29,25 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="130dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             tools:src="@drawable/icon_location_loading"/>
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/image"
             android:layout_alignParentBottom="true"
+            android:layout_alignStart="@id/image"
+            android:layout_alignRight="@id/image"
+            android:layout_alignEnd="@id/image"
             android:background="#6c000000">
 
             <TextView

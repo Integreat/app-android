@@ -79,16 +79,20 @@ public class BaseActivity extends RoboActionBarActivity implements BaseFragment.
         return "Activity~";
     }
 
-    public void sendScreen(String name){
-        mTracker.setScreenName(name);
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    public void sendScreen(String name) {
+        if (mTracker != null) {
+            mTracker.setScreenName(name);
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     public void sendEvent(String category, String action) {
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .build());
+        if (mTracker != null) {
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory(category)
+                    .setAction(action)
+                    .build());
+        }
     }
 
     @Override
