@@ -41,7 +41,6 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
-import augsburg.se.alltagsguide.start.WelcomeActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
@@ -156,6 +155,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
             });
             snackBar.show();
         }
+        sendEvent("Page", mPage.getTitle());
     }
 
     protected abstract void setMorePageDetails(T t);
@@ -251,6 +251,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     }
 
     protected void loadLanguage(AvailableLanguage language) {
+        sendEvent("Page", mPage.getTitle() + "/" + language.getLanguage());
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_LANGUAGE, language);
         getSupportLoaderManager().restartLoader(0, bundle, this);
