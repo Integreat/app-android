@@ -55,7 +55,13 @@ public class Helper {
 
     public static float getFloatOrDefault(@NonNull JsonElement elem, float defaultValue) {
         try {
-            return elem.getAsFloat();
+            if (!elem.isJsonNull()){
+                String string = elem.getAsString();
+                if (string != null){
+                    return Float.parseFloat(string.trim());
+                }
+            }
+            return defaultValue;
         } catch (Exception e) {
             Ln.d(e);
             return defaultValue;
@@ -74,7 +80,10 @@ public class Helper {
     @NonNull
     public static String getStringOrDefault(JsonElement elem, String defaultValue) {
         try {
-            return elem.getAsString();
+            if (!elem.isJsonNull()){
+                return elem.getAsString();
+            }
+            return defaultValue;
         } catch (Exception e) {
             Ln.d(e);
             return defaultValue;
@@ -83,7 +92,13 @@ public class Helper {
 
     public static int getIntOrDefault(JsonElement elem, int defaultValue) {
         try {
-            return elem.getAsInt();
+            if (!elem.isJsonNull()){
+                String string = elem.getAsString();
+                if (string != null){
+                    return Integer.parseInt(string.trim());
+                }
+            }
+            return defaultValue;
         } catch (Exception e) {
             Ln.d(e);
             return defaultValue;

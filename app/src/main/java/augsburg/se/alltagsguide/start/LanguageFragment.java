@@ -63,7 +63,10 @@ public class LanguageFragment extends BaseListFragment<Language> {
 
     @Override
     protected String getScreenName() {
-        return super.getScreenName() + "LanguageFragment";
+        if (mLocation != null) {
+            return String.format("Language-Overview(%s)", mLocation.getName());
+        }
+        return "Language-Overview";
     }
 
     @Override

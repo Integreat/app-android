@@ -674,6 +674,8 @@ public class OverviewActivity extends BaseActivity
 
     @Override
     protected String getScreenName() {
-        return super.getScreenName() + "OverviewActivity";
+        return String.format("Overview(%s|%s)",
+                mLocation != null ? mLocation.getName() : "",
+                mLanguage != null ? mLanguage.getName() : "");
     }
 }

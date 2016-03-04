@@ -150,6 +150,12 @@ public class EventActivity extends BasePageWebViewLanguageActivity<EventPage> {
 
     @Override
     protected String getScreenName() {
-        return super.getScreenName() + "EventActivity";
+        if (mPage == null || mPage.getLanguage() == null || mPage.getLanguage().getLocation() == null){
+            return "PageActivity";
+        }
+        return String.format("EventPage(%s|%s|%s)",
+                mPage.getLanguage().getLocation().getName(),
+                mPage.getLanguage().getName(),
+                mPage.getId());
     }
 }

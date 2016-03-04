@@ -82,7 +82,7 @@ public class LocationFragment extends BaseListFragment<Location> implements Text
 
     @Override
     protected String getScreenName() {
-        return super.getScreenName() + "LocationFragment";
+        return "Location-Overview";
     }
 
     @Override

@@ -83,6 +83,6 @@ public class SettingsActivity extends BaseActivity implements PrefFragment.OnPre
 
     @Override
     protected String getScreenName() {
-        return super.getScreenName() + "SettingsActivity";
+        return "Settings";
     }
 }

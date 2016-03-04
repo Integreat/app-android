@@ -68,7 +68,7 @@ public class WelcomeActivity extends BaseActivity implements LanguageFragment.On
 
     @Override
     protected String getScreenName() {
-        return super.getScreenName() + "WelcomeActivity";
+        return "Welcome";
     }
 
     @Override
