@@ -73,7 +73,6 @@ public abstract class BasicLoader<D> extends AsyncLoader<D> {
                 return dbCache.load(resource);
             case FORCE_NETWORK:
                 dbCache.requestAndStore(resource);
-                //TODO maybe consider just returning new network-data (or maybe not -> deletion more complicated)
                 return dbCache.load(resource);
             case NETWORK_OR_DATABASE:
                 return dbCache.loadOrRequest(resource);

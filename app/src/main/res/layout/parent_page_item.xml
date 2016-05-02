@@ -27,7 +27,7 @@
     tools:context="augsburg.se.alltagsguide.category.InformationActivity">
 
     <LinearLayout
-        android:layout_width="match_pagrent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 

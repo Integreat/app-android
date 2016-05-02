@@ -66,7 +66,7 @@ public class Location implements Serializable, Newer<Location> {
 
     @Override
     public String toString() {
-        //TODO currently required for retrofit get parameter
+        //required for retrofit get parameter
         return mPath.substring(1, mPath.length() - 1);
     }
 

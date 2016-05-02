@@ -36,10 +36,14 @@ import augsburg.se.alltagsguide.utilities.Objects;
  */
 public class EventPage extends Page implements Newer<Page> {
 
-    @NonNull private Event mEvent;
-    @Nullable private EventLocation mLocation;
-    @NonNull private List<EventTag> mTags;
-    @NonNull private List<EventCategory> mCategories;
+    @NonNull
+    private Event mEvent;
+    @Nullable
+    private EventLocation mLocation;
+    @NonNull
+    private List<EventTag> mTags;
+    @NonNull
+    private List<EventCategory> mCategories;
 
     public EventPage(@NonNull Page page, @NonNull Event event, @Nullable EventLocation location, @NonNull List<EventTag> tags, @NonNull List<EventCategory> categories) {
         super(page.getId(), page.getTitle(), page.getType(), page.getStatus(), page.getModified(), page.getDescription(),
@@ -53,7 +57,6 @@ public class EventPage extends Page implements Newer<Page> {
     @NonNull
     public static EventPage fromJson(@NonNull final JsonObject jsonPage) {
         Page page = Page.fromJson(jsonPage);
-        //TODO jsonPage.get("page") !?
         Event event = Event.fromJson(jsonPage.get("event").getAsJsonObject(), page.getId());
         JsonElement locationElement = jsonPage.get("location");
         EventLocation location = null;
@@ -69,7 +72,7 @@ public class EventPage extends Page implements Newer<Page> {
     @Override
     public int compareTo(@NonNull Page o) {
         EventPage other = (EventPage) o;
-        return Long.valueOf(other.getEvent().getStartTime()).compareTo(getEvent().getStartTime());
+        return Long.valueOf(getEvent().getStartTime()).compareTo(other.getEvent().getStartTime()); //newest first
     }
 
     @NonNull

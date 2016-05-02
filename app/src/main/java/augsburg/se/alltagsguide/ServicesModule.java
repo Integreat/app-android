@@ -45,7 +45,6 @@ import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
 import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.RetrofitError;
 import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
 import retrofit.http.Path;
