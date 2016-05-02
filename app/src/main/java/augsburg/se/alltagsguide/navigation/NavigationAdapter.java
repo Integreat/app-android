@@ -111,8 +111,8 @@ public class NavigationAdapter extends UltimateViewAdapter<NavigationAdapter.Nav
             position--; //so you can see the first position because position = 0 is the header!
         }
         final Page item = mPages.get(position);
-        boolean selected = Objects.equals(item.getId(), mCurrentPageId);
-        if (selected) {
+        boolean childOrParentSelected = isSelectedRecursively(item, mCurrentPageId);
+        if (childOrParentSelected) {
             mSelectedPage = item;
         }
         holder.title.setText(item.getTitle());
@@ -122,11 +122,11 @@ public class NavigationAdapter extends UltimateViewAdapter<NavigationAdapter.Nav
                 mListener.onNavigationClicked(item);
             }
         });
-        holder.itemView.setBackgroundColor(selected ? mColor : whiteColor);
-        holder.title.setTextColor(selected ? whiteColor : textColor);
+        holder.itemView.setBackgroundColor(childOrParentSelected ? mColor : whiteColor);
+        holder.title.setTextColor(childOrParentSelected ? whiteColor : textColor);
         if (!Objects.isNullOrEmpty(item.getThumbnail())) {
             RequestCreator creator = mPicasso.load(item.getThumbnail());
-            if (selected) {
+            if (childOrParentSelected) {
                 creator = creator.transform(mInvertTransformation);
             } else {
                 creator = creator.transform(mColorTransformation);
@@ -135,6 +135,17 @@ public class NavigationAdapter extends UltimateViewAdapter<NavigationAdapter.Nav
         } else {
             holder.image.setImageDrawable(null);
         }
+    }
+
+    private boolean isSelectedRecursively(Page item, int mCurrentPageId) {
+        Page curPage = item;
+        while (curPage != null){
+            if(Objects.equals(curPage.getId(), mCurrentPageId)){
+                return true;
+            }
+            curPage = item.getParent();
+        }
+        return false;
     }
 
     @Override

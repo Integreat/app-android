@@ -151,7 +151,7 @@ public class OverviewActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         mLocation = mPrefUtilities.getLocation();
         mLanguage = mPrefUtilities.getLanguage();
-        if (mLanguage == null || mLocation == null){
+        if (mLanguage == null || mLocation == null) {
             startWelcome();
         }
         mHandler = new Handler();
@@ -427,7 +427,6 @@ public class OverviewActivity extends BaseActivity
         return useMultiple;
     }
 
-    @Override
     public void onOpenPage(@NonNull Page page) {
         Intent intent = new Intent(OverviewActivity.this, PageActivity.class);
         intent.putExtra(PageActivity.ARG_INFO, page);
@@ -464,20 +463,30 @@ public class OverviewActivity extends BaseActivity
         mViewPager.setCurrentItem(PAGE_OVERVIEW_INDEX);
     }
 
+    @Override
+    public void onOpenPageRecursively(Page page) {
+        navigatePageRecursively(page);
+    }
+
 
     @Override
     public void onNavigationClicked(@NonNull final Page item) {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                goToNavDrawerItem(item);
+                navigatePageRecursively(item);
             }
         }, NAVDRAWER_LAUNCH_DELAY);
         drawerLayout.closeDrawers();
     }
 
-    private void goToNavDrawerItem(@NonNull Page item) {
-        if (item.getSubPages().isEmpty()) {
+    /**
+     * Opens the subpages or the page if we reached a child
+     *
+     * @param item
+     */
+    private void navigatePageRecursively(@NonNull Page item) {
+        if (item.getSubPages().isEmpty() || Objects.equals(item.getId(), mPrefUtilities.getSelectedPageId())) {
             mPrefUtilities.setSelectedPage(-1);
             onOpenPage(item);
             return;

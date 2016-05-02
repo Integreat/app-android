@@ -42,7 +42,8 @@ import roboguice.util.Ln;
  */
 public class Page implements Serializable, Newer<Page> {
     private final int mId;
-    @NonNull private final String mTitle;
+    @NonNull
+    private final String mTitle;
     private final String mType;
     private final String mStatus;
     private final int mParentId;
@@ -54,7 +55,8 @@ public class Page implements Serializable, Newer<Page> {
     private Author mAuthor;
 
     private Page mParent;
-    @NonNull final List<Page> mSubPages;
+    @NonNull
+    final List<Page> mSubPages;
     private List<Page> mAvailablePages;
 
     private List<AvailableLanguage> mAvailableLanguages;
@@ -258,7 +260,7 @@ public class Page implements Serializable, Newer<Page> {
     public static List<Page> filterParents(@NonNull List<Page> pages) {
         List<Page> parentPages = new ArrayList<>();
         for (Page page : pages) {
-            if (page.getParent() == null) {
+            if (!page.getSubPages().isEmpty()) {
                 parentPages.add(page);
             }
         }

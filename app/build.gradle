@@ -36,27 +36,26 @@ repositories {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
-    dexOptions {    
+    dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
         preDexLibraries = preDexEnabled && !travisBuild
         jumboMode true
     }
     lintOptions {
         abortOnError false
-   }
+    }
 
-        defaultConfig {
-            applicationId "augsburg.se.alltagsguide"
-            versionCode 1
-            versionName "buddy"
-            minSdkVersion 9
-            targetSdkVersion 23
-            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        }
+    defaultConfig {
+        applicationId "augsburg.se.alltagsguide"
+        versionCode 1
+        versionName "buddy"
+        minSdkVersion 9
+        targetSdkVersion 23
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
 
-    def location = ''
     buildTypes {
         release {
             minifyEnabled false
@@ -88,14 +87,12 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
     }
 }
 
 dependencies {
-    project.dependencies {
-        compile 'org.roboguice:roboguice:3.0.1'
-        provided 'org.roboguice:roboblender:3.0.1'
-    }
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile('com.google.inject.extensions:guice-assistedinject:4.0') {
         exclude group: 'com.google.inject'
@@ -103,6 +100,9 @@ dependencies {
     provided 'org.roboguice:roboblender:3.0.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
+    }
+    compile('org.roboguice:roboguice:3.0.1') {
+        exclude group: 'com.google.guava'
     }
     compile 'com.google.guava:guava:19.0-rc2'
     compile 'com.android.support:preference-v7:23.1.1'

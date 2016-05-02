@@ -129,7 +129,7 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
 
 
     @Override
-    public BaseAdapter getOrCreateAdapter(List<Page> items) {
+    public BaseAdapter getOrCreateAdapter(@NonNull final List<Page> items) {
         if (mPageAdapter == null) {
             mPageAdapter = new PageAdapter(items, mListener, mPrefUtilities.getCurrentColor(), getActivity());
         } else {
@@ -181,11 +181,11 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
     }
 
     public interface OnPageFragmentInteractionListener {
-        void onOpenPage(Page page);
-
-        void onPagesLoaded(List<Page> pages);
+        void onPagesLoaded(@NonNull final List<Page> pages);
 
         void onSetItemsChanged();
+
+        void onOpenPageRecursively(Page page);
     }
 
 }

@@ -83,7 +83,7 @@ public class PageAdapter extends BaseAdapter<PageAdapter.ContentViewHolder, Page
         contentHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onOpenPage(page);
+                mListener.onOpenPageRecursively(page);
             }
         });
         //contentHolder.more.setTextColor(mColor);
