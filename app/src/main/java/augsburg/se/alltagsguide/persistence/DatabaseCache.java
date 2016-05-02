@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -230,7 +231,7 @@ public class DatabaseCache {
 
             List<E> cached = new ArrayList<>();
             do {
-                cached.add(persistableResource.loadFrom(cursor, db));
+                cached.add(persistableResource.loadFrom(cursor));
             }
             while (cursor.moveToNext());
             return cached;
@@ -251,9 +252,18 @@ public class DatabaseCache {
             if (!cursor.moveToFirst()) {
                 return null;
             }
-            return persistableResource.loadFrom(cursor, db);
+            return persistableResource.loadFrom(cursor);
         } finally {
             cursor.close();
         }
+    }
+
+    public Cursor executeRawQuery(SQLiteQueryBuilder queryBuilder) {
+        final SQLiteDatabase db = getReadable(helperProvider.get());
+        if (db == null) {
+            Ln.d("SQLiteDatabase is null");
+            return null;
+        }
+        return queryBuilder.query(db, null, null, null, null, null, null);
     }
 }

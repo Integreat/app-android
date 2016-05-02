@@ -20,17 +20,28 @@ package augsburg.se.alltagsguide.utilities.ui;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.MailTo;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.inject.Inject;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.page.PageActivity;
+import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.persistence.DatabaseCache;
 import augsburg.se.alltagsguide.utilities.FileHelper;
+import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Objects;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
 /**
@@ -38,11 +49,14 @@ import roboguice.util.Ln;
  */
 public class MyWebViewClient extends WebViewClient {
     private final WeakReference<Activity> mActivityRef;
-
     private String mContent = "";
+
+    @Inject
+    private DatabaseCache mDbCache;
 
     public MyWebViewClient(Activity activity) {
         mActivityRef = new WeakReference<>(activity);
+        RoboGuice.injectMembers(activity, this);
     }
 
     @Override
@@ -79,9 +93,16 @@ public class MyWebViewClient extends WebViewClient {
                 return true;
             }
         } else if (url.startsWith("http://") || url.startsWith("https://")) {
-            Intent extBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            extBrowserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mActivityRef.get().startActivity(extBrowserIntent);
+            Page page = findByPermalink(url);
+            if (page != null) {
+                Intent intent = new Intent(activity, PageActivity.class);
+                intent.putExtra(PageActivity.ARG_INFO, page);
+                activity.startActivity(intent);
+            } else {
+                Intent extBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                extBrowserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(extBrowserIntent);
+            }
             return true;
         } else {
             view.loadUrl(url);
@@ -118,4 +139,21 @@ public class MyWebViewClient extends WebViewClient {
 
         return string.replace("'", "\\'");
     }
+
+    public SQLiteQueryBuilder getPermaLinkQuery(String url) {
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(Page.TABLES);
+        builder.appendWhere(CacheHelper.PAGE_PERMALINK +  " = " + Helper.quote(url));
+        return builder;
+    }
+
+    public Page findByPermalink(String url) {
+        SQLiteQueryBuilder queryBuilder = getPermaLinkQuery(url);
+        Cursor cursor = mDbCache.executeRawQuery(queryBuilder);
+        if (cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        return Page.loadFrom(cursor);
+    }
+
 }

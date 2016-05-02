@@ -83,7 +83,7 @@ public class LanguageResource implements PersistableNetworkResource<Language> {
 
     @Nullable
     @Override
-    public Language loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
+    public Language loadFrom(@NonNull Cursor cursor) {
         Language language = Language.fromCursor(cursor);
         language.setLocation(mLocation);
         return language;

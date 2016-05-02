@@ -40,6 +40,7 @@ import java.io.Serializable;
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.network.PageLoader;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
 import augsburg.se.alltagsguide.start.WelcomeActivity;
 import de.hdodenhof.circleimageview.CircleImageView;

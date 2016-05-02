@@ -65,7 +65,7 @@ public class LocationResource implements PersistableNetworkResource<Location> {
 
     @Nullable
     @Override
-    public Location loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
+    public Location loadFrom(@NonNull Cursor cursor) {
         return Location.fromCursor(cursor);
     }
 

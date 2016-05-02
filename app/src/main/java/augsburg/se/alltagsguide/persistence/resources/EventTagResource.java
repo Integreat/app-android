@@ -81,7 +81,7 @@ public class EventTagResource implements PersistableResource<EventTag> {
 
     @Nullable
     @Override
-    public EventTag loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
+    public EventTag loadFrom(@NonNull Cursor cursor) {
         return EventTag.loadFrom(cursor);
     }
 

@@ -128,9 +128,9 @@ public class EventPageResource implements PersistableNetworkResource<EventPage> 
 
     @NonNull
     @Override
-    public EventPage loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
+    public EventPage loadFrom(@NonNull Cursor cursor) {
         // SELECT statement must include every attribute from page
-        Page page = mPageResource.loadFrom(cursor, db);
+        Page page = mPageResource.loadFrom(cursor);
         if (BuildConfig.DEBUG) {
             if (cursor.isClosed()) {
                 throw new IllegalStateException("Cursor should not be closed");

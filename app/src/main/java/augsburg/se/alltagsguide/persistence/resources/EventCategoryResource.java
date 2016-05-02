@@ -80,7 +80,7 @@ public class EventCategoryResource implements PersistableResource<EventCategory>
 
     @NonNull
     @Override
-    public EventCategory loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
+    public EventCategory loadFrom(@NonNull Cursor cursor) {
         return EventCategory.loadFrom(cursor);
     }
 

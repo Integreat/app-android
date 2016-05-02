@@ -85,7 +85,7 @@ public class AvailableLanguageResource implements PersistableResource<AvailableL
 
     @NonNull
     @Override
-    public AvailableLanguage loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
+    public AvailableLanguage loadFrom(@NonNull Cursor cursor) {
         AvailableLanguage availableLanguage = AvailableLanguage.loadFrom(cursor);
         Language language = Language.fromCursor(cursor);
         availableLanguage.setLanguage(language);

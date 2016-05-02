@@ -17,6 +17,7 @@
 
 package augsburg.se.alltagsguide.common;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.Html;
 
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.utilities.FileHelper;
 import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Newer;
@@ -41,6 +43,10 @@ import roboguice.util.Ln;
  * Created by Daniel-L on 20.09.2015.
  */
 public class Page implements Serializable, Newer<Page> {
+    public static final String TABLES = CacheHelper.TABLE_PAGE
+            + " join " + CacheHelper.TABLE_AUTHOR + " ON " + CacheHelper.PAGE_AUTHOR + " = " + CacheHelper.AUTHOR_USERNAME;
+
+
     private final int mId;
     @NonNull
     private final String mTitle;
@@ -52,6 +58,7 @@ public class Page implements Serializable, Newer<Page> {
     private final String mContent;
     private final int mOrder;
     private String mThumbnail;
+    private String mPermalink;
     private Author mAuthor;
 
     private Page mParent;
@@ -63,7 +70,7 @@ public class Page implements Serializable, Newer<Page> {
     private Language mLanguage;
     private boolean mAutoTranslated;
 
-    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, boolean autoTranslated, List<AvailableLanguage> availableLanguages) {
+    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, boolean autoTranslated, List<AvailableLanguage> availableLanguages, String permalink) {
         mId = id;
         mTitle = title;
         mType = type;
@@ -79,6 +86,7 @@ public class Page implements Serializable, Newer<Page> {
         mAvailableLanguages = availableLanguages;
         mAvailablePages = new ArrayList<>();
         mSubPages = new ArrayList<>();
+        mPermalink = permalink;
     }
 
     public void addSubPages(@NonNull List<Page> subPages) {
@@ -113,6 +121,7 @@ public class Page implements Serializable, Newer<Page> {
         }
         String description = jsonPage.get("excerpt").getAsString();
         String content = jsonPage.get("content").getAsString();
+        String permalink = jsonPage.get("permalink").getAsJsonObject().get("url").getAsString();
         int parentId = jsonPage.get("parent").getAsInt();
         int order = jsonPage.get("order").getAsInt();
         String thumbnail = jsonPage.get("thumbnail").isJsonNull() ? "" : jsonPage.get("thumbnail").getAsString();
@@ -127,7 +136,7 @@ public class Page implements Serializable, Newer<Page> {
                 autoTranslated = elem.getAsBoolean();
             }
         }
-        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, languages);
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, languages, permalink);
     }
 
     public void setParent(Page parent) {
@@ -287,5 +296,27 @@ public class Page implements Serializable, Newer<Page> {
 
     public List<String> getPdfs() {
         return FileHelper.extractUrls(getContent());
+    }
+
+    public String getPermalink() {
+        return mPermalink;
+    }
+
+    public static Page loadFrom(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ID));
+        String title = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TITLE));
+        String type = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TYPE));
+        String status = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_STATUS));
+        long modified = cursor.getLong(cursor.getColumnIndex(CacheHelper.PAGE_MODIFIED));
+        String description = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_DESCRIPTION));
+        String content = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_CONTENT));
+        int parentId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_PARENT_ID));
+        int order = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ORDER));
+        String thumbnail = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_THUMBNAIL));
+        boolean autoTranslated = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AUTO_TRANSLATED)) == 1;
+        String permalink = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_PERMALINK));
+
+        Author author = Author.fromCursor(cursor);
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>(), permalink);
     }
 }

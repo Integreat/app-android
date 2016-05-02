@@ -43,7 +43,7 @@ public class EventPage extends Page implements Newer<Page> {
 
     public EventPage(@NonNull Page page, @NonNull Event event, @Nullable EventLocation location, @NonNull List<EventTag> tags, @NonNull List<EventCategory> categories) {
         super(page.getId(), page.getTitle(), page.getType(), page.getStatus(), page.getModified(), page.getDescription(),
-                page.getContent(), page.getParentId(), page.getOrder(), page.getThumbnail(), page.getAuthor(), page.isAutoTranslated(), page.getAvailableLanguages());
+                page.getContent(), page.getParentId(), page.getOrder(), page.getThumbnail(), page.getAuthor(), page.isAutoTranslated(), page.getAvailableLanguages(), page.getPermalink());
         mEvent = event;
         mLocation = location;
         mTags = tags;
@@ -53,7 +53,6 @@ public class EventPage extends Page implements Newer<Page> {
     @NonNull
     public static EventPage fromJson(@NonNull final JsonObject jsonPage) {
         Page page = Page.fromJson(jsonPage);
-        //TODO jsonPage.get("page") !?
         Event event = Event.fromJson(jsonPage.get("event").getAsJsonObject(), page.getId());
         JsonElement locationElement = jsonPage.get("location");
         EventLocation location = null;

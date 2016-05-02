@@ -50,11 +50,10 @@ public interface PersistableResource<E> {
 
     /**
      * @param cursor
-     * @param db     for having n:m joins
      * @return a single item, read from this row of the cursor
      */
     @Nullable
-    E loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db);
+    E loadFrom(@NonNull Cursor cursor);
 
     /**
      * Store supplied items in DB, removing or updating prior entries
