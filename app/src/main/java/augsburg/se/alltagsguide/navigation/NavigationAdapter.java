@@ -143,7 +143,7 @@ public class NavigationAdapter extends UltimateViewAdapter<NavigationAdapter.Nav
             if(Objects.equals(curPage.getId(), mCurrentPageId)){
                 return true;
             }
-            curPage = item.getParent();
+            curPage = curPage.getParent();
         }
         return false;
     }
