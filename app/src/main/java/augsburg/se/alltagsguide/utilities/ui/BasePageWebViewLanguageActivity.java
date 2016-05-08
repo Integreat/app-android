@@ -39,6 +39,8 @@ import java.io.Serializable;
 
 import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
+import augsburg.se.alltagsguide.common.Language;
+import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.network.PageLoader;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
@@ -76,7 +78,6 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initWebView();
         if (savedInstanceState == null) {
             setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
         }
@@ -141,6 +142,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     protected void setPage(T t) {
         mPage = t;
         setSubTitle(mPage.getTitle());
+        initWebView(mPage);
         loadWebViewData();
         setupLanguagesButton();
         setMorePageDetails(t);
@@ -180,8 +182,10 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    protected void initWebView() {
-        myWebViewClient = new MyWebViewClient(this);
+    protected void initWebView(T page) {
+        Language language = page.getLanguage();
+        Location location = language.getLocation();
+        myWebViewClient = new MyWebViewClient(this, language, location);
         descriptionView.setWebViewClient(myWebViewClient);
         // javascript broken bug android versions 2.3.X
         if (!"2.3".equals(Build.VERSION.RELEASE)) {
