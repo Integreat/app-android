@@ -32,11 +32,17 @@ import com.google.inject.Inject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
+import augsburg.se.alltagsguide.common.AvailableLanguage;
+import augsburg.se.alltagsguide.common.Language;
+import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.page.PageActivity;
 import augsburg.se.alltagsguide.persistence.CacheHelper;
 import augsburg.se.alltagsguide.persistence.DatabaseCache;
+import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.utilities.FileHelper;
 import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Objects;
@@ -53,9 +59,17 @@ public class MyWebViewClient extends WebViewClient {
     @Inject
     private DatabaseCache mDbCache;
 
-    public MyWebViewClient(Activity activity) {
+    @Inject
+    private AvailableLanguageResource.Factory availableLanguageFactory;
+
+    private Language mLanguage;
+    private Location mLocation;
+
+    public MyWebViewClient(Activity activity, Language language, Location location) {
         mActivityRef = new WeakReference<>(activity);
         RoboGuice.injectMembers(activity, this);
+        mLanguage = language;
+        mLocation = location;
     }
 
     @Override
@@ -152,7 +166,12 @@ public class MyWebViewClient extends WebViewClient {
         if (cursor == null || !cursor.moveToFirst()) {
             return null;
         }
-        return Page.loadFrom(cursor);
+        Page referencedPage = Page.loadFrom(cursor);
+        List<Page> pages = new ArrayList<>();
+        pages.add(referencedPage);
+        List<AvailableLanguage> languages = mDbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
+        Page.recreateRelations(pages, languages, mLanguage);
+        return referencedPage;
     }
 
 }
