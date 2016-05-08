@@ -142,7 +142,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     protected void setPage(T t) {
         mPage = t;
         setSubTitle(mPage.getTitle());
-        initWebView(mPage);
+        initWebView();
         loadWebViewData();
         setupLanguagesButton();
         setMorePageDetails(t);
@@ -182,10 +182,8 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    protected void initWebView(T page) {
-        Language language = page.getLanguage();
-        Location location = language.getLocation();
-        myWebViewClient = new MyWebViewClient(this, language, location);
+    protected void initWebView() {
+        myWebViewClient = new MyWebViewClient(this);
         descriptionView.setWebViewClient(myWebViewClient);
         // javascript broken bug android versions 2.3.X
         if (!"2.3".equals(Build.VERSION.RELEASE)) {

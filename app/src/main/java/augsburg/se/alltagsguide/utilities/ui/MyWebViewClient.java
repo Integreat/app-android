@@ -92,7 +92,7 @@ public class MyWebViewClient extends WebViewClient {
                 return true;
             }
         } else if (url.startsWith("http://") || url.startsWith("https://")) {
-            Page page = findByPermalink(url);
+            Page page = findByPermalink(Helper.shortenUrl(url));
             if (page != null) {
                 Intent intent = new Intent(activity, PageActivity.class);
                 intent.putExtra(PageActivity.ARG_INFO, page);
@@ -142,7 +142,7 @@ public class MyWebViewClient extends WebViewClient {
     public SQLiteQueryBuilder getPermaLinkQuery(String url) {
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(Page.TABLES);
-        builder.appendWhere(CacheHelper.PAGE_PERMALINK +  " = " + Helper.quote(url));
+        builder.appendWhere(CacheHelper.PAGE_PERMALINK + " = " + Helper.quote(url));
         return builder;
     }
 
