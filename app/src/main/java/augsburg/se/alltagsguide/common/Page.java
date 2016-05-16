@@ -270,7 +270,7 @@ public class Page implements Serializable, Newer<Page> {
     public static List<Page> filterParents(@NonNull List<Page> pages) {
         List<Page> parentPages = new ArrayList<>();
         for (Page page : pages) {
-            if (!page.getSubPages().isEmpty()) {
+            if (page.getParent() == null){
                 parentPages.add(page);
             }
         }
