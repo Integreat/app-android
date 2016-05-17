@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ This file is part of Integreat.
   ~
   ~ Integreat is free software: you can redistribute it and/or modify
@@ -16,16 +15,15 @@
   ~ along with Integreat.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardBackgroundColor="@android:color/transparent"
-    app:cardElevation="3dp"
-    app:cardCornerRadius="3dp">
+    app:cardCornerRadius="3dp"
+    app:cardElevation="3dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,7 +36,7 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            tools:src="@drawable/icon_language_loading_error"/>
+            tools:src="@drawable/icon_language_loading_error" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -55,7 +53,7 @@
                 android:paddingTop="2dp"
                 android:textColor="@android:color/white"
                 android:textSize="?attr/font_xlarge"
-                tools:text="Deutsch"/>
+                tools:text="Deutsch" />
         </RelativeLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>
