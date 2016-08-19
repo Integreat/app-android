@@ -430,10 +430,23 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    public void onOpenPage(@NonNull Page page) {
-        Intent intent = new Intent(OverviewActivity.this, PageActivity.class);
-        intent.putExtra(PageActivity.ARG_INFO, page);
-        startActivity(intent);
+    public void onOpenPage(@NonNull Page item) {
+        if (item.getSubPages().isEmpty() || item.getId() == mPrefUtilities.getSelectedPageId()) {
+            mPrefUtilities.setSelectedPage(-1);
+            Intent intent = new Intent(OverviewActivity.this, PageActivity.class);
+            intent.putExtra(PageActivity.ARG_INFO, item);
+            startActivity(intent);
+            return;
+        }
+        mPrefUtilities.setSelectedPage(item.getId());
+        if (mNavigationAdapter != null) {
+            mNavigationAdapter.setSelectedIndex(item.getId());
+            mNavigationAdapter.notifyDataSetChanged();
+        }
+        if (mPageOverviewFragment != null) {
+            mPageOverviewFragment.indexUpdated();
+        }
+
     }
 
 
@@ -479,19 +492,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void goToNavDrawerItem(@NonNull Page item) {
-        if (item.getSubPages().isEmpty()) {
-            mPrefUtilities.setSelectedPage(-1);
-            onOpenPage(item);
-            return;
-        }
-        mPrefUtilities.setSelectedPage(item.getId());
-        if (mNavigationAdapter != null) {
-            mNavigationAdapter.setSelectedIndex(item.getId());
-            mNavigationAdapter.notifyDataSetChanged();
-        }
-        if (mPageOverviewFragment != null) {
-            mPageOverviewFragment.indexUpdated();
-        }
+        onOpenPage(item);
     }
 
     @Override
