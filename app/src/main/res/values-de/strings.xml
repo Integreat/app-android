@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="action_settings">Einstellungen / Disclaimer</string>
+    <string name="action_settings">Einstellungen / Impressum</string>
 
     <string name="single_columns">Eine Spalte</string>
     <string name="multiple_columns">Mehrere Spalten</string>
@@ -59,4 +59,5 @@
     <string name="preferences_licenses">Copyright</string>
     <string name="preferences_icons_summary">… entworfen von Freepik (www.flaticon.com)</string>
     <string name="preferences_icons_title">Icons</string>
+    <string name="app_name" translatable="false"></string>
 </resources>
