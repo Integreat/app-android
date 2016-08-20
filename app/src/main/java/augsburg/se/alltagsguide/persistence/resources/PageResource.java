@@ -125,9 +125,10 @@ public class PageResource implements PersistableNetworkResource<Page> {
         int order = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ORDER));
         String thumbnail = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_THUMBNAIL));
         boolean autoTranslated = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AUTO_TRANSLATED)) == 1;
+        String page_url = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_URL));
 
         Author author = Author.fromCursor(cursor);
-        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>());
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>(), page_url);
     }
 
     @Override

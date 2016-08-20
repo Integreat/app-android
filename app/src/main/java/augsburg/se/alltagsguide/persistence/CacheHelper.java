@@ -48,6 +48,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String PAGE_LANGUAGE = "p_language"; //12
     public static final String PAGE_AUTHOR = "p_author"; //13
     public static final String PAGE_AUTO_TRANSLATED = "p_auto_translated"; //14
+    public static final String PAGE_URL = "p_url"; //14
 
     public static final String TABLE_PAGE_AVAILABLE_LANGUAGE = "pages_languages";
     public static final String PAGE_AVAIL_PAGE_ID = "pa_id"; // 1
@@ -310,6 +311,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     private void createPageTable(@NonNull SQLiteDatabase db) {
         String pageQuery = "CREATE TABLE " + TABLE_PAGE + "(" +
                 PAGE_ID + " INTEGER," +
+                PAGE_URL + " TEXT," +
                 PAGE_TITLE + " TEXT," +
                 PAGE_TYPE + " TEXT," +
                 PAGE_STATUS + " TEXT," +
@@ -345,6 +347,7 @@ public class CacheHelper extends SQLiteOpenHelper {
                 //32 -> 33 added boolean-column
                 db.execSQL("ALTER TABLE " + TABLE_LOCATION + " ADD " + LOCATION_LIVE + " INTEGER;");
                 db.execSQL("ALTER TABLE " + TABLE_PAGE + " ADD " + PAGE_AUTO_TRANSLATED + " INTEGER DEFAULT 0;");
+                db.execSQL("ALTER TABLE " + TABLE_PAGE + " ADD " + PAGE_URL + " Text DEFAULT NULL;");
             }
         }
     }

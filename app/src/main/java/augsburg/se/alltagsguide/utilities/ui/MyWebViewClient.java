@@ -78,6 +78,14 @@ public class MyWebViewClient extends WebViewClient {
                 view.reload();
                 return true;
             }
+        } else if (url.startsWith("https://cms.integreat-app.de/")) {
+            //split URL by / (slashes)
+
+            //last element is unique page identifier
+
+            //search for element in list of pages
+
+            //goto page
         } else if (url.startsWith("http://") || url.startsWith("https://")) {
             Intent extBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             extBrowserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -30,7 +30,7 @@
             android:summary="@string/clear_cache_pref_summary"
             android:key="clear_cache"/>
     </PreferenceCategory>
-    <PreferenceCategory android:key="disclaimer" android:title="Disclaimer"/>
+    <PreferenceCategory android:key="disclaimer" android:title="Impressum"/>
     <PreferenceCategory android:title = "@string/preferences_licenses" android:key="licenses">
         <Preference
             android:title="@string/preferences_icons_title"

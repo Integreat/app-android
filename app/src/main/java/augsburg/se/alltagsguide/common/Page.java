@@ -26,7 +26,6 @@ import com.google.gson.JsonObject;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +41,7 @@ import roboguice.util.Ln;
  */
 public class Page implements Serializable, Newer<Page> {
     private final int mId;
+    private final String mPageUrl;
     @NonNull private final String mTitle;
     private final String mType;
     private final String mStatus;
@@ -61,8 +61,9 @@ public class Page implements Serializable, Newer<Page> {
     private Language mLanguage;
     private boolean mAutoTranslated;
 
-    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, boolean autoTranslated, List<AvailableLanguage> availableLanguages) {
+    public Page(int id, @NonNull String title, String type, String status, long modified, String excerpt, String content, int parentId, int order, String thumbnail, Author author, boolean autoTranslated, List<AvailableLanguage> availableLanguages, String page_url) {
         mId = id;
+        mPageUrl = page_url;
         mTitle = title;
         mType = type;
         mStatus = status;
@@ -117,6 +118,8 @@ public class Page implements Serializable, Newer<Page> {
         Author author = Author.fromJson(jsonPage.get("author").getAsJsonObject());
         List<AvailableLanguage> languages = AvailableLanguage.fromJson(jsonPage.get("available_languages"));
 
+        JsonObject permalink = jsonPage.get("permalink").getAsJsonObject();
+        String page_url = permalink.get("url_page").getAsString();
 
         boolean autoTranslated = false;
         if (jsonPage.has("automatic_translation")) {
@@ -125,7 +128,7 @@ public class Page implements Serializable, Newer<Page> {
                 autoTranslated = elem.getAsBoolean();
             }
         }
-        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, languages);
+        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, languages, page_url);
     }
 
     public void setParent(Page parent) {
@@ -135,6 +138,10 @@ public class Page implements Serializable, Newer<Page> {
 
     public Author getAuthor() {
         return mAuthor;
+    }
+
+    public String getPageUrl() {
+        return mPageUrl;
     }
 
     @Override
