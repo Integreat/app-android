@@ -118,7 +118,7 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
             for (Page page : pages) {
                 if (Objects.equals(selectedPageId, page.getId())) {
                     setCategoryTitle(page);
-                    return page.getSubPagesRecursively();
+                    return page.getSubPages();
                 }
             }
         }
