@@ -26,7 +26,7 @@
         android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Integreat"
         android:theme="@style/AppTheme.NoActionBar">
         <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
              dispatching on non-Google Play devices -->
