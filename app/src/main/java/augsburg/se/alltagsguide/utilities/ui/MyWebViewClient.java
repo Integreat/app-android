@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.MailTo;
 import android.net.Uri;
-import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -76,11 +75,9 @@ public class MyWebViewClient extends WebViewClient {
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         final Activity activity = mActivityRef.get();
         if (url.toLowerCase().contains(".pdf")) {
-            Log.i("MyWebViewClient", "Clicked: " + url);
             Uri uri;
             File file = FileHelper.getPDFFileLink(mActivityRef.get(), url);
             if (file.exists()) {
-                Log.i("MyWebViewClient", "Open file: " + file.getAbsolutePath());
                 uri = Uri.fromFile(file);
             } else {
                 uri = Uri.parse(url);
@@ -109,6 +106,7 @@ public class MyWebViewClient extends WebViewClient {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse(url));
             activity.startActivity(intent);
+            return true;
         } else if (url.startsWith("http://") || url.startsWith("https://")) {
             Page page = findByPermalink(Helper.shortenUrl(url));
             if (page != null) {
@@ -166,6 +164,7 @@ public class MyWebViewClient extends WebViewClient {
 
     public Page findByPermalink(String url) {
         SQLiteQueryBuilder queryBuilder = getPermaLinkQuery(url);
+
         Cursor cursor = mDbCache.executeRawQuery(queryBuilder);
         if (cursor == null || !cursor.moveToFirst()) {
             return null;
