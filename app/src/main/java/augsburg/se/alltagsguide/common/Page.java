@@ -40,6 +40,7 @@ import roboguice.util.Ln;
  * Created by Daniel-L on 20.09.2015.
  */
 public class Page implements Serializable, Newer<Page> {
+    private static final String TAG = "integreat.Page";
     private final int mId;
     private final String mPageUrl;
     @NonNull private final String mTitle;

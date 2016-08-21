@@ -126,7 +126,6 @@ public class PageResource implements PersistableNetworkResource<Page> {
         String thumbnail = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_THUMBNAIL));
         boolean autoTranslated = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AUTO_TRANSLATED)) == 1;
         String page_url = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_URL));
-
         Author author = Author.fromCursor(cursor);
         return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>(), page_url);
     }
@@ -137,7 +136,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
             return;
         }
 
-        ContentValues pageValues = new ContentValues(14);
+        ContentValues pageValues = new ContentValues(15);
         ContentValues authorValues = new ContentValues(3);
         for (Page mPage : mPages) {
             List<Page> pages = new ArrayList<>();
@@ -146,6 +145,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
             for (Page page : pages) {
                 pageValues.clear();
                 pageValues.put(CacheHelper.PAGE_ID, page.getId());
+                pageValues.put(CacheHelper.PAGE_URL, page.getPageUrl());
                 pageValues.put(CacheHelper.PAGE_TITLE, page.getTitle());
                 pageValues.put(CacheHelper.PAGE_TYPE, page.getType());
                 pageValues.put(CacheHelper.PAGE_STATUS, page.getStatus());
