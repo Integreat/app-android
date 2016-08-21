@@ -105,6 +105,10 @@ public class MyWebViewClient extends WebViewClient {
                 view.reload();
                 return true;
             }
+        } else if (url.startsWith("tel:")) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse(url));
+            activity.startActivity(intent);
         } else if (url.startsWith("http://") || url.startsWith("https://")) {
             Page page = findByPermalink(Helper.shortenUrl(url));
             if (page != null) {
