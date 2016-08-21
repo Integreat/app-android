@@ -74,10 +74,10 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initWebView();
         if (savedInstanceState == null) {
             setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
         }
+        initWebView();
     }
 
     @SuppressWarnings("unchecked")
