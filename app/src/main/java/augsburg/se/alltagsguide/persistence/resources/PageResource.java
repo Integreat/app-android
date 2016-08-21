@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -30,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import augsburg.se.alltagsguide.BuildConfig;
-import augsburg.se.alltagsguide.common.Author;
-import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Language;
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
@@ -52,6 +50,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
     public String getType() {
         return "page";
     }
+
 
     /**
      * Creation factory
@@ -83,7 +82,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
     @NonNull
     @Override
     public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase) {
-        return getCursorQueryBuilder(getTables()).query(readableDatabase, null, null, null, null, null, null);
+        return getCursorQueryBuilder(Page.TABLES).query(readableDatabase, null, null, null, null, null, null);
     }
 
     private SQLiteQueryBuilder getCursorQueryBuilder(String tables) {
@@ -98,37 +97,19 @@ public class PageResource implements PersistableNetworkResource<Page> {
 
 
     @NonNull
-    private String getTables() {
-        return CacheHelper.TABLE_PAGE
-                + " join " + CacheHelper.TABLE_AUTHOR + " ON " + CacheHelper.PAGE_AUTHOR + " = " + CacheHelper.AUTHOR_USERNAME;
-    }
-
-    @NonNull
     @Override
     public Cursor getCursor(@NonNull SQLiteDatabase readableDatabase, int id) {
-        SQLiteQueryBuilder builder = getCursorQueryBuilder(getTables());
+        SQLiteQueryBuilder builder = getCursorQueryBuilder(Page.TABLES);
         builder.appendWhere(" AND " + CacheHelper.PAGE_ID + "=" + String.valueOf(id));
         return builder.query(readableDatabase, null, null, null, null, null, null);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public Page loadFrom(@NonNull Cursor cursor, @NonNull SQLiteDatabase db) {
-        int id = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ID));
-        String title = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TITLE));
-        String type = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_TYPE));
-        String status = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_STATUS));
-        long modified = cursor.getLong(cursor.getColumnIndex(CacheHelper.PAGE_MODIFIED));
-        String description = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_DESCRIPTION));
-        String content = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_CONTENT));
-        int parentId = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_PARENT_ID));
-        int order = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_ORDER));
-        String thumbnail = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_THUMBNAIL));
-        boolean autoTranslated = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AUTO_TRANSLATED)) == 1;
-
-        Author author = Author.fromCursor(cursor);
-        return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>());
+        return Page.loadFrom(cursor);
     }
+
 
     @Override
     public void store(@NonNull SQLiteDatabase db, @NonNull List<? extends Page> mPages) {
@@ -158,6 +139,7 @@ public class PageResource implements PersistableNetworkResource<Page> {
                 pageValues.put(CacheHelper.PAGE_LANGUAGE, mLanguage.getId());
                 pageValues.put(CacheHelper.PAGE_AUTHOR, page.getAuthor().getLogin());
                 pageValues.put(CacheHelper.PAGE_AUTO_TRANSLATED, page.isAutoTranslated() ? 1 : 0);
+                pageValues.put(CacheHelper.PAGE_PERMALINK, page.getPermalink());
                 db.replace(CacheHelper.TABLE_PAGE, null, pageValues);
 
                 authorValues.clear();
