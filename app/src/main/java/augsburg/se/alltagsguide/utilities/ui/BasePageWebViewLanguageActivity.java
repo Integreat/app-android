@@ -78,6 +78,29 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
             setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
         }
         initWebView();
+        if (savedInstanceState == null) {
+            initRest();
+        }
+    }
+
+    private void initRest() {
+        loadWebViewData();
+        setupLanguagesButton();
+        setMorePageDetails(mPage);
+
+        if (mPage.isAutoTranslated() && !mTranslatedDismissed) {
+            final Snackbar snackBar = Snackbar.make(mToolbar, R.string.auto_translated, Snackbar.LENGTH_INDEFINITE);
+            snackBar.getView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+            snackBar.setAction(R.string.auto_translated_snackbar_close, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackBar.dismiss();
+                    mTranslatedDismissed = true;
+                }
+            });
+            snackBar.show();
+        }
+        sendEvent("Page", mPage.getTitle());
     }
 
     @SuppressWarnings("unchecked")
@@ -139,23 +162,6 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     protected void setPage(T t) {
         mPage = t;
         setSubTitle(mPage.getTitle());
-        loadWebViewData();
-        setupLanguagesButton();
-        setMorePageDetails(t);
-
-        if (mPage.isAutoTranslated() && !mTranslatedDismissed) {
-            final Snackbar snackBar = Snackbar.make(mToolbar, R.string.auto_translated, Snackbar.LENGTH_INDEFINITE);
-            snackBar.getView().setBackgroundColor(mPrefUtilities.getCurrentColor());
-            snackBar.setAction(R.string.auto_translated_snackbar_close, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snackBar.dismiss();
-                    mTranslatedDismissed = true;
-                }
-            });
-            snackBar.show();
-        }
-        sendEvent("Page", mPage.getTitle());
     }
 
     protected abstract void setMorePageDetails(T t);
