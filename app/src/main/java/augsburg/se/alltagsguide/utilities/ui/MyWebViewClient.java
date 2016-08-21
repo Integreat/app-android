@@ -28,6 +28,7 @@ import android.webkit.WebViewClient;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.StringTokenizer;
 
 import augsburg.se.alltagsguide.utilities.FileHelper;
 import augsburg.se.alltagsguide.utilities.Objects;
@@ -80,9 +81,9 @@ public class MyWebViewClient extends WebViewClient {
             }
         } else if (url.startsWith("https://cms.integreat-app.de/")) {
             //split URL by / (slashes)
-
-            //last element is unique page identifier
-
+            // last element is unique page identifier
+            String[] urlSplits = url.split("/");
+            String pageId  = urlSplits[urlSplits.length-2];
             //search for element in list of pages
 
             //goto page
