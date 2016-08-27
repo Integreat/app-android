@@ -268,6 +268,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     public void onLoadFinished(Loader<T> loader, T data) {
         if (data != null) {
             setPage(data);
+            initRest();
         }
         stopLoading();
     }
