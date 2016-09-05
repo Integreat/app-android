@@ -56,7 +56,8 @@ public class Helper {
                 .replace("http://", "")
                 .replace("https://", "")
                 .replace("vmkrcmar21.informatik.tu-muenchen.de/wordpress/", "")
-                .replace("cms.integreat-app.de/", "");
+                .replace("cms.integreat-app.de/", "")
+                .replace("/", "");
     }
 
     @NonNull

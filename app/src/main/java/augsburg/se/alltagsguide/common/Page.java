@@ -20,6 +20,7 @@ package augsburg.se.alltagsguide.common;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.Html;
+import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -122,7 +123,6 @@ public class Page implements Serializable, Newer<Page> {
         String description = jsonPage.get("excerpt").getAsString();
         String content = jsonPage.get("content").getAsString();
         String permalink = Helper.shortenUrl(jsonPage.get("permalink").getAsJsonObject().get("url").getAsString());
-        System.out.println(permalink);
         int parentId = jsonPage.get("parent").getAsInt();
         int order = jsonPage.get("order").getAsInt();
         String thumbnail = jsonPage.get("thumbnail").isJsonNull() ? "" : jsonPage.get("thumbnail").getAsString();
@@ -316,7 +316,6 @@ public class Page implements Serializable, Newer<Page> {
         String thumbnail = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_THUMBNAIL));
         boolean autoTranslated = cursor.getInt(cursor.getColumnIndex(CacheHelper.PAGE_AUTO_TRANSLATED)) == 1;
         String permalink = cursor.getString(cursor.getColumnIndex(CacheHelper.PAGE_PERMALINK));
-
         Author author = Author.fromCursor(cursor);
         return new Page(id, title, type, status, modified, description, content, parentId, order, thumbnail, author, autoTranslated, new ArrayList<AvailableLanguage>(), permalink);
     }
