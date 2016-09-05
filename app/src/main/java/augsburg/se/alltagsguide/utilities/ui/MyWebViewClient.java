@@ -20,17 +20,32 @@ package augsburg.se.alltagsguide.utilities.ui;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.MailTo;
 import android.net.Uri;
-import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.inject.Inject;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
+import augsburg.se.alltagsguide.common.AvailableLanguage;
+import augsburg.se.alltagsguide.common.Language;
+import augsburg.se.alltagsguide.common.Location;
+import augsburg.se.alltagsguide.common.Page;
+import augsburg.se.alltagsguide.page.PageActivity;
+import augsburg.se.alltagsguide.persistence.CacheHelper;
+import augsburg.se.alltagsguide.persistence.DatabaseCache;
+import augsburg.se.alltagsguide.persistence.resources.AvailableLanguageResource;
 import augsburg.se.alltagsguide.utilities.FileHelper;
+import augsburg.se.alltagsguide.utilities.Helper;
 import augsburg.se.alltagsguide.utilities.Objects;
+import roboguice.RoboGuice;
 import roboguice.util.Ln;
 
 /**
@@ -38,22 +53,31 @@ import roboguice.util.Ln;
  */
 public class MyWebViewClient extends WebViewClient {
     private final WeakReference<Activity> mActivityRef;
-
     private String mContent = "";
 
-    public MyWebViewClient(Activity activity) {
+    @Inject
+    private DatabaseCache mDbCache;
+
+    @Inject
+    private AvailableLanguageResource.Factory availableLanguageFactory;
+
+    private Language mLanguage;
+    private Location mLocation;
+
+    public MyWebViewClient(Activity activity, Language language, Location location) {
         mActivityRef = new WeakReference<>(activity);
+        RoboGuice.injectMembers(activity, this);
+        mLanguage = language;
+        mLocation = location;
     }
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         final Activity activity = mActivityRef.get();
         if (url.toLowerCase().contains(".pdf")) {
-            Log.i("MyWebViewClient", "Clicked: " + url);
             Uri uri;
             File file = FileHelper.getPDFFileLink(mActivityRef.get(), url);
             if (file.exists()) {
-                Log.i("MyWebViewClient", "Open file: " + file.getAbsolutePath());
                 uri = Uri.fromFile(file);
             } else {
                 uri = Uri.parse(url);
@@ -78,10 +102,22 @@ public class MyWebViewClient extends WebViewClient {
                 view.reload();
                 return true;
             }
+        } else if (url.startsWith("tel:")) {
+            Intent intent = new Intent(Intent.ACTION_DIAL);
+            intent.setData(Uri.parse(url));
+            activity.startActivity(intent);
+            return true;
         } else if (url.startsWith("http://") || url.startsWith("https://")) {
-            Intent extBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            extBrowserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mActivityRef.get().startActivity(extBrowserIntent);
+            Page page = findByPermalink(Helper.shortenUrl(url));
+            if (page != null) {
+                Intent intent = new Intent(activity, PageActivity.class);
+                intent.putExtra(PageActivity.ARG_INFO, page);
+                activity.startActivity(intent);
+            } else {
+                Intent extBrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                extBrowserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(extBrowserIntent);
+            }
             return true;
         } else {
             view.loadUrl(url);
@@ -118,4 +154,27 @@ public class MyWebViewClient extends WebViewClient {
 
         return string.replace("'", "\\'");
     }
+
+    public SQLiteQueryBuilder getPermaLinkQuery(String url) {
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(Page.TABLES);
+        builder.appendWhere(CacheHelper.PAGE_PERMALINK + " = " + Helper.quote(url));
+        return builder;
+    }
+
+    public Page findByPermalink(String url) {
+        SQLiteQueryBuilder queryBuilder = getPermaLinkQuery(url);
+
+        Cursor cursor = mDbCache.executeRawQuery(queryBuilder);
+        if (cursor == null || !cursor.moveToFirst()) {
+            return null;
+        }
+        Page referencedPage = Page.loadFrom(cursor);
+        List<Page> pages = new ArrayList<>();
+        pages.add(referencedPage);
+        List<AvailableLanguage> languages = mDbCache.load(availableLanguageFactory.under(mLanguage, mLocation));
+        Page.recreateRelations(pages, languages, mLanguage);
+        return referencedPage;
+    }
+
 }

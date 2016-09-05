@@ -115,16 +115,18 @@ public class PageOverviewFragment extends BaseListFragment<Page> {
     private List<Page> restoreVisiblePages(List<Page> pages) {
         int selectedPageId = mPrefUtilities.getSelectedPageId();
         if (selectedPageId >= 0) {
-            List<Page> hierarchyPages = Page.filterParents(pages);
-            for (Page page : hierarchyPages) {
+            for (Page page : pages) {
                 if (Objects.equals(selectedPageId, page.getId())) {
                     setCategoryTitle(page);
-                    return page.getSubPagesRecursively();
+                    List<Page> lePages = page.getSubPages();
+                    lePages.add(page);
+                    return lePages;
                 }
             }
         }
+
         setDefaultTitle();
-        return pages;
+        return Page.filterParents(pages);
     }
 
 

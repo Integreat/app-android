@@ -48,6 +48,7 @@ public class CacheHelper extends SQLiteOpenHelper {
     public static final String PAGE_LANGUAGE = "p_language"; //12
     public static final String PAGE_AUTHOR = "p_author"; //13
     public static final String PAGE_AUTO_TRANSLATED = "p_auto_translated"; //14
+    public static final String PAGE_PERMALINK = "p_permalink"; //15
 
     public static final String TABLE_PAGE_AVAILABLE_LANGUAGE = "pages_languages";
     public static final String PAGE_AVAIL_PAGE_ID = "pa_id"; // 1
@@ -323,6 +324,7 @@ public class CacheHelper extends SQLiteOpenHelper {
                 PAGE_LOCATION + " INTEGER," +
                 PAGE_LANGUAGE + " INTEGER," +
                 PAGE_AUTO_TRANSLATED + " INTEGER," +
+                PAGE_PERMALINK + " TEXT," +
                 "PRIMARY KEY(" + PAGE_ID + "," + PAGE_LOCATION + "," + PAGE_LANGUAGE + ")" +
                 ");";
         Ln.d(pageQuery);
@@ -345,6 +347,9 @@ public class CacheHelper extends SQLiteOpenHelper {
                 //32 -> 33 added boolean-column
                 db.execSQL("ALTER TABLE " + TABLE_LOCATION + " ADD " + LOCATION_LIVE + " INTEGER;");
                 db.execSQL("ALTER TABLE " + TABLE_PAGE + " ADD " + PAGE_AUTO_TRANSLATED + " INTEGER DEFAULT 0;");
+            }
+            if (oldVersion <= 33){
+                db.execSQL("ALTER TABLE " + TABLE_PAGE + " ADD " + PAGE_PERMALINK + " TEXT;");
             }
         }
     }

@@ -48,6 +48,18 @@ public class Helper {
         TO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
+    public static String shortenUrl(String url) {
+        if (url == null) {
+            return null;
+        }
+        return url
+                .replace("http://", "")
+                .replace("https://", "")
+                .replace("vmkrcmar21.informatik.tu-muenchen.de/wordpress/", "")
+                .replace("cms.integreat-app.de/", "")
+                .replace("/", "");
+    }
+
     @NonNull
     public static String quote(String s) {
         return "'" + s + "'";

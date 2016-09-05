@@ -41,7 +41,6 @@ import augsburg.se.alltagsguide.R;
 import augsburg.se.alltagsguide.common.AvailableLanguage;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.overview.OverviewActivity;
-import augsburg.se.alltagsguide.start.WelcomeActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 import roboguice.inject.InjectView;
 import roboguice.util.Ln;
@@ -75,10 +74,33 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initWebView();
         if (savedInstanceState == null) {
             setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
         }
+        initWebView();
+        if (savedInstanceState == null) {
+            initRest();
+        }
+    }
+
+    private void initRest() {
+        loadWebViewData();
+        setupLanguagesButton();
+        setMorePageDetails(mPage);
+
+        if (mPage.isAutoTranslated() && !mTranslatedDismissed) {
+            final Snackbar snackBar = Snackbar.make(mToolbar, R.string.auto_translated, Snackbar.LENGTH_INDEFINITE);
+            snackBar.getView().setBackgroundColor(mPrefUtilities.getCurrentColor());
+            snackBar.setAction(R.string.auto_translated_snackbar_close, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackBar.dismiss();
+                    mTranslatedDismissed = true;
+                }
+            });
+            snackBar.show();
+        }
+        sendEvent("Page", mPage.getTitle());
     }
 
     @SuppressWarnings("unchecked")
@@ -140,22 +162,6 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     protected void setPage(T t) {
         mPage = t;
         setSubTitle(mPage.getTitle());
-        loadWebViewData();
-        setupLanguagesButton();
-        setMorePageDetails(t);
-
-        if (mPage.isAutoTranslated() && !mTranslatedDismissed) {
-            final Snackbar snackBar = Snackbar.make(mToolbar, R.string.auto_translated, Snackbar.LENGTH_INDEFINITE);
-            snackBar.getView().setBackgroundColor(mPrefUtilities.getCurrentColor());
-            snackBar.setAction(R.string.auto_translated_snackbar_close, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snackBar.dismiss();
-                    mTranslatedDismissed = true;
-                }
-            });
-            snackBar.show();
-        }
     }
 
     protected abstract void setMorePageDetails(T t);
@@ -180,7 +186,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
 
     @SuppressLint("SetJavaScriptEnabled")
     protected void initWebView() {
-        myWebViewClient = new MyWebViewClient(this);
+        myWebViewClient = new MyWebViewClient(this, mPage.getLanguage(), mPage.getLanguage().getLocation());
         descriptionView.setWebViewClient(myWebViewClient);
         // javascript broken bug android versions 2.3.X
         if (!"2.3".equals(Build.VERSION.RELEASE)) {
@@ -251,6 +257,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     }
 
     protected void loadLanguage(AvailableLanguage language) {
+        sendEvent("Page", mPage.getTitle() + "/" + language.getLanguage());
         Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_LANGUAGE, language);
         getSupportLoaderManager().restartLoader(0, bundle, this);
@@ -261,6 +268,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
     public void onLoadFinished(Loader<T> loader, T data) {
         if (data != null) {
             setPage(data);
+            initRest();
         }
         stopLoading();
     }

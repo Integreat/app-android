@@ -19,7 +19,7 @@
     <string name="app_name" translatable="false">Integreat</string>
     <string name="refguide" translatable="false">Integreat %s</string>
 
-    <string name="action_settings">Settings / Disclaimer</string>
+    <string name="action_settings">Settings / Imprint</string>
 
     <string name="single_columns">View with a single column</string>
     <string name="multiple_columns">View with multiple columns</string>

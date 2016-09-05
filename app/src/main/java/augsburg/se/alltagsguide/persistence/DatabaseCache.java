@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -255,5 +256,14 @@ public class DatabaseCache {
         } finally {
             cursor.close();
         }
+    }
+
+    public Cursor executeRawQuery(SQLiteQueryBuilder queryBuilder) {
+        final SQLiteDatabase db = getReadable(helperProvider.get());
+        if (db == null) {
+            Ln.d("SQLiteDatabase is null");
+            return null;
+        }
+        return queryBuilder.query(db, null, null, null, null, null, null);
     }
 }

@@ -154,6 +154,7 @@ public class OverviewActivity extends BaseActivity
         if (mLanguage == null || mLocation == null){
             startWelcome();
         }
+        sendEvent("Overview", mLocation.getName() + "/" + mLanguage.getShortName());
         mHandler = new Handler();
         changeLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,6 +263,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void loadLanguage(@NonNull Language language) {
+        sendEvent("Overview", mLocation.getName() + "/" + language.getShortName());
         Page selectedPage = mNavigationAdapter.getSelectedPage();
         int selectedPageEquivalent = -1;
         if (selectedPage != null) {
@@ -428,10 +430,23 @@ public class OverviewActivity extends BaseActivity
     }
 
     @Override
-    public void onOpenPage(@NonNull Page page) {
-        Intent intent = new Intent(OverviewActivity.this, PageActivity.class);
-        intent.putExtra(PageActivity.ARG_INFO, page);
-        startActivity(intent);
+    public void onOpenPage(@NonNull Page item) {
+        if (item.getSubPages().isEmpty() || item.getId() == mPrefUtilities.getSelectedPageId()) {
+            mPrefUtilities.setSelectedPage(-1);
+            Intent intent = new Intent(OverviewActivity.this, PageActivity.class);
+            intent.putExtra(PageActivity.ARG_INFO, item);
+            startActivity(intent);
+            return;
+        }
+        mPrefUtilities.setSelectedPage(item.getId());
+        if (mNavigationAdapter != null) {
+            mNavigationAdapter.setSelectedIndex(item.getId());
+            mNavigationAdapter.notifyDataSetChanged();
+        }
+        if (mPageOverviewFragment != null) {
+            mPageOverviewFragment.indexUpdated();
+        }
+
     }
 
 
@@ -477,19 +492,7 @@ public class OverviewActivity extends BaseActivity
     }
 
     private void goToNavDrawerItem(@NonNull Page item) {
-        if (item.getSubPages().isEmpty()) {
-            mPrefUtilities.setSelectedPage(-1);
-            onOpenPage(item);
-            return;
-        }
-        mPrefUtilities.setSelectedPage(item.getId());
-        if (mNavigationAdapter != null) {
-            mNavigationAdapter.setSelectedIndex(item.getId());
-            mNavigationAdapter.notifyDataSetChanged();
-        }
-        if (mPageOverviewFragment != null) {
-            mPageOverviewFragment.indexUpdated();
-        }
+        onOpenPage(item);
     }
 
     @Override
@@ -580,7 +583,6 @@ public class OverviewActivity extends BaseActivity
         startActivity(intent);
     }
 
-
     @Override
     public void onEventPagesLoaded(@NonNull final List<EventPage> pages) {
     }
@@ -669,5 +671,12 @@ public class OverviewActivity extends BaseActivity
             }
             return createdFragment;
         }
+    }
+
+    @Override
+    protected String getScreenName() {
+        return String.format("Overview(%s|%s)",
+                mLocation != null ? mLocation.getName() : "",
+                mLanguage != null ? mLanguage.getName() : "");
     }
 }
