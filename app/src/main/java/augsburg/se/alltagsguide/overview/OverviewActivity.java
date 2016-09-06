@@ -153,6 +153,7 @@ public class OverviewActivity extends BaseActivity
         mLanguage = mPrefUtilities.getLanguage();
         if (mLanguage == null || mLocation == null){
             startWelcome();
+            return;
         }
         sendEvent("Overview", mLocation.getName() + "/" + mLanguage.getShortName());
         mHandler = new Handler();
