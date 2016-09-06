@@ -163,6 +163,7 @@ public class MyWebViewClient extends WebViewClient {
     }
 
     public Page findByPermalink(String url) {
+        url = url.replaceAll("%", "").toLowerCase();
         SQLiteQueryBuilder queryBuilder = getPermaLinkQuery(url);
 
         Cursor cursor = mDbCache.executeRawQuery(queryBuilder);
