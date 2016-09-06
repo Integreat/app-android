@@ -122,7 +122,7 @@ public class Page implements Serializable, Newer<Page> {
         }
         String description = jsonPage.get("excerpt").getAsString();
         String content = jsonPage.get("content").getAsString();
-        String permalink = Helper.shortenUrl(jsonPage.get("permalink").getAsJsonObject().get("url").getAsString());
+        String permalink = Helper.shortenUrl(jsonPage.get("permalink").getAsJsonObject().get("url").getAsString().replaceAll("%", "").toLowerCase());
         int parentId = jsonPage.get("parent").getAsInt();
         int order = jsonPage.get("order").getAsInt();
         String thumbnail = jsonPage.get("thumbnail").isJsonNull() ? "" : jsonPage.get("thumbnail").getAsString();

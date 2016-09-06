@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.MailTo;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -163,6 +164,7 @@ public class MyWebViewClient extends WebViewClient {
     }
 
     public Page findByPermalink(String url) {
+        url = url.replaceAll("%", "").toLowerCase();
         SQLiteQueryBuilder queryBuilder = getPermaLinkQuery(url);
 
         Cursor cursor = mDbCache.executeRawQuery(queryBuilder);
