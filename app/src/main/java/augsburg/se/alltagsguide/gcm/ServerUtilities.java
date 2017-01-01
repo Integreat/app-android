@@ -24,16 +24,13 @@ import android.text.TextUtils;
 import com.google.android.gcm.GCMRegistrar;
 import com.google.inject.Inject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.utilities.CommonUtilities;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import roboguice.util.Ln;
 
 /**
@@ -78,31 +75,29 @@ public final class ServerUtilities {
     void register(final Location location, final String regId, final Callback<String> callback) {
         Ln.i("registering device (regId = " + regId + ")");
         mNetworkCommunication.subscribePush(location, regId, new Callback<String>() {
-                    @Override
-                    public void success(String result, Response response) {
-                        mPrefUtilities.setRegisteredOnServer(location, true, regId);
-                        if (callback != null) {
-                            callback.success(result, response);
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        // Here we are simplifying and retrying on
-                        // any error; in a
-                        // real
-                        // application, it should retry only on
-                        // unrecoverable errors
-                        // (like HTTP error code 503).
-                        Ln.e("Failed to register after several retries",
-                                error);
-                        unregisterDevice();
-                        if (callback != null) {
-                            callback.failure(null);
-                        }
-                    }
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                mPrefUtilities.setRegisteredOnServer(location, true, regId);
+                if (callback != null) {
+                    callback.onResponse(call, response);
                 }
-        );
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                // Here we are simplifying and retrying on
+                // any error; in a
+                // real
+                // application, it should retry only on
+                // unrecoverable errors
+                // (like HTTP error code 503).
+                Ln.e("Failed to register after several retries", t);
+                unregisterDevice();
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
+            }
+        });
     }
 
     /**

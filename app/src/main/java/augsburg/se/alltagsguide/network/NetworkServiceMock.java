@@ -32,9 +32,9 @@ import augsburg.se.alltagsguide.common.Location;
 import augsburg.se.alltagsguide.common.Page;
 import augsburg.se.alltagsguide.common.UpdateTime;
 import augsburg.se.alltagsguide.utilities.ColorManager;
-import retrofit.Callback;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.Callback;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import roboguice.RoboGuice;
 
 
@@ -92,18 +92,18 @@ public class NetworkServiceMock implements NetworkService {
     }
 
     @Override
-    public void subscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
+    public void subscribePush(@NonNull @Path(value = "location") Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
         sendDelayed(callback, "Yes", TIME_TO_SLEEP);
     }
 
     @Override
-    public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
+    public void unsubscribePush(@NonNull @Path(value = "location") Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
         sendDelayed(callback, "Yes", TIME_TO_SLEEP);
     }
 
     @NonNull
     @Override
-    public List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
+    public List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location") Location location, @NonNull @Query("since") UpdateTime time) {
         return getPages(language, location, time);
     }
 
@@ -120,7 +120,7 @@ public class NetworkServiceMock implements NetworkService {
             @Override
             public void run() {
                 if (successListener != null) {
-                    successListener.success(response, null);
+                    successListener.onResponse(null, null);
                 }
             }
         }, timeToSleep);
@@ -150,7 +150,7 @@ public class NetworkServiceMock implements NetworkService {
 
     @NonNull
     @Override
-    public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
+    public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location") Location location, @NonNull @Query("since") UpdateTime time) {
         return new ArrayList<>();
     }
 

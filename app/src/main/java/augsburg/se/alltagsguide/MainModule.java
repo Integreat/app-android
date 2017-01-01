@@ -47,7 +47,7 @@ import augsburg.se.alltagsguide.serialization.LanguageSerializer;
 import augsburg.se.alltagsguide.serialization.LocationSerializer;
 import augsburg.se.alltagsguide.serialization.PageSerializer;
 import de.greenrobot.event.EventBus;
-import retrofit.converter.GsonConverter;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Daniel-L on 01.09.2015.
@@ -106,8 +106,8 @@ public class MainModule extends AbstractModule {
     }
 
     @Provides
-    GsonConverter gsonConverter(Gson gson) {
-        return new GsonConverter(gson);
+    GsonConverterFactory gsonConverterFactory(Gson gson) {
+        return GsonConverterFactory.create(gson);
     }
 
 

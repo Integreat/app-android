@@ -24,15 +24,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.liulishuo.filedownloader.FileDownloader;
-import com.liulishuo.filedownloader.util.FileDownloadHelper;
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.picasso.OkHttpDownloader;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,13 +41,14 @@ import augsburg.se.alltagsguide.network.NetworkService;
 import augsburg.se.alltagsguide.network.NetworkServiceMock;
 import augsburg.se.alltagsguide.utilities.ColorManager;
 import augsburg.se.alltagsguide.utilities.PrefUtilities;
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.OkClient;
-import retrofit.converter.GsonConverter;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import roboguice.util.Ln;
 
 /**
@@ -70,41 +66,44 @@ public class ServicesModule extends AbstractModule {
         Ln.d("okHttpClient is intialized.");
         int cacheSize = 50 * 1024 * 1024; // 50 MiB
         Cache cache = new Cache(cachedir, cacheSize);
-        OkHttpClient client = new OkHttpClient();
-        client.setCache(cache);
-        client.setConnectTimeout(10, TimeUnit.SECONDS);
-        client.setWriteTimeout(10, TimeUnit.SECONDS);
-        client.setReadTimeout(30, TimeUnit.SECONDS);
-        return client;
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(BuildConfig.DEBUG ?
+                HttpLoggingInterceptor.Level.NONE :
+                HttpLoggingInterceptor.Level.NONE);
+
+        return new OkHttpClient.Builder().cache(cache)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
+                .build();
     }
 
     @Provides
     @Singleton
-    OkHttpDownloader okHttpDownloader(OkHttpClient client) {
+    OkHttp3Downloader okHttpDownloader(OkHttpClient client) {
         Ln.d("OkHttpDownloader is intialized.");
-        return new OkHttpDownloader(client);
+        return new OkHttp3Downloader(client);
     }
 
     @Provides
     @Singleton
-    Picasso picasso(Context context, OkHttpDownloader downloader) {
+    Picasso picasso(Context context, OkHttp3Downloader downloader) {
         Ln.d("Picasso is intialized.");
         return new Picasso.Builder(context).downloader(downloader).build();
     }
 
     @Provides
     @Singleton
-    NetworkService networkService(Context context, GsonConverter gsonConverter, OkHttpClient client) {
+    NetworkService networkService(Context context, GsonConverterFactory factory, OkHttpClient client) {
         Ln.d("NetworkService is intialized.");
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
-                .setLogLevel(BuildConfig.DEBUG ?
-                        RestAdapter.LogLevel.NONE :
-                        RestAdapter.LogLevel.NONE)
-                .setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/")
-                .setConverter(gsonConverter)
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://vmkrcmar21.informatik.tu-muenchen.de/")
+                .client(client)
+                .addConverterFactory(factory)
                 .build();
-        final NetworkService service = restAdapter.create(NetworkService.class);
+        final NetworkService service = retrofit.create(NetworkService.class);
         final NetworkService mock = new NetworkServiceMock(context);
         return new NetworkService() {
             @NonNull
@@ -126,7 +125,7 @@ public class ServicesModule extends AbstractModule {
 
             @NonNull
             @Override
-            public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime updateTime) {
+            public List<EventPage> getEventPages(@NonNull @Path("language") Language language, @NonNull @Path(value = "location") Location location, @NonNull @Query("since") UpdateTime updateTime) {
                 try {
                     return service.getEventPages(language, location, updateTime);
                 } catch (Exception e) {
@@ -158,18 +157,18 @@ public class ServicesModule extends AbstractModule {
             }
 
             @Override
-            public void subscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
+            public void subscribePush(@NonNull @Path(value = "location") Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
                 service.subscribePush(location, regId, callback);
             }
 
             @Override
-            public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
+            public void unsubscribePush(@NonNull @Path(value = "location") Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
                 service.unsubscribePush(location, regId, callback);
             }
 
             @NonNull
             @Override
-            public List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("since") UpdateTime time) {
+            public List<Page> getDisclaimers(@NonNull @Path("language") Language language, @NonNull @Path(value = "location") Location location, @NonNull @Query("since") UpdateTime time) {
                 try {
                     return service.getDisclaimers(language, location, time);
                 } catch (Exception e) {
