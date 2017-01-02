@@ -76,9 +76,7 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             setPageFromSerializable(getIntent().getSerializableExtra(ARG_INFO));
-        }
-        initWebView();
-        if (savedInstanceState == null) {
+            initWebView();
             initRest();
         }
     }
@@ -125,6 +123,8 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
         mTranslatedDismissed = savedInstanceState.getBoolean(TRANSLATED_DISMISSED);
         Serializable savedInstance = savedInstanceState.getSerializable(PAGE_STATE);
         setPageFromSerializable(savedInstance);
+        initWebView();
+        initRest();
     }
 
 
@@ -297,8 +297,8 @@ public abstract class BasePageWebViewLanguageActivity<T extends Page> extends Ba
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putSerializable(PAGE_STATE, mPage);
         outState.putBoolean(TRANSLATED_DISMISSED, mTranslatedDismissed);
-        super.onSaveInstanceState(outState);
     }
 }
