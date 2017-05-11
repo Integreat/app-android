@@ -92,9 +92,9 @@ public class ServicesModule extends AbstractModule {
         return new Picasso.Builder(context).downloader(downloader).build();
     }
 
-    private NetworkService buildRestAdapter(OkHttpClient client, GsonConverter gsonConverter, String endpoint) {
+    private NetworkService buildRestAdapter(OkClient client, GsonConverter gsonConverter, String endpoint) {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
+                .setClient(client)
                 .setLogLevel(BuildConfig.DEBUG ?
                         RestAdapter.LogLevel.NONE :
                         RestAdapter.LogLevel.NONE)
@@ -107,9 +107,9 @@ public class ServicesModule extends AbstractModule {
     @Singleton
     NetworkService networkService(Context context, GsonConverter gsonConverter, OkHttpClient client) {
         Ln.d("NetworkService is intialized.");
-
-        final NetworkService service = buildRestAdapter(client, gsonConverter, "https://cms.integreat-app.de");
-        final NetworkService fallbackService = buildRestAdapter(client, gsonConverter, "http://vmkrcmar21.informatik.tu-muenchen.de/");
+        OkClient okClient = new OkClient(client);
+        final NetworkService service = buildRestAdapter(okClient, gsonConverter, "https://cms.integreat-app.de/");
+        final NetworkService fallbackService = buildRestAdapter(okClient, gsonConverter, "http://vmkrcmar21.informatik.tu-muenchen.de/");
         final NetworkService mock = new NetworkServiceMock(context);
         return new NetworkService() {
             @NonNull
