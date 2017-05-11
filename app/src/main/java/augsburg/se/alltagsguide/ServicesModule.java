@@ -92,19 +92,24 @@ public class ServicesModule extends AbstractModule {
         return new Picasso.Builder(context).downloader(downloader).build();
     }
 
-    @Provides
-    @Singleton
-    NetworkService networkService(Context context, GsonConverter gsonConverter, OkHttpClient client) {
-        Ln.d("NetworkService is intialized.");
+    private NetworkService buildRestAdapter(OkHttpClient client, GsonConverter gsonConverter, String endpoint) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setLogLevel(BuildConfig.DEBUG ?
                         RestAdapter.LogLevel.NONE :
                         RestAdapter.LogLevel.NONE)
-                .setEndpoint("http://vmkrcmar21.informatik.tu-muenchen.de/")
+                .setEndpoint(endpoint)
                 .setConverter(gsonConverter)
                 .build();
-        final NetworkService service = restAdapter.create(NetworkService.class);
+        return restAdapter.create(NetworkService.class);
+    }
+    @Provides
+    @Singleton
+    NetworkService networkService(Context context, GsonConverter gsonConverter, OkHttpClient client) {
+        Ln.d("NetworkService is intialized.");
+
+        final NetworkService service = buildRestAdapter(client, gsonConverter, "https://cms.integreat-app.de");
+        final NetworkService fallbackService = buildRestAdapter(client, gsonConverter, "http://vmkrcmar21.informatik.tu-muenchen.de/");
         final NetworkService mock = new NetworkServiceMock(context);
         return new NetworkService() {
             @NonNull
@@ -120,7 +125,12 @@ public class ServicesModule extends AbstractModule {
                     return service.getPages(language, location, updateTime);
                 } catch (Exception e) {
                     Ln.e(e);
-                    return new ArrayList<>();
+                    try {
+                        return fallbackService.getPages(language, location, updateTime);
+                    } catch (Exception e2) {
+                        Ln.e(e2);
+                        return new ArrayList<>();
+                    }
                 }
             }
 
@@ -131,7 +141,12 @@ public class ServicesModule extends AbstractModule {
                     return service.getEventPages(language, location, updateTime);
                 } catch (Exception e) {
                     Ln.e(e);
-                    return new ArrayList<>();
+                    try {
+                        return fallbackService.getEventPages(language, location, updateTime);
+                    } catch (Exception e2) {
+                        Ln.e(e2);
+                        return new ArrayList<>();
+                    }
                 }
             }
 
@@ -142,7 +157,12 @@ public class ServicesModule extends AbstractModule {
                     return service.getAvailableLocations();
                 } catch (Exception e) {
                     Ln.e(e);
-                    return new ArrayList<>();
+                    try {
+                        return fallbackService.getAvailableLocations();
+                    } catch (Exception e2) {
+                        Ln.e(e2);
+                        return new ArrayList<>();
+                    }
                 }
             }
 
@@ -153,18 +173,33 @@ public class ServicesModule extends AbstractModule {
                     return service.getAvailableLanguages(location);
                 } catch (Exception e) {
                     Ln.e(e);
-                    return new ArrayList<>();
+                    try {
+                        return fallbackService.getAvailableLanguages(location);
+                    } catch (Exception e2) {
+                        Ln.e(e2);
+                        return new ArrayList<>();
+                    }
                 }
             }
 
             @Override
             public void subscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_register_id") String regId, @NonNull Callback<String> callback) {
-                service.subscribePush(location, regId, callback);
+                try {
+                    service.subscribePush(location, regId, callback);
+                } catch (Exception e) {
+                    Ln.e(e);
+                    fallbackService.subscribePush(location, regId, callback);
+                }
             }
 
             @Override
             public void unsubscribePush(@NonNull @Path(value = "location", encode = false) Location location, @NonNull @Query("gcm_unregister_id") String regId, @NonNull Callback<String> callback) {
-                service.unsubscribePush(location, regId, callback);
+                try {
+                    service.unsubscribePush(location, regId, callback);
+                } catch (Exception e) {
+                    Ln.e(e);
+                    fallbackService.unsubscribePush(location, regId, callback);
+                }
             }
 
             @NonNull
@@ -174,7 +209,12 @@ public class ServicesModule extends AbstractModule {
                     return service.getDisclaimers(language, location, time);
                 } catch (Exception e) {
                     Ln.e(e);
-                    return new ArrayList<>();
+                    try {
+                        return fallbackService.getDisclaimers(language, location, time);
+                    } catch (Exception e2) {
+                        Ln.e(e2);
+                        return new ArrayList<>();
+                    }
                 }
             }
         };
