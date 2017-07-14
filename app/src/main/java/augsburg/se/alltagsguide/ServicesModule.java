@@ -108,7 +108,7 @@ public class ServicesModule extends AbstractModule {
     NetworkService networkService(Context context, GsonConverter gsonConverter, OkHttpClient client) {
         Ln.d("NetworkService is intialized.");
         OkClient okClient = new OkClient(client);
-        final NetworkService service = buildRestAdapter(okClient, gsonConverter, "https://cms.integreat-app.de/");
+        final NetworkService service = buildRestAdapter(okClient, gsonConverter, "https://web.integreat-app.de/");
         final NetworkService fallbackService = buildRestAdapter(okClient, gsonConverter, "http://vmkrcmar21.informatik.tu-muenchen.de/");
         final NetworkService mock = new NetworkServiceMock(context);
         return new NetworkService() {
