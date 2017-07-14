@@ -49,7 +49,7 @@ android {
 
     defaultConfig {
         applicationId "augsburg.se.alltagsguide"
-        versionCode 55564
+        versionCode 55571
         versionName "2017"
         minSdkVersion 9
         targetSdkVersion 23
